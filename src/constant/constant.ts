@@ -1,0 +1,14 @@
+export const ROUTES = {
+  HOME: "/home",
+  AUTH: "/auth",
+  REGISTER: "/auth/register",
+  LOGIN: "/auth/login",
+  MENU: "/menu",
+  CART: "/cart",
+  RESTAURANT: "/restaurant/:id",
+  SEARCH: "/search/:selectedCity/:searchValue",
+  PRODUCT: "/product/:id",
+  USER: "/user",
+  ORDERS: "/orders",
+  NOT_FOUND: "*",
+};

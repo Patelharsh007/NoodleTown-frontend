@@ -37,13 +37,11 @@ interface MealItem {
 
 const RestaurantOrderOnline: React.FC<restaurantProps> = ({ id }) => {
   const [restaurant, setRestaurant] = useState<RestaurantItem | null>(null);
-  // const [mealItem, setMealItem] = useState<MealItem[]>([]);
   const [selectedCategory, setSelectedCategory] =
     useState<string>("Recommended");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // setTimeout(() => fetchRestaurantDetailById(id), 1000);
     fetchRestaurantDetailById(id);
   }, [id]);
 

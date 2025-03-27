@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { Box, Grid2 } from "@mui/material";
+import { Box, Grid2, Skeleton } from "@mui/material";
 
 import mealItems from "../../data/mealItem";
 
@@ -11,8 +11,22 @@ import {
   incrementQuantity,
   decrementQuantity,
 } from "../../redux/slices/CartSlice";
-import { MealItem } from "../../types/type";
+
 import ProductDescription from "./ProductDescription";
+import { showErrorToast } from "../../components/ToastContainer";
+
+interface MealItem {
+  id: number;
+  mealId: string;
+  restaurantId: string;
+  category: string;
+  image: string;
+  title: string;
+  shortDescription: string;
+  fullDescription: string[];
+  price: number;
+  isPopular: boolean;
+}
 
 interface productDetailProp {
   id: string;
@@ -21,11 +35,18 @@ interface productDetailProp {
 const Product: React.FC<productDetailProp> = ({ id }) => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const meal = mealItems.find((item) => item.id === id);
+  // const meal = mealItems.find((item) => item.id === id);
+  const [meal, setMeal] = useState<MealItem | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!meal) {
-    return <Navigate to="/" replace />;
-  }
+  useEffect(() => {
+    // setTimeout(() => fetchRestaurantDetailById(id), 1000);
+    fetchMealDetailById(id);
+  }, [id]);
+
+  // if (!meal) {
+  //   return <Navigate to="/" replace />;
+  // }
 
   const isItemInCart = (id: string) => cartItems.some((item) => item.id === id);
   const getItemQuantity = (id: string) =>
@@ -34,8 +55,8 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
   const handleAddToCart = (meal: MealItem) => {
     dispatch(
       addToCart({
-        id: meal.id,
-        itemId: meal.id,
+        id: meal.mealId,
+        itemId: meal.mealId,
         price: meal.price,
         quantity: 1,
         image: meal.image,
@@ -55,6 +76,25 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
     dispatch(decrementQuantity(itemId));
   };
 
+  const fetchMealDetailById = async (id: string) => {
+    try {
+      const url = `http://localhost:8080/api/meal/${id}`;
+      const response = await fetch(url, { method: "GET" });
+      const result = await response.json();
+
+      if (result.status === "success") {
+        setMeal(result.meal[0]);
+      } else {
+        showErrorToast(result.message);
+      }
+    } catch (error) {
+      console.error(`Error: ${error}`);
+      showErrorToast("Some error occurred.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box
       maxWidth="1600px"
@@ -63,31 +103,61 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
       marginY={{ xs: "30px", md: "50px" }}
     >
       <Grid2 container spacing={{ xs: 3, md: 4 }} alignItems="flex-start">
-        {/* Image Section */}
-        <Grid2 size={{ sm: 12, md: 5 }}>
-          <Box
-            component="img"
-            src={meal.image}
-            alt={meal.title}
-            width={"100%"}
-            height={{ xs: "400px", sm: "400px", md: "500px" }}
-            borderRadius={"16px"}
-            boxShadow={"0 4px 12px rgba(0,0,0,0.1)"}
-            sx={{
-              objectFit: "cover",
-            }}
-          />
-        </Grid2>
+        {loading ? (
+          <>
+            <Grid2 size={{ sm: 12, md: 5 }}>
+              <Skeleton variant="rectangular" width="100%" height={500} />
+            </Grid2>
 
-        {/* Description Section */}
-        <ProductDescription
-          meal={meal}
-          onDecrement={handleDecrement}
-          onIncrement={handleIncrement}
-          onAddToCart={handleAddToCart}
-          onGetItemQuantity={getItemQuantity}
-          onIsItemInCart={isItemInCart}
-        />
+            <Grid2 size={{ sm: 12, md: 7 }}>
+              <Skeleton variant="text" width="60%" height={40} />
+              <Skeleton
+                variant="text"
+                width="40%"
+                height={20}
+                sx={{ marginTop: 1 }}
+              />
+              <Skeleton
+                variant="text"
+                width="80%"
+                height={20}
+                sx={{ marginTop: 2 }}
+              />
+              <Skeleton
+                variant="rectangular"
+                width="60%"
+                height={50}
+                sx={{ marginTop: 2 }}
+              />
+            </Grid2>
+          </>
+        ) : (
+          <>
+            <Grid2 size={{ sm: 12, md: 5 }}>
+              <Box
+                component="img"
+                src={meal?.image}
+                alt={meal?.title}
+                width={"100%"}
+                height={{ xs: "400px", sm: "400px", md: "500px" }}
+                borderRadius={"16px"}
+                boxShadow={"0 4px 12px rgba(0,0,0,0.1)"}
+                sx={{
+                  objectFit: "cover",
+                }}
+              />
+            </Grid2>
+
+            <ProductDescription
+              meal={meal}
+              onDecrement={handleDecrement}
+              onIncrement={handleIncrement}
+              onAddToCart={handleAddToCart}
+              onGetItemQuantity={getItemQuantity}
+              onIsItemInCart={isItemInCart}
+            />
+          </>
+        )}
       </Grid2>
     </Box>
   );

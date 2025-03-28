@@ -26,11 +26,7 @@ const FoodByWeather: React.FC = () => {
     data: weatherMeal,
     isLoading,
     error,
-  } = useQuery("weatherMeals", fetchRandomWeatherMeal, {
-    onError: (error) => {
-      showErrorToast("An error occurred while fetching the top brands.");
-    },
-  });
+  } = useQuery({ queryKey: "weatherMeals", queryFn: fetchRandomWeatherMeal });
 
   return (
     <>

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
-import { Box, Grid2, Skeleton } from "@mui/material";
 
-import mealItems from "../../data/mealItem";
+import { Box, Grid2, Skeleton } from "@mui/material";
 
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
@@ -14,6 +12,8 @@ import {
 
 import ProductDescription from "./ProductDescription";
 import { showErrorToast } from "../../components/ToastContainer";
+import { useQuery } from "react-query";
+import { fetchMealDetailById } from "../../util/util";
 
 interface MealItem {
   id: number;
@@ -39,17 +39,19 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state: RootState) => state.cart.items);
   // const meal = mealItems.find((item) => item.id === id);
-  const [meal, setMeal] = useState<MealItem | null>(null);
+  // const [meal, setMeal] = useState<MealItem | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // setTimeout(() => fetchRestaurantDetailById(id), 1000);
-    fetchMealDetailById(id);
-  }, [id]);
+  const {
+    data: meal,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["mealDetails"],
+    queryFn: () => fetchMealDetailById(id),
+  });
 
-  // if (!meal) {
-  //   return <Navigate to="/" replace />;
-  // }
+  console.log(meal);
 
   const isItemInCart = (id: string) => cartItems.some((item) => item.id === id);
   const getItemQuantity = (id: string) =>
@@ -79,24 +81,24 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
     dispatch(decrementQuantity(itemId));
   };
 
-  const fetchMealDetailById = async (id: string) => {
-    try {
-      const url = `http://localhost:8080/api/meal/${id}`;
-      const response = await fetch(url, { method: "GET" });
-      const result = await response.json();
+  // const fetchMealDetailById = async (id: string) => {
+  //   try {
+  //     const url = `http://localhost:8080/api/meal/${id}`;
+  //     const response = await fetch(url, { method: "GET" });
+  //     const result = await response.json();
 
-      if (result.status === "success") {
-        setMeal(result.meal[0]);
-      } else {
-        showErrorToast(result.message);
-      }
-    } catch (error) {
-      console.error(`Error: ${error}`);
-      showErrorToast("Some error occurred.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     if (result.status === "success") {
+  //       setMeal(result.meal[0]);
+  //     } else {
+  //       showErrorToast(result.message);
+  //     }
+  //   } catch (error) {
+  //     console.error(`Error: ${error}`);
+  //     showErrorToast("Some error occurred.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <Box

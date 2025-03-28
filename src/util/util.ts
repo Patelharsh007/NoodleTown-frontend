@@ -1,6 +1,7 @@
 import axios from "axios";
 const BASE_URL = "http://localhost:8080/api";
 
+//-------------------------Menu Page----------------------------
 //get Top Brands ---- Menu/tobrand
 export const fetchTopBrands = async () => {
   try {
@@ -23,7 +24,22 @@ export const fetchRandomWeatherMeal = async () => {
       const weatherMeals = response.data.meals;
       return weatherMeals.sort(() => Math.random() - 0.5).slice(0, 6);
     } else {
-      throw new Error(response.data.message || "Failed to fetch top brands.");
+      throw new Error(response.data.message || "Failed to fetch data.");
+    }
+  } catch (error) {
+    throw new Error("An error occurred while fetching data");
+  }
+};
+
+//-------------------------Product Page----------------------------
+
+export const fetchMealDetailById = async (id: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/meal/${id}`);
+    if (response.data.status === "success") {
+      return response.data.meal[0];
+    } else {
+      throw new Error(response.data.message || "Failed to fetch data.");
     }
   } catch (error) {
     throw new Error("An error occurred while fetching data");

@@ -2,7 +2,19 @@ import { Grid2, Box, Stack, Typography } from "@mui/material";
 import React from "react";
 
 import { Link } from "react-router-dom";
-import { MealItem } from "../types/type";
+
+interface MealItem {
+  id: number;
+  mealId: string;
+  restaurantId: string;
+  category: string;
+  image: string;
+  title: string;
+  shortDescription: string;
+  fullDescription: string[];
+  price: number;
+  isPopular: boolean;
+}
 
 interface foodByWeatherCardProp {
   Card: MealItem;
@@ -11,7 +23,7 @@ interface foodByWeatherCardProp {
 const FoodByWeatherCard: React.FC<foodByWeatherCardProp> = ({ Card }) => {
   return (
     <Grid2 size={{ xs: 6, sm: 4 }}>
-      <Link to={`/product/${Card.id}`}>
+      <Link to={`/product/${Card.mealId}`}>
         <Box
           component={"img"}
           src={Card.image}

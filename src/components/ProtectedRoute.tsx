@@ -2,53 +2,46 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/Store";
 import Cookies from "js-cookie";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { clearUser, setUser } from "../redux/slices/AuthUserSlice";
-import { showErrorToast } from "./ToastContainer";
+import {
+  showErrorToast,
+  showInfoToast,
+  showSuccessToast,
+} from "./ToastContainer";
+import Home from "../pages/Home";
 
-const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const authUser = useSelector((state: RootState) => state.authUser.authUser);
-  const token = Cookies.get("authToken");
 
   useEffect(() => {
-    if (token) {
-      // Verify token if token exists
-      verifyToken();
-    }
-  }, [dispatch, token]);
-
-  if (!authUser.isAuthenticated) {
-    return <Navigate to="/auth/login" />;
-  }
+    verifyToken();
+  }, []);
 
   const verifyToken = async () => {
-    const token = Cookies.get("authToken"); // Retrieve token from cookies
-
-    if (!token) {
-      return;
-    }
-
     try {
+      console.log("IN Protected route");
       const response = await fetch(
-        "http://localhost:8080/api/auth/verifyUser",
+        "http://localhost:8080/api/user/verifyUser",
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`, // Send token in Authorization header
             "Content-Type": "application/json",
           },
-          credentials: "include", // To include cookies in the request
+          credentials: "include",
         }
       );
 
       const result = await response.json();
 
+      console.log("Verifying Token");
+
       if (result.status === "success") {
-        // If token is valid, store user data in Redux
+        console.log(result);
         const { user } = result;
         dispatch(
           setUser({
@@ -57,21 +50,19 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
             userName: user.userName,
           })
         );
+        // showSuccessToast("User Authenticated");
       } else {
-        // Token expired or invalid, log the user out
+        showErrorToast("Access Denied. Please Log-In");
         dispatch(clearUser());
-        Cookies.remove("authToken");
       }
     } catch (error) {
       console.error("Error verifying token:", error);
-      showErrorToast("Failed to verify token. Please log in again.");
-      dispatch(clearUser());
-      Cookies.remove("authToken");
-      navigate("/auth/login");
+      showErrorToast("Failed to verify token...");
     }
   };
 
-  return <>{children}</>;
+  // Only render children if the user is authenticated
+  return authUser.isAuthenticated ? <>{children}</> : <Home />;
 };
 
-export default PrivateRoute;
+export default ProtectedRoute;

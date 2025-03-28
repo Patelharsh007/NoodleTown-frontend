@@ -26,6 +26,9 @@ interface MealItem {
   fullDescription: string[];
   price: number;
   isPopular: boolean;
+  restaurant?: {
+    title: string;
+  };
 }
 
 interface productDetailProp {

@@ -69,7 +69,11 @@ const TopBrands = () => {
             padding={"auto 30px"}
             display={"flex"}
             gap={{ xs: "45px", sm: "65px", md: "75px" }}
-            height={{ xs: "170px", sm: "250px", md: "300px" }}
+            height={
+              restaurants.length > 0
+                ? { xs: "170px", sm: "250px", md: "300px" }
+                : "100px"
+            }
             sx={{
               overflowX: "scroll",
               overflowY: "hidden",

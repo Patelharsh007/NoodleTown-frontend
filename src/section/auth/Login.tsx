@@ -1,10 +1,9 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-
 import { LoginForm } from "../../form/LoginForm";
-
 import { assets } from "../../assets/assets";
 import { showErrorToast, showInfoToast } from "../../components/ToastContainer";
 import { setUser } from "../../redux/slices/AuthUserSlice";
@@ -43,7 +42,6 @@ export const Login: React.FC = () => {
 
       if (result.status === "success") {
         showInfoToast(`${result.message}`);
-        // dispatch(login({ email, password }));
         const id = result.logUser.id as number;
         const userName = result.logUser.userName as string;
         dispatch(setUser({ id, userName, email }));
@@ -62,6 +60,8 @@ export const Login: React.FC = () => {
     } catch (error) {
       console.log("Error during fetch:", error);
       showErrorToast("An unexpected error occurred. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -1,7 +1,7 @@
 //Order-Item used in OrderSlice and OrderSummary
 export interface OrderItem {
   id: string;
-  user_email: string;
+  user_email: string | null;
   Date: Date | string;
   address: string;
   items: {
@@ -56,9 +56,9 @@ export interface AuthItem {
 //AuthItem for AuthUserSlice
 export interface AuthUserItem {
   isAuthenticated: boolean;
-  id: number;
-  email: string;
-  userName: string;
+  id: number | null;
+  email: string | null;
+  userName: string | null;
 }
 
 //mealItemType used in mealitem data and

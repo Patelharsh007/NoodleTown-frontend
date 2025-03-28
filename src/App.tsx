@@ -35,14 +35,7 @@ function App() {
         <Route path={ROUTES.RESTAURANT} element={<RestaurantPage />} />
         <Route path={ROUTES.PRODUCT} element={<ProductDetails />} />
         <Route path={ROUTES.CART} element={<Cart />} />
-        <Route
-          path={ROUTES.USER}
-          element={
-            <ProtectedRoute>
-              <UserDetail />
-            </ProtectedRoute>
-          }
-        />
+        <Route path={ROUTES.USER} element={<UserDetail />} />
         <Route
           path={ROUTES.ORDERS}
           element={

@@ -1,77 +1,162 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
-
-import { Navigate, useNavigate } from "react-router-dom";
-import { Button, Typography, Box, Container } from "@mui/material";
-import { logout } from "../../redux/slices/AuthSlice";
+import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  Typography,
+  Box,
+  Container,
+  Skeleton,
+  Avatar,
+} from "@mui/material";
 import { clearUser } from "../../redux/slices/AuthUserSlice";
+import { showSuccessToast } from "../../components/ToastContainer";
 
-const UserPage: React.FC = () => {
+const User: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(true);
+
   const { authUser } = useSelector((state: RootState) => state.authUser);
 
+  // Simulate loading state for demo purposes
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1000);
+  }, []);
+
+  // Handle logout action
   const handleLogout = () => {
     dispatch(clearUser());
-    navigate("/auth/login");
+    navigate("/home");
+    showSuccessToast("Log-Out Successfully");
   };
 
+  // Navigate to the orders page
   const handleViewOrders = () => {
     navigate("/orders");
   };
 
-  if (!authUser.isAuthenticated) {
-    return <Navigate to="/auth/login" />;
-  }
+  // Helper to get the initials of the username
+  const getInitials = (name: string) => {
+    const names = name.split(" ");
+    return names.length > 1 ? names[0][0] + names[1][0] : names[0][0];
+  };
 
   return (
-    <Container maxWidth="md" sx={{ marginTop: { xs: "40px" }, height: "70vh" }}>
-      <Box
-        display={"flex"}
-        flexDirection={"column"}
-        alignItems={"center"}
-        justifyContent={"center"}
-        mt={4}
-        height={"90%"}
-      >
-        <Typography variant="h4" gutterBottom>
-          User Profile
-        </Typography>
-        {authUser.userName && (
-          <Typography variant="h6">
-            <strong>Full Name:</strong> {authUser.userName}
-          </Typography>
-        )}
-
-        <Typography variant="h6">
-          <strong>Email:</strong> {authUser.email || "N/A"}
-        </Typography>
-
-        {/* Logout Button */}
-        <Box sx={{ marginTop: 2 }}>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={handleLogout}
-            sx={{ marginRight: 2 }}
+    <Container maxWidth="sm" sx={{ marginTop: "40px" }}>
+      {authUser.isAuthenticated ? (
+        <Container maxWidth="md" sx={{ marginTop: "40px" }}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            sx={{ height: "60vh", padding: "20px" }}
           >
-            Logout
-          </Button>
+            {loading ? (
+              <Skeleton variant="circular" width={100} height={100} />
+            ) : (
+              <Avatar
+                sx={{
+                  width: 100,
+                  height: 100,
+                  fontSize: 40,
+                  bgcolor: "primary.main",
+                  color: "white",
+                }}
+              >
+                {authUser.userName && getInitials(authUser.userName)}
+              </Avatar>
+            )}
 
-          {/* View Orders Button */}
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleViewOrders}
+            <Box sx={{ marginTop: 2, textAlign: "center" }}>
+              {loading ? (
+                <Skeleton variant="text" width={100} height={20} />
+              ) : (
+                <Typography variant="h6" gutterBottom>
+                  {authUser.userName}
+                </Typography>
+              )}
+              {loading ? (
+                <Skeleton variant="text" width={100} height={20} />
+              ) : (
+                <Typography variant="body2">
+                  {authUser.email || "N/A"}
+                </Typography>
+              )}
+            </Box>
+
+            <Box
+              sx={{
+                marginTop: 4,
+                width: "100%",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {loading ? (
+                <>
+                  <Skeleton
+                    variant="rectangular"
+                    width="80%"
+                    height={40}
+                    sx={{ marginBottom: 2 }}
+                  />
+                  <Skeleton variant="rectangular" width="80%" height={40} />
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleLogout}
+                    sx={{ width: "80%", marginBottom: 2 }}
+                  >
+                    Logout
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleViewOrders}
+                    sx={{ width: "80%" }}
+                  >
+                    View Orders
+                  </Button>
+                </>
+              )}
+            </Box>
+          </Box>
+        </Container>
+      ) : (
+        <Container maxWidth="md" sx={{ marginTop: "40px" }}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            mt={4}
+            sx={{ height: "60vh", padding: "20px" }}
           >
-            View Orders
-          </Button>
-        </Box>
-      </Box>
+            <Typography variant="h5" gutterBottom>
+              You are not logged in.
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate("/auth/login")}
+            >
+              Login
+            </Button>
+          </Box>
+        </Container>
+      )}
     </Container>
   );
 };
 
-export default UserPage;
+export default User;

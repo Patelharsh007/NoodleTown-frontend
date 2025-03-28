@@ -45,7 +45,7 @@ export const Register: React.FC = () => {
       if (result.status === "success") {
         showInfoToast(`${result.message}`);
         // dispatch(signUp({ email, password }));
-        navigate("/user");
+        navigate("/auth/login");
       } else if (result.status === "error") {
         // Handle validation errors
         if (result.errors && result.errors.length > 0) {

@@ -86,7 +86,7 @@ const OrderItems: React.FC<OrderItemsProps> = ({ order }) => {
                       padding: { xs: "8px", sm: "16px" },
                     }}
                   >
-                    ${item.price.toFixed(2)}
+                    ${item.price ? Number(item.price).toFixed(2) : "0.00"}
                   </TableCell>
                   <TableCell
                     align="right"

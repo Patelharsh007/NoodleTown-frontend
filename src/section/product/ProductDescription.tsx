@@ -21,6 +21,9 @@ interface MealItem {
   fullDescription: string[];
   price: number;
   isPopular: boolean;
+  restaurant?: {
+    title: string;
+  };
 }
 
 interface ProductDescriptionProps {
@@ -62,7 +65,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({
               sx={{ lineHeight: 1.2 }}
             >
               {/* {meal.restaurantName} */}
-              Change {meal.mealId}
+              {meal.restaurant?.title}
             </Typography>
           </Stack>
           <Stack

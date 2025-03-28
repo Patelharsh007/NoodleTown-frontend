@@ -5,6 +5,8 @@ import FoodByWeatherCard from "../../components/FoodByWeatherCard";
 
 import mealItems from "../../data/mealItem";
 import { showErrorToast } from "../../components/ToastContainer";
+import { useQuery } from "react-query";
+import { fetchRandomWeatherMeal } from "../../util/util";
 
 interface MealItem {
   id: number;
@@ -20,33 +22,16 @@ interface MealItem {
 }
 
 const FoodByWeather: React.FC = () => {
-  const [meal, setMeal] = useState<MealItem[] | null>(null);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: weatherMeal,
+    isLoading,
+    error,
+  } = useQuery("weatherMeals", fetchRandomWeatherMeal, {
+    onError: (error) => {
+      showErrorToast("An error occurred while fetching the top brands.");
+    },
+  });
 
-  const weatherMeal = meal?.sort(() => Math.random() - 0.5).slice(0, 6);
-
-  const fetchRandomMeal = async () => {
-    try {
-      const url = `http://localhost:8080/api/meal/allMeals`;
-      const response = await fetch(url, { method: "GET" });
-      const result = await response.json();
-
-      if (result.status === "success") {
-        setMeal(result.meals);
-      } else {
-        showErrorToast(result.message);
-      }
-    } catch (error) {
-      console.error(`Error: ${error}`);
-      showErrorToast("Some error occurred.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (!meal) {
-    fetchRandomMeal();
-  }
   return (
     <>
       <Box
@@ -66,7 +51,7 @@ const FoodByWeather: React.FC = () => {
           Food according to Weather
         </Typography>
 
-        {loading ? (
+        {isLoading ? (
           <Grid2
             container
             spacing={{ xs: "20px", sm: "40px", md: "50px" }}
@@ -77,18 +62,27 @@ const FoodByWeather: React.FC = () => {
                 <Skeleton
                   variant="rectangular"
                   width="100%"
-                  sx={{ height: { xs: "200px", sm: "220px", md: "260px" } }}
+                  animation="wave"
+                  sx={{
+                    height: { xs: "200px", sm: "220px", md: "260px" },
+                    borderRadius: "17px",
+                  }}
                 />
 
                 <Skeleton
                   variant="text"
                   width="60%"
                   height={30}
+                  animation="wave"
                   sx={{ marginBottom: "10px" }}
                 />
 
-                {/* Short Description Skeleton */}
-                <Skeleton variant="text" width="80%" height={20} />
+                <Skeleton
+                  variant="text"
+                  animation="wave"
+                  width="80%"
+                  height={20}
+                />
               </Grid2>
             ))}
           </Grid2>
@@ -100,7 +94,7 @@ const FoodByWeather: React.FC = () => {
                 spacing={{ xs: "20px", sm: "40px", md: "50px" }}
                 marginY={"50px"}
               >
-                {weatherMeal?.map((food) => (
+                {weatherMeal?.map((food: MealItem) => (
                   <FoodByWeatherCard Card={food} key={food.id} />
                 ))}
               </Grid2>

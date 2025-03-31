@@ -8,7 +8,22 @@ import { showInfoToast } from "./ToastContainer";
 
 import { RootState } from "../redux/Store";
 import { Link } from "react-router-dom";
-import { MealItem } from "../types/type";
+
+interface MealItem {
+  id: number;
+  mealId: string;
+  restaurantId: string;
+  category: string;
+  image: string;
+  title: string;
+  shortDescription: string;
+  fullDescription: string[];
+  price: number;
+  isPopular: boolean;
+  restaurant?: {
+    title: string;
+  };
+}
 
 interface ScrollerCardProp {
   Card: MealItem;
@@ -24,14 +39,14 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
   };
 
   const handleAddToCart = () => {
-    if (isItemInCart(Card.id)) {
-      dispatch(removeFromCart(Card.id));
+    if (isItemInCart(Card.mealId)) {
+      dispatch(removeFromCart(Card.mealId));
       showInfoToast(`${Card.title} removed from cart`);
     } else {
       dispatch(
         addToCart({
-          id: Card.id,
-          itemId: Card.id,
+          itemId: Card.mealId,
+          id: Card.mealId,
           price: Card.price,
           quantity: 1,
           image: Card.image,
@@ -90,7 +105,10 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
               Popular
             </Typography>
           </Box>
-          <Link to={`/product/${Card.id}`} style={{ textDecoration: "none" }}>
+          <Link
+            to={`/product/${Card.mealId}`}
+            style={{ textDecoration: "none" }}
+          >
             <Box
               component={"img"}
               src={Card.image}
@@ -127,7 +145,7 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
                 maxWidth: "100%",
               }}
             >
-              {Card.restaurantName}
+              {Card.restaurantId}
             </Typography>
             <Typography
               fontFamily={"Inter"}
@@ -214,12 +232,14 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
             zIndex={3}
             sx={{
               cursor: "pointer",
-              backgroundColor: isItemInCart(Card.id) ? "#F6B716" : "#fff",
-              color: isItemInCart(Card.id) ? "#fff" : "#000000",
+              backgroundColor: isItemInCart(Card.mealId) ? "#F6B716" : "#fff",
+              color: isItemInCart(Card.mealId) ? "#fff" : "#000000",
               transition: "all 0.3s ease",
               "&:hover": {
-                backgroundColor: isItemInCart(Card.id) ? "#ff8c00" : "#F6B716",
-                color: isItemInCart(Card.id) ? "#fff" : "#000000",
+                backgroundColor: isItemInCart(Card.mealId)
+                  ? "#ff8c00"
+                  : "#F6B716",
+                color: isItemInCart(Card.mealId) ? "#fff" : "#000000",
 
                 transform: "scale(1.1)",
                 "& .MuiSvgIcon-root": {

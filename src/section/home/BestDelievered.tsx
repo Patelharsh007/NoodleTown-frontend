@@ -2,11 +2,16 @@ import { Box, Stack, Typography } from "@mui/material";
 import React from "react";
 import mealItems from "../../data/mealItem";
 import BestDelieveredBox from "../../components/BestDelieveredBox";
+import { useQuery } from "@tanstack/react-query";
+import { fetchBestDelievered } from "../../util/util";
+import { MealItem } from "../../types/type";
 
 const BestDelievered: React.FC = () => {
-  const num1 = Math.random();
-
-  const bestMeals = mealItems.sort(() => num1 - 0.3).slice(0, 3);
+  const {
+    data: bestMeals,
+    isLoading,
+    error,
+  } = useQuery({ queryKey: ["BestDeivered"], queryFn: fetchBestDelievered });
 
   return (
     <>
@@ -64,11 +69,7 @@ const BestDelievered: React.FC = () => {
             },
           }}
         >
-          {/* {DUMMY_BEST_DELIEVERED_DATA.map((item) => {
-            return <BestDelieveredBox box={item} key={item.title} />;
-          })} */}
-
-          {bestMeals.map((item) => {
+          {bestMeals?.map((item: MealItem) => {
             return (
               <BestDelieveredBox
                 box={{ id: item.id, imageurl: item.image, title: item.title }}

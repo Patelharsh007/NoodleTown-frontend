@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Box, Container, Grid2, Skeleton, Typography } from "@mui/material";
+import { Box, Container, Grid2, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import {
@@ -10,6 +10,7 @@ import {
 } from "../../redux/slices/CartSlice";
 import ProductDescription from "./ProductDescription";
 import { fetchMealDetailById } from "../../util/util";
+import ProductSkeleton from "../../skeleton/ProductSkeleton";
 
 interface MealItem {
   id: number;
@@ -92,46 +93,7 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
     >
       <Grid2 container spacing={{ xs: 3, md: 4 }} alignItems="flex-start">
         {isLoading ? (
-          <>
-            <Grid2 size={{ sm: 12, md: 5 }}>
-              <Skeleton
-                variant="rectangular"
-                animation="wave"
-                width="100%"
-                height={500}
-              />
-            </Grid2>
-
-            <Grid2 size={{ sm: 12, md: 7 }}>
-              <Skeleton
-                animation="wave"
-                variant="text"
-                width="60%"
-                height={40}
-              />
-              <Skeleton
-                animation="wave"
-                variant="text"
-                width="40%"
-                height={20}
-                sx={{ marginTop: 1 }}
-              />
-              <Skeleton
-                animation="wave"
-                variant="text"
-                width="80%"
-                height={20}
-                sx={{ marginTop: 2 }}
-              />
-              <Skeleton
-                animation="wave"
-                variant="rectangular"
-                width="60%"
-                height={50}
-                sx={{ marginTop: 2 }}
-              />
-            </Grid2>
-          </>
+          <ProductSkeleton />
         ) : (
           <>
             <Grid2 size={{ sm: 12, md: 5 }}>

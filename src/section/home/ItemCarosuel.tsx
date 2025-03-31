@@ -4,50 +4,56 @@ import ScrollerCard from "../../components/ScrollerCard";
 import mealItems from "../../data/mealItem";
 import { assets } from "../../assets/assets";
 
+import { fetchCarosuelCategories, fetchCarosuelItems } from "../../util/util";
+import { useQuery } from "@tanstack/react-query";
+
+interface MealItem {
+  id: number;
+  mealId: string;
+  restaurantId: string;
+  category: string;
+  image: string;
+  title: string;
+  shortDescription: string;
+  fullDescription: string[];
+  price: number;
+  isPopular: boolean;
+  restaurant?: {
+    title: string;
+  };
+}
+
 const ItemCarosuel: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
 
-  const getTopCategories = () => {
-    // CategoryCount item(object)
-    const categoryCount: { [key: string]: number } = {};
-
-    // Count occurrences of each category
-    mealItems.forEach((item) => {
-      if (categoryCount[item.category]) {
-        categoryCount[item.category]++;
-      } else {
-        categoryCount[item.category] = 1;
-      }
-    });
-
-    // array of [{name:category,count:count-of-items}]
-    const categoryArray = Object.keys(categoryCount).map((category) => ({
-      name: category,
-      count: categoryCount[category],
-    }));
-
-    //sort descending and then get top 6 and then cretes array of only name
-    const topCategories = categoryArray
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 6)
-      .map((item) => item.name);
-
-    return topCategories;
-  };
-
-  // top categories
-  const categories = getTopCategories();
+  const {
+    data: categories,
+    isLoading: isLoadingCategories,
+    error,
+  } = useQuery({
+    queryKey: ["CarosuelCategories"],
+    queryFn: fetchCarosuelCategories,
+  });
 
   useEffect(() => {
-    if (categories.length > 0 && !selectedCategory) {
+    if (categories?.length > 0 && !selectedCategory) {
       setSelectedCategory(categories[0]);
     }
   }, [categories]);
 
-  //filter item based on selected category
-  const filteredItems = selectedCategory
-    ? mealItems.filter((item) => item.category === selectedCategory)
-    : mealItems;
+  const {
+    data: filteredItems,
+    isLoading: isLoadingItems,
+    error: eoor1,
+  } = useQuery({
+    queryKey: ["CarosuelItems", selectedCategory],
+    queryFn: () => fetchCarosuelItems(selectedCategory),
+    enabled: !isLoadingCategories,
+  });
+  // //filter item based on selected category
+  // const filteredItems = selectedCategory
+  //   ? mealItems.filter((item) => item.category === selectedCategory)
+  //   : mealItems;
 
   return (
     <>
@@ -92,7 +98,7 @@ const ItemCarosuel: React.FC = () => {
         gap={"15px"}
       >
         {categories &&
-          categories.map((category) => (
+          categories.map((category: string) => (
             <Button
               key={category}
               onClick={() => setSelectedCategory(category)}
@@ -161,17 +167,17 @@ const ItemCarosuel: React.FC = () => {
             height: "100%",
             justifyContent: {
               sm: "flex-start",
-              xm: filteredItems.length <= 5 ? "center" : "flex-start",
+              xm: filteredItems?.length <= 5 ? "center" : "flex-start",
             },
             "&:hover": {
-              cursor: filteredItems.length > 4 ? "grab" : "default",
+              cursor: "grab",
             },
             "&:active": {
-              cursor: filteredItems.length > 4 ? "grabbing" : "default",
+              cursor: "grabbing",
             },
           }}
         >
-          {filteredItems.map((item) => (
+          {filteredItems?.map((item: MealItem) => (
             <Box
               key={item.id}
               sx={{

@@ -25,7 +25,7 @@ const RestaurantDetail: React.FC<restaurantProps> = ({ id }) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["restaurantDetails"],
+    queryKey: ["restaurantDetails", id],
     queryFn: () => fetchRestaurantDetailById(id),
   });
 

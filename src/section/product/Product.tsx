@@ -40,7 +40,7 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["mealDetails"],
+    queryKey: ["mealDetails", id],
     queryFn: () => fetchMealDetailById(id),
   });
 

@@ -12,7 +12,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { fetchMealDetailById, fetchMenu } from "../util/util";
+import { fetchMenu } from "../util/util";
 import { useQuery } from "@tanstack/react-query";
 
 interface MealItem {

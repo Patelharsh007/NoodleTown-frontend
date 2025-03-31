@@ -9,8 +9,8 @@ import {
 } from "../../redux/slices/CartSlice";
 import { RootState } from "../../redux/Store";
 
-import RestaurantOrderCategories from "../../components/RestaurantOrderCategories";
-import RestaurantOrderMenuItems from "../../components/RestaurantOrderMenuItems";
+import RestaurantMenuCategories from "../../components/RestaurantMenuCategories";
+import RestaurantMenuItems from "../../components/RestaurantMenuItems";
 import { fetchMenuCategories } from "../../util/util";
 
 interface restaurantProps {
@@ -36,8 +36,8 @@ const RestaurantOrderOnline: React.FC<restaurantProps> = ({ id }) => {
 
   const {
     data: categoriesCount,
-    isLoading: isLoading1,
-    error: error1,
+    isLoading,
+    error,
   } = useQuery({
     queryKey: ["MenuCategories", id],
     queryFn: () => fetchMenuCategories(id),
@@ -90,11 +90,11 @@ const RestaurantOrderOnline: React.FC<restaurantProps> = ({ id }) => {
     dispatch(decrementQuantity(mealId));
   };
 
-  // if (error) {
-  //   return (
-  //     <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }}></Container>
-  //   );
-  // }
+  if (error) {
+    return (
+      <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }}></Container>
+    );
+  }
 
   return (
     <>
@@ -111,12 +111,13 @@ const RestaurantOrderOnline: React.FC<restaurantProps> = ({ id }) => {
           Order Online
         </Typography>
         <Grid2 container width={"100%"} marginY={"40px"}>
-          <RestaurantOrderCategories
+          <RestaurantMenuCategories
             categoriesCount={categoriesCount}
             Category={selectedCategory}
             onCategoryClick={handleCategoryClick}
+            isLoading={isLoading}
           />
-          <RestaurantOrderMenuItems
+          <RestaurantMenuItems
             id={id}
             Category={selectedCategory}
             onAddToCart={handleAddToCart}

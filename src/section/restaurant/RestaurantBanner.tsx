@@ -1,7 +1,8 @@
 import React from "react";
-import { Box, Container, Skeleton } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { fetchRestaurantDetailById } from "../../util/util";
+import RestaurantBannerSkeleton from "../../skeleton/RestaurantBannerSkeleton";
 
 interface restaurantProps {
   id: string;
@@ -25,46 +26,7 @@ const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
   return (
     <>
       {isLoading ? (
-        <Box
-          width={"100%"}
-          margin={{ xs: "30px auto", sm: "50px auto" }}
-          display={"grid"}
-          gridTemplateAreas={{
-            xs: '"first" "second" "third"',
-            sm: '"first second" "first third"',
-          }}
-          gridTemplateColumns={{ xs: "1fr", sm: "1.1fr 0.9fr" }}
-          gap={"10px"}
-        >
-          {/* Skeleton loader for images */}
-          <Skeleton
-            animation="wave"
-            variant="rectangular"
-            width="100%"
-            sx={{
-              gridArea: "first",
-              height: { xs: "200px", sm: "500px", lg: "600px" },
-            }}
-          />
-          <Skeleton
-            variant="rectangular"
-            animation="wave"
-            width="100%"
-            sx={{
-              gridArea: "second",
-              height: { xs: "200px", sm: "245px", lg: "295px" },
-            }}
-          />
-          <Skeleton
-            variant="rectangular"
-            animation="wave"
-            width="100%"
-            sx={{
-              gridArea: "third",
-              height: { xs: "200px", sm: "245px", lg: "295px" },
-            }}
-          />
-        </Box>
+        <RestaurantBannerSkeleton />
       ) : (
         <Box
           width={"100%"}

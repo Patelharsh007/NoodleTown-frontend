@@ -1,7 +1,7 @@
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Box, Container, Grid2, Skeleton, Typography } from "@mui/material";
 import { fetchRestaurantDetailById } from "../../util/util";
-import { useQuery } from "react-query";
 
 interface restaurantProps {
   id: string;

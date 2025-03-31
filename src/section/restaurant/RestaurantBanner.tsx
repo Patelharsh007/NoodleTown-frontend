@@ -1,24 +1,7 @@
 import React from "react";
-import { Box, Skeleton } from "@mui/material";
-import { useQuery } from "react-query";
+import { Box, Container, Skeleton } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import { fetchRestaurantDetailById } from "../../util/util";
-
-interface RestaurantItem {
-  id: number;
-  restaurantId: string;
-  title: string;
-  logo: string;
-  posterImages: string[];
-  cuisines: string[];
-  avgCostPerPerson: number;
-  address: string;
-  isOpen: boolean;
-  timing: string;
-  menuImages: string[];
-  categories: string[];
-  isFeatured: boolean;
-  rating: number;
-}
 
 interface restaurantProps {
   id: string;
@@ -34,6 +17,10 @@ const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
     queryKey: ["restaurantDetails"],
     queryFn: () => fetchRestaurantDetailById(id),
   });
+
+  if (error) {
+    return <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }} />;
+  }
 
   return (
     <>

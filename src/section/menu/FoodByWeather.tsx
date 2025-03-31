@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Box, Grid2, Skeleton, Stack, Typography } from "@mui/material";
-
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Box, Grid2, Skeleton, Typography } from "@mui/material";
 import FoodByWeatherCard from "../../components/FoodByWeatherCard";
-
-import mealItems from "../../data/mealItem";
-import { showErrorToast } from "../../components/ToastContainer";
-import { useQuery } from "react-query";
 import { fetchRandomWeatherMeal } from "../../util/util";
 
 interface MealItem {
@@ -26,7 +22,7 @@ const FoodByWeather: React.FC = () => {
     data: weatherMeal,
     isLoading,
     error,
-  } = useQuery({ queryKey: "weatherMeals", queryFn: fetchRandomWeatherMeal });
+  } = useQuery({ queryKey: ["weatherMeals"], queryFn: fetchRandomWeatherMeal });
 
   return (
     <>

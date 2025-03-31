@@ -1,6 +1,6 @@
 import { Container, Grid2, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addToCart,
@@ -11,8 +11,6 @@ import { RootState } from "../../redux/Store";
 
 import RestaurantOrderCategories from "../../components/RestaurantOrderCategories";
 import RestaurantOrderMenuItems from "../../components/RestaurantOrderMenuItems";
-import { showErrorToast } from "../../components/ToastContainer";
-import { useQueries, useQuery } from "react-query";
 import { fetchRestaurantAndMealById } from "../../util/util";
 
 interface restaurantProps {
@@ -96,6 +94,12 @@ const RestaurantOrderOnline: React.FC<restaurantProps> = ({ id }) => {
   const handleDecrementMeal = (mealId: string) => {
     dispatch(decrementQuantity(mealId));
   };
+
+  if (error) {
+    return (
+      <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }}></Container>
+    );
+  }
 
   return (
     <>

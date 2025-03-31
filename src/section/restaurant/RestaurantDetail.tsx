@@ -9,8 +9,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchRestaurantDetailById } from "../../util/util";
 
 interface restaurantProps {

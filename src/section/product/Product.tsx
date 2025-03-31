@@ -1,6 +1,6 @@
 import React from "react";
-import { useQuery } from "react-query";
-import { Box, Grid2, Skeleton } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { Box, Container, Grid2, Skeleton, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import {
@@ -71,6 +71,17 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
   const handleDecrement = (itemId: string) => {
     dispatch(decrementQuantity(itemId));
   };
+
+  if (error) {
+    return (
+      <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }}>
+        <Typography variant="body1" color="error" textAlign="center">
+          No data found. Please check your internet connection or try again
+          later.
+        </Typography>
+      </Container>
+    );
+  }
 
   return (
     <Box

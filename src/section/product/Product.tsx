@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-
+import { useQuery } from "react-query";
 import { Box, Grid2, Skeleton } from "@mui/material";
-
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import {
@@ -9,10 +8,7 @@ import {
   incrementQuantity,
   decrementQuantity,
 } from "../../redux/slices/CartSlice";
-
 import ProductDescription from "./ProductDescription";
-import { showErrorToast } from "../../components/ToastContainer";
-import { useQuery } from "react-query";
 import { fetchMealDetailById } from "../../util/util";
 
 interface MealItem {
@@ -38,9 +34,6 @@ interface productDetailProp {
 const Product: React.FC<productDetailProp> = ({ id }) => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  // const meal = mealItems.find((item) => item.id === id);
-  // const [meal, setMeal] = useState<MealItem | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const {
     data: meal,
@@ -81,25 +74,6 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
     dispatch(decrementQuantity(itemId));
   };
 
-  // const fetchMealDetailById = async (id: string) => {
-  //   try {
-  //     const url = `http://localhost:8080/api/meal/${id}`;
-  //     const response = await fetch(url, { method: "GET" });
-  //     const result = await response.json();
-
-  //     if (result.status === "success") {
-  //       setMeal(result.meal[0]);
-  //     } else {
-  //       showErrorToast(result.message);
-  //     }
-  //   } catch (error) {
-  //     console.error(`Error: ${error}`);
-  //     showErrorToast("Some error occurred.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   return (
     <Box
       maxWidth="1600px"
@@ -108,7 +82,7 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
       marginY={{ xs: "30px", md: "50px" }}
     >
       <Grid2 container spacing={{ xs: 3, md: 4 }} alignItems="flex-start">
-        {loading ? (
+        {isLoading ? (
           <>
             <Grid2 size={{ sm: 12, md: 5 }}>
               <Skeleton variant="rectangular" width="100%" height={500} />

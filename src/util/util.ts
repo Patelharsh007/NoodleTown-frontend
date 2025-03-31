@@ -19,10 +19,9 @@ export const fetchTopBrands = async () => {
 //get food by weather ----- menu/food bt weather
 export const fetchRandomWeatherMeal = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/meal/allMeals`);
+    const response = await axios.get(`${BASE_URL}/meal/weatherMeals`);
     if (response.data.status === "success") {
-      const weatherMeals = response.data.meals;
-      return weatherMeals.sort(() => Math.random() - 0.5).slice(0, 6);
+      return response.data.meals;
     } else {
       throw new Error(response.data.message || "Failed to fetch data.");
     }

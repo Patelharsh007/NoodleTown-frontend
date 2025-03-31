@@ -1,55 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Box, Container, Grid2, Skeleton, Typography } from "@mui/material";
-import { showErrorToast } from "../../components/ToastContainer";
-
-interface RestaurantItem {
-  id: number;
-  restaurantId: string;
-  title: string;
-  logo: string;
-  posterImages: string[];
-  cuisines: string[];
-  avgCostPerPerson: number;
-  address: string;
-  isOpen: boolean;
-  timing: string;
-  menuImages: string[];
-  categories: string[];
-  isFeatured: boolean;
-  rating: number;
-}
+import { fetchRestaurantDetailById } from "../../util/util";
+import { useQuery } from "react-query";
 
 interface restaurantProps {
   id: string;
 }
 
 const RestaurantMenu: React.FC<restaurantProps> = ({ id }) => {
-  const [restaurant, setRestaurant] = useState<RestaurantItem | null>(null);
-  const [loading, setLoading] = useState(true);
+  //query to get restaurant data by id
+  const {
+    data: restaurant,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["restaurantDetails"],
+    queryFn: () => fetchRestaurantDetailById(id),
+  });
 
-  useEffect(() => {
-    setTimeout(() => fetchRestaurantDetailById(id), 1000);
-    // fetchRestaurantDetailById(id);
-  }, [id]);
-
-  const fetchRestaurantDetailById = async (id: string) => {
-    try {
-      const url = `http://localhost:8080/api/restaurant/${id}`;
-      const response = await fetch(url, { method: "GET" });
-      const result = await response.json();
-
-      if (result.status === "success") {
-        setRestaurant(result.restaurant[0]);
-      } else {
-        showErrorToast(result.message);
-      }
-    } catch (error) {
-      console.error(`Error: ${error}`);
-      showErrorToast("Some error occurred.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (error) {
+    return (
+      <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }}></Container>
+    );
+  }
 
   return (
     <>
@@ -71,7 +44,7 @@ const RestaurantMenu: React.FC<restaurantProps> = ({ id }) => {
           spacing={{ xs: "40px", sm: "30px" }}
           padding={{ xs: "10px", sm: "0" }}
         >
-          {loading
+          {isLoading
             ? // Show skeleton while loading
               Array(3)
                 .fill(0)
@@ -83,6 +56,7 @@ const RestaurantMenu: React.FC<restaurantProps> = ({ id }) => {
                   >
                     <Skeleton
                       variant="rectangular"
+                      animation="wave"
                       width="100%"
                       sx={{
                         height: { xs: "100%", sm: "500px" },
@@ -91,17 +65,18 @@ const RestaurantMenu: React.FC<restaurantProps> = ({ id }) => {
                     />
                     <Skeleton
                       variant="text"
+                      animation="wave"
                       width="60%"
                       height={30}
                       sx={{ marginTop: "16px", marginLeft: "16px" }}
                     />
                   </Grid2>
                 ))
-            : restaurant?.menuImages.map((image, index) => (
+            : restaurant?.menuImages.map((image: string, id: number) => (
                 <Grid2
                   size={{ xs: 12, sm: 6, md: 4 }}
                   marginTop={"30px"}
-                  key={index}
+                  key={id}
                 >
                   <Box
                     component={"img"}
@@ -125,7 +100,7 @@ const RestaurantMenu: React.FC<restaurantProps> = ({ id }) => {
                     color={"#000000"}
                     textAlign={"center"}
                   >
-                    Menu-{index + 1}
+                    Menu-{id + 1}
                   </Typography>
                 </Grid2>
               ))}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useQuery } from "react-query";
 import { Box, Grid2, Skeleton } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -44,8 +44,6 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
     queryFn: () => fetchMealDetailById(id),
   });
 
-  console.log(meal);
-
   const isItemInCart = (id: string) => cartItems.some((item) => item.id === id);
   const getItemQuantity = (id: string) =>
     cartItems.find((item) => item.id === id)?.quantity || 0;
@@ -85,24 +83,37 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
         {isLoading ? (
           <>
             <Grid2 size={{ sm: 12, md: 5 }}>
-              <Skeleton variant="rectangular" width="100%" height={500} />
+              <Skeleton
+                variant="rectangular"
+                animation="wave"
+                width="100%"
+                height={500}
+              />
             </Grid2>
 
             <Grid2 size={{ sm: 12, md: 7 }}>
-              <Skeleton variant="text" width="60%" height={40} />
               <Skeleton
+                animation="wave"
+                variant="text"
+                width="60%"
+                height={40}
+              />
+              <Skeleton
+                animation="wave"
                 variant="text"
                 width="40%"
                 height={20}
                 sx={{ marginTop: 1 }}
               />
               <Skeleton
+                animation="wave"
                 variant="text"
                 width="80%"
                 height={20}
                 sx={{ marginTop: 2 }}
               />
               <Skeleton
+                animation="wave"
                 variant="rectangular"
                 width="60%"
                 height={50}

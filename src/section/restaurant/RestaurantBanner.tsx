@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Box, Skeleton } from "@mui/material";
-import { showErrorToast } from "../../components/ToastContainer";
+import { useQuery } from "react-query";
+import { fetchRestaurantDetailById } from "../../util/util";
 
 interface RestaurantItem {
   id: number;
@@ -24,36 +25,19 @@ interface restaurantProps {
 }
 
 const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
-  const [restaurant, setRestaurant] = useState<RestaurantItem | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // setTimeout(() => fetchRestaurantDetailById(id), 1000);
-    fetchRestaurantDetailById(id);
-  }, [id]);
-
-  const fetchRestaurantDetailById = async (id: string) => {
-    try {
-      const url = `http://localhost:8080/api/restaurant/${id}`;
-      const response = await fetch(url, { method: "GET" });
-      const result = await response.json();
-
-      if (result.status === "success") {
-        setRestaurant(result.restaurant[0]);
-      } else {
-        showErrorToast(result.message);
-      }
-    } catch (error) {
-      console.error(`Error: ${error}`);
-      showErrorToast("Some error occurred.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //query to get restaurant data by id
+  const {
+    data: restaurant,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["restaurantDetails"],
+    queryFn: () => fetchRestaurantDetailById(id),
+  });
 
   return (
     <>
-      {loading ? (
+      {isLoading ? (
         <Box
           width={"100%"}
           margin={{ xs: "30px auto", sm: "50px auto" }}
@@ -67,6 +51,7 @@ const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
         >
           {/* Skeleton loader for images */}
           <Skeleton
+            animation="wave"
             variant="rectangular"
             width="100%"
             sx={{
@@ -76,6 +61,7 @@ const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
           />
           <Skeleton
             variant="rectangular"
+            animation="wave"
             width="100%"
             sx={{
               gridArea: "second",
@@ -84,6 +70,7 @@ const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
           />
           <Skeleton
             variant="rectangular"
+            animation="wave"
             width="100%"
             sx={{
               gridArea: "third",
@@ -91,7 +78,7 @@ const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
             }}
           />
         </Box>
-      ) : restaurant ? (
+      ) : (
         <Box
           width={"100%"}
           margin={{ xs: "30px auto", sm: "50px auto" }}
@@ -150,8 +137,6 @@ const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
             />
           )}
         </Box>
-      ) : (
-        <div>Restaurant not found.</div>
       )}
     </>
   );

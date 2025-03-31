@@ -44,3 +44,33 @@ export const fetchMealDetailById = async (id: string) => {
     throw new Error("An error occurred while fetching data");
   }
 };
+
+//-------------------------Restaurant Page----------------------------
+
+export const fetchRestaurantDetailById = async (id: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/restaurant/${id}`);
+    if (response.data.status === "success") {
+      return response.data.restaurant[0];
+    } else {
+      throw new Error(response.data.message || "Failed to fetch data.");
+    }
+  } catch (error) {
+    throw new Error("An error occurred while fetching data");
+  }
+};
+
+export const fetchRestaurantAndMealById = async (id: string) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/restaurant/restaurantmeal/${id}`
+    );
+    if (response.data.status === "success") {
+      return response.data.restaurant[0];
+    } else {
+      throw new Error(response.data.message || "Failed to fetch data.");
+    }
+  } catch (error) {
+    throw new Error("An error occurred while fetching data");
+  }
+};

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import TopBrandUI from "../../components/TopBrandUI";
 import { useQuery } from "react-query";
 import { fetchTopBrands } from "../../util/util";
@@ -116,7 +116,10 @@ const TopBrands = () => {
                 </Link>
               ))
             ) : (
-              <Typography>No brands found.</Typography>
+              <Typography variant="body1" color="error" textAlign="center">
+                No data found. Please check your internet connection or try
+                again later.
+              </Typography>
             )}
           </Box>
         )}

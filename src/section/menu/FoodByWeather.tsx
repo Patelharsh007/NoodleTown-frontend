@@ -95,7 +95,10 @@ const FoodByWeather: React.FC = () => {
                 ))}
               </Grid2>
             ) : (
-              <>No Food Found....</>
+              <Typography variant="body1" color="error">
+                No data found. Please check your internet connection or try
+                again later.
+              </Typography>
             )}
           </>
         )}

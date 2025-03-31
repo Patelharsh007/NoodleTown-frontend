@@ -1,48 +1,18 @@
 import { Grid2, Stack, Button, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-interface MealItem {
-  id: number;
-  mealId: string;
-  restaurantId: string;
-  category: string;
-  image: string;
-  title: string;
-  shortDescription: string;
-  fullDescription: string[];
-  price: number;
-  isPopular: boolean;
-}
-
 interface RestaurantOrderCategoriesProps {
   restaurantId?: string;
-  meals?: MealItem[];
+  categoriesCount: { category: string; count: number }[];
   Category: string;
   onCategoryClick: (category: string) => void;
 }
 
 const RestaurantOrderCategories: React.FC<RestaurantOrderCategoriesProps> = ({
-  restaurantId,
-  meals,
-
+  categoriesCount,
   Category,
   onCategoryClick,
 }) => {
-  const [categories, setCategories] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (meals) {
-      const newCategories: string[] = ["Recommended"];
-      meals.forEach((meal) => {
-        if (!newCategories.includes(meal.category)) {
-          newCategories.push(meal.category);
-        }
-      });
-      setCategories(newCategories);
-    }
-    console.log(categories);
-  }, [restaurantId]);
-
   return (
     <>
       <Grid2
@@ -63,20 +33,14 @@ const RestaurantOrderCategories: React.FC<RestaurantOrderCategoriesProps> = ({
         }}
       >
         <Stack marginTop={{ xs: "0px", sm: "50px" }} spacing={1}>
-          {/* {restaurant?.categories.unshift("Recommended")} */}
-
-          {categories ? (
-            categories.map((category, index) => {
-              const categoryCount =
-                category === "Recommended"
-                  ? meals?.filter((meal) => meal.isPopular).length
-                  : meals?.filter((meal) => meal.category === category).length;
-              if (categoryCount && categoryCount > 0) {
-                const isSelected = Category === category;
+          {categoriesCount ? (
+            categoriesCount.map((categoryCount) => {
+              {
+                const isSelected = Category === categoryCount.category;
                 return (
                   <Button
-                    key={index}
-                    onClick={() => onCategoryClick(category)}
+                    key={categoryCount.category}
+                    onClick={() => onCategoryClick(categoryCount.category)}
                     sx={{
                       color: isSelected ? "#FFFFFF" : "#000000",
                       backgroundColor: isSelected ? "#FFC300" : "transparent",
@@ -96,7 +60,7 @@ const RestaurantOrderCategories: React.FC<RestaurantOrderCategoriesProps> = ({
                       lineHeight={{ xs: "30px", sm: "28px", md: "30px" }}
                       color="inherit"
                     >
-                      {category} ({categoryCount})
+                      {categoryCount.category} ({categoryCount.count})
                     </Typography>
                   </Button>
                 );

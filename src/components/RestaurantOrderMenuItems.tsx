@@ -5,11 +5,15 @@ import {
   Stack,
   ButtonGroup,
   Button,
+  Skeleton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import React from "react";
 import { Link } from "react-router-dom";
+
+import { fetchMealDetailById, fetchMenu } from "../util/util";
+import { useQuery } from "@tanstack/react-query";
 
 interface MealItem {
   id: number;
@@ -25,8 +29,8 @@ interface MealItem {
 }
 
 interface RestaurantOrderMenuItemsProps {
-  meals?: MealItem[];
-  Category: string | null;
+  id: string;
+  Category: string;
   onAddToCart: (meal: MealItem) => void;
   onIsItemInCart: (id: string) => boolean;
   onIncrementItem: (id: string) => void;
@@ -35,7 +39,7 @@ interface RestaurantOrderMenuItemsProps {
 }
 
 const RestaurantOrderMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
-  meals,
+  id,
   Category,
   onAddToCart,
   onDecrementItem,
@@ -43,6 +47,15 @@ const RestaurantOrderMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
   onIsItemInCart,
   onGetItemQuantity,
 }) => {
+  const {
+    data: meals,
+    isLoading: isLoading1,
+    error: error1,
+  } = useQuery({
+    queryKey: ["filterMenu", id, Category],
+    queryFn: () => fetchMenu(id, Category),
+  });
+
   return (
     <>
       <Grid2
@@ -94,14 +107,33 @@ const RestaurantOrderMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
             scrollBehavior: "smooth",
           }}
         >
-          {meals &&
-            meals
-              .filter((meal) =>
-                Category === "Recommended"
-                  ? meal.isPopular === true
-                  : meal.category === Category
-              )
-              .map((meal) => {
+          {/* Skeleton Loader when data is loading */}
+          {isLoading1
+            ? Array(6)
+                .fill(0)
+                .map((_, index) => (
+                  <Grid2 key={index} size={{ xs: 12, sm: 6 }} paddingY={"10px"}>
+                    <Skeleton
+                      variant="rectangular"
+                      width="100%"
+                      sx={{
+                        borderRadius: "16px",
+                        marginBottom: "10px",
+                        height: { xs: "190px", sm: "270px" },
+                      }}
+                    />
+                    <Stack
+                      spacing={{ xs: "2px", sm: "9px" }}
+                      paddingTop={{ sm: "5px" }}
+                    >
+                      <Skeleton width="80%" height={30} />
+                      <Skeleton width="60%" height={20} />
+                      <Skeleton width="50%" height={20} />
+                    </Stack>
+                  </Grid2>
+                ))
+            : meals &&
+              meals.map((meal: MealItem) => {
                 return (
                   <React.Fragment key={meal.mealId}>
                     <Grid2 size={{ xs: 12, sm: 6 }} paddingY={"10px"}>
@@ -115,7 +147,6 @@ const RestaurantOrderMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
                           alt={meal.title}
                           width={{ xs: "100%", sm: "95%" }}
                           margin={"auto"}
-                          // height={"100%"}
                           height={{ xs: "190px", sm: "270px" }}
                           borderRadius={"16px"}
                           sx={{
@@ -128,9 +159,7 @@ const RestaurantOrderMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
 
                     <Grid2
                       size={{ xs: 12, sm: 6 }}
-                      sx={{
-                        marginBottom: "50px",
-                      }}
+                      sx={{ marginBottom: "50px" }}
                     >
                       <Stack
                         spacing={{ xs: "2px", sm: "9px" }}
@@ -273,19 +302,6 @@ const RestaurantOrderMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
                   </React.Fragment>
                 );
               })}
-          {meals &&
-            meals.filter((meal) =>
-              Category === "Recommended" ? true : meal.category === Category
-            ).length === 0 && (
-              <Typography
-                fontFamily="Poppins"
-                textAlign="center"
-                width="100%"
-                color="#666"
-              >
-                No items available in this category
-              </Typography>
-            )}
         </Grid2>
       </Grid2>
     </>

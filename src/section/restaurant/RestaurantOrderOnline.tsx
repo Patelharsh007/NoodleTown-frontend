@@ -11,15 +11,10 @@ import { RootState } from "../../redux/Store";
 
 import RestaurantOrderCategories from "../../components/RestaurantOrderCategories";
 import RestaurantOrderMenuItems from "../../components/RestaurantOrderMenuItems";
-import { fetchRestaurantAndMealById } from "../../util/util";
+import { fetchMenuCategories } from "../../util/util";
 
 interface restaurantProps {
   id: string;
-}
-
-interface RestaurantItem {
-  restaurantId: string;
-  meals: MealItem[];
 }
 
 interface MealItem {
@@ -40,12 +35,12 @@ const RestaurantOrderOnline: React.FC<restaurantProps> = ({ id }) => {
     useState<string>("Recommended");
 
   const {
-    data: restaurant,
-    isLoading,
-    error,
+    data: categoriesCount,
+    isLoading: isLoading1,
+    error: error1,
   } = useQuery({
-    queryKey: ["restaurantMealDetails"],
-    queryFn: () => fetchRestaurantAndMealById(id),
+    queryKey: ["MenuCategories", id],
+    queryFn: () => fetchMenuCategories(id),
   });
 
   const handleCategoryClick = (category: string) => {
@@ -68,7 +63,7 @@ const RestaurantOrderOnline: React.FC<restaurantProps> = ({ id }) => {
   };
 
   const handleAddToCart = (meal: MealItem) => {
-    if (!restaurant) return;
+    if (!meal) return;
 
     if (!isItemInCart(meal.mealId)) {
       dispatch(
@@ -95,11 +90,11 @@ const RestaurantOrderOnline: React.FC<restaurantProps> = ({ id }) => {
     dispatch(decrementQuantity(mealId));
   };
 
-  if (error) {
-    return (
-      <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }}></Container>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }}></Container>
+  //   );
+  // }
 
   return (
     <>
@@ -117,13 +112,12 @@ const RestaurantOrderOnline: React.FC<restaurantProps> = ({ id }) => {
         </Typography>
         <Grid2 container width={"100%"} marginY={"40px"}>
           <RestaurantOrderCategories
-            restaurantId={restaurant?.restaurantId}
-            meals={restaurant?.meals}
+            categoriesCount={categoriesCount}
             Category={selectedCategory}
             onCategoryClick={handleCategoryClick}
           />
           <RestaurantOrderMenuItems
-            meals={restaurant?.meals}
+            id={id}
             Category={selectedCategory}
             onAddToCart={handleAddToCart}
             onIsItemInCart={isItemInCart}

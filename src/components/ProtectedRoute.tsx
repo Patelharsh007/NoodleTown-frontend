@@ -4,16 +4,18 @@ import { RootState } from "../redux/Store";
 import { clearUser, setUser } from "../redux/slices/AuthUserSlice";
 import { showErrorToast } from "./ToastContainer";
 import Home from "../pages/Home";
+import { useNavigate } from "react-router-dom";
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const authUser = useSelector((state: RootState) => state.authUser.authUser);
 
   useEffect(() => {
     verifyToken();
-  }, [children]);
+  }, []);
 
   const verifyToken = async () => {
     try {
@@ -47,15 +49,18 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
       } else {
         showErrorToast("Access Denied. Please Log-In");
         dispatch(clearUser());
+        navigate("/auth/login"); // Redirect to login page
       }
     } catch (error) {
       console.error("Error verifying token:", error);
       showErrorToast("Failed to verify token...");
+      dispatch(clearUser());
+      navigate("/auth/login");
     }
   };
 
   // Only render children if the user is authenticated
-  return authUser.isAuthenticated ? <>{children}</> : <Home />;
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

@@ -36,7 +36,7 @@ export const fetchMealDetailById = async (id: string) => {
   try {
     const response = await axios.get(`${BASE_URL}/meal/${id}`);
     if (response.data.status === "success") {
-      return response.data.meal[0];
+      return response.data.meal;
     } else {
       throw new Error(response.data.message || "Failed to fetch data.");
     }
@@ -51,7 +51,7 @@ export const fetchRestaurantDetailById = async (id: string) => {
   try {
     const response = await axios.get(`${BASE_URL}/restaurant/${id}`);
     if (response.data.status === "success") {
-      return response.data.restaurant[0];
+      return response.data.restaurant;
     } else {
       throw new Error(response.data.message || "Failed to fetch data.");
     }
@@ -60,13 +60,32 @@ export const fetchRestaurantDetailById = async (id: string) => {
   }
 };
 
-export const fetchRestaurantAndMealById = async (id: string) => {
+export const fetchMenuCategories = async (id: string) => {
   try {
-    const response = await axios.get(
-      `${BASE_URL}/restaurant/restaurantmeal/${id}`
-    );
+    const response = await axios.get(`${BASE_URL}/meal/${id}/categories`);
     if (response.data.status === "success") {
-      return response.data.restaurant[0];
+      return response.data.categoriesCount;
+    } else {
+      throw new Error(response.data.message || "Failed to fetch data.");
+    }
+  } catch (error) {
+    throw new Error("An error occurred while fetching data");
+  }
+};
+
+export const fetchMenu = async (id: string, category: string) => {
+  let url = "";
+  if (category === "Recommended") {
+    url = `${BASE_URL}/meal/${id}/menu`;
+  } else {
+    url = `${BASE_URL}/meal/${id}/menu?category=${category}`;
+  }
+
+  try {
+    const response = await axios.get(url);
+
+    if (response.data.status === "success") {
+      return response.data.menu;
     } else {
       throw new Error(response.data.message || "Failed to fetch data.");
     }

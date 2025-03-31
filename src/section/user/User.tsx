@@ -21,7 +21,6 @@ const User: React.FC = () => {
 
   const { authUser } = useSelector((state: RootState) => state.authUser);
 
-  // Simulate loading state for demo purposes
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
   }, []);

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Container, Skeleton, Typography } from "@mui/material";
 import ScrollerCard from "../../components/ScrollerCard";
-import mealItems from "../../data/mealItem";
 import { assets } from "../../assets/assets";
 
 import { fetchCarosuelCategories, fetchCarosuelItems } from "../../util/util";
 import { useQuery } from "@tanstack/react-query";
+import CarosuelCategoriesSkeleton from "../../skeleton/CarosuelCategoriesSkeleton";
+import CarosuelItemsSkeleton from "../../skeleton/CarosuelItemsSkeleton";
 
 interface MealItem {
   id: number;
@@ -44,16 +45,12 @@ const ItemCarosuel: React.FC = () => {
   const {
     data: filteredItems,
     isLoading: isLoadingItems,
-    error: eoor1,
+    error: error1,
   } = useQuery({
     queryKey: ["CarosuelItems", selectedCategory],
     queryFn: () => fetchCarosuelItems(selectedCategory),
-    enabled: !isLoadingCategories,
+    enabled: !isLoadingCategories && !error,
   });
-  // //filter item based on selected category
-  // const filteredItems = selectedCategory
-  //   ? mealItems.filter((item) => item.category === selectedCategory)
-  //   : mealItems;
 
   return (
     <>
@@ -97,34 +94,53 @@ const ItemCarosuel: React.FC = () => {
         justifyContent={"center"}
         gap={"15px"}
       >
-        {categories &&
-          categories.map((category: string) => (
-            <Button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              sx={{
-                padding: "10px 20px",
-                fontSize: "16px",
-                cursor: "pointer",
-                border:
-                  selectedCategory === category
-                    ? "2px solid #F6B716"
-                    : "2px solid #ECEEF6",
-                borderRadius: "45px",
-                bgcolor: selectedCategory === category ? "#F6B716" : "#ECEEF6",
-                color: selectedCategory === category ? "white" : "inherit",
-                textTransform: "none",
+        {error ? (
+          <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }}>
+            <Typography variant="body1" color="error" textAlign="center">
+              No data found. Please check your internet connection or try again
+              later.
+            </Typography>
+          </Container>
+        ) : (
+          <>
+            {isLoadingCategories ? (
+              <CarosuelCategoriesSkeleton />
+            ) : (
+              <>
+                {categories &&
+                  categories.map((category: string) => (
+                    <Button
+                      key={category}
+                      onClick={() => setSelectedCategory(category)}
+                      sx={{
+                        padding: "10px 20px",
+                        fontSize: "16px",
+                        cursor: "pointer",
+                        border:
+                          selectedCategory === category
+                            ? "2px solid #F6B716"
+                            : "2px solid #ECEEF6",
+                        borderRadius: "45px",
+                        bgcolor:
+                          selectedCategory === category ? "#F6B716" : "#ECEEF6",
+                        color:
+                          selectedCategory === category ? "white" : "inherit",
+                        textTransform: "none",
 
-                "&:hover": {
-                  opacity: 0.8,
-                  bgcolor: "#f8c33d",
-                  border: "2px solid #f8c33d",
-                },
-              }}
-            >
-              {category}
-            </Button>
-          ))}
+                        "&:hover": {
+                          opacity: 0.8,
+                          bgcolor: "#f8c33d",
+                          border: "2px solid #f8c33d",
+                        },
+                      }}
+                    >
+                      {category}
+                    </Button>
+                  ))}
+              </>
+            )}
+          </>
+        )}
       </Box>
       <Box
         maxWidth="1800px"
@@ -177,20 +193,26 @@ const ItemCarosuel: React.FC = () => {
             },
           }}
         >
-          {filteredItems?.map((item: MealItem) => (
-            <Box
-              key={item.id}
-              sx={{
-                flex: "0 0 auto",
-                transition: "transform 0.2s ease",
-                "&:hover": {
-                  transform: "translateY(-5px)",
-                },
-              }}
-            >
-              <ScrollerCard Card={item} />
-            </Box>
-          ))}
+          {isLoadingItems ? (
+            <CarosuelItemsSkeleton />
+          ) : (
+            <>
+              {filteredItems?.map((item: MealItem) => (
+                <Box
+                  key={item.id}
+                  sx={{
+                    flex: "0 0 auto",
+                    transition: "transform 0.2s ease",
+                    "&:hover": {
+                      transform: "translateY(-5px)",
+                    },
+                  }}
+                >
+                  <ScrollerCard Card={item} />
+                </Box>
+              ))}
+            </>
+          )}
         </Box>
       </Box>
     </>

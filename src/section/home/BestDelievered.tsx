@@ -1,10 +1,25 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import React from "react";
-import mealItems from "../../data/mealItem";
 import BestDelieveredBox from "../../components/BestDelieveredBox";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBestDelievered } from "../../util/util";
-import { MealItem } from "../../types/type";
+import BestDeliveredSkeleton from "../../skeleton/BestDeliveredSkeleton";
+
+interface MealItem {
+  id: number;
+  mealId: string;
+  restaurantId: string;
+  category: string;
+  image: string;
+  title: string;
+  shortDescription: string;
+  fullDescription: string[];
+  price: number;
+  isPopular: boolean;
+  restaurant?: {
+    title: string;
+  };
+}
 
 const BestDelievered: React.FC = () => {
   const {
@@ -12,6 +27,13 @@ const BestDelievered: React.FC = () => {
     isLoading,
     error,
   } = useQuery({ queryKey: ["BestDeivered"], queryFn: fetchBestDelievered });
+
+  // If there is an error (network error or server error)
+  if (error) {
+    return (
+      <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }}></Container>
+    );
+  }
 
   return (
     <>
@@ -69,14 +91,25 @@ const BestDelievered: React.FC = () => {
             },
           }}
         >
-          {bestMeals?.map((item: MealItem) => {
-            return (
-              <BestDelieveredBox
-                box={{ id: item.id, imageurl: item.image, title: item.title }}
-                key={item.title}
-              />
-            );
-          })}
+          {isLoading ? (
+            <BestDeliveredSkeleton />
+          ) : (
+            <>
+              {bestMeals &&
+                bestMeals?.map((item: MealItem) => {
+                  return (
+                    <BestDelieveredBox
+                      box={{
+                        id: item.mealId,
+                        imageurl: item.image,
+                        title: item.title,
+                      }}
+                      key={item.title}
+                    />
+                  );
+                })}
+            </>
+          )}
         </Box>
       </Box>
     </>

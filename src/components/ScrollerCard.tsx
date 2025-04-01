@@ -145,7 +145,7 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
                 maxWidth: "100%",
               }}
             >
-              {Card.restaurantId}
+              {Card.restaurant?.title}
             </Typography>
             <Typography
               fontFamily={"Inter"}

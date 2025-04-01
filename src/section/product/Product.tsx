@@ -11,22 +11,7 @@ import {
 import ProductDescription from "./ProductDescription";
 import { fetchMealDetailById } from "../../util/util";
 import ProductSkeleton from "../../skeleton/ProductSkeleton";
-
-interface MealItem {
-  id: number;
-  mealId: string;
-  restaurantId: string;
-  category: string;
-  image: string;
-  title: string;
-  shortDescription: string;
-  fullDescription: string[];
-  price: number;
-  isPopular: boolean;
-  restaurant?: {
-    title: string;
-  };
-}
+import { MealItem } from "../../types/type";
 
 interface productDetailProp {
   id: string;

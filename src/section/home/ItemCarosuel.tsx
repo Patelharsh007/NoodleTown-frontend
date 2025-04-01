@@ -7,22 +7,7 @@ import { fetchCarosuelCategories, fetchCarosuelItems } from "../../util/util";
 import { useQuery } from "@tanstack/react-query";
 import CarosuelCategoriesSkeleton from "../../skeleton/CarosuelCategoriesSkeleton";
 import CarosuelItemsSkeleton from "../../skeleton/CarosuelItemsSkeleton";
-
-interface MealItem {
-  id: number;
-  mealId: string;
-  restaurantId: string;
-  category: string;
-  image: string;
-  title: string;
-  shortDescription: string;
-  fullDescription: string[];
-  price: number;
-  isPopular: boolean;
-  restaurant?: {
-    title: string;
-  };
-}
+import { MealItem } from "../../types/type";
 
 const ItemCarosuel: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");

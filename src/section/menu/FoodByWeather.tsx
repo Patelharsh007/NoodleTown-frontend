@@ -3,19 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Box, Grid2, Skeleton, Typography } from "@mui/material";
 import FoodByWeatherCard from "../../components/FoodByWeatherCard";
 import { fetchRandomWeatherMeal } from "../../util/util";
-
-interface MealItem {
-  id: number;
-  mealId: string;
-  restaurantId: string;
-  category: string;
-  image: string;
-  title: string;
-  shortDescription: string;
-  fullDescription: string[];
-  price: number;
-  isPopular: boolean;
-}
+import { MealItem } from "../../types/type";
 
 const FoodByWeather: React.FC = () => {
   const {

@@ -8,22 +8,7 @@ import { showInfoToast } from "./ToastContainer";
 
 import { RootState } from "../redux/Store";
 import { Link } from "react-router-dom";
-
-interface MealItem {
-  id: number;
-  mealId: string;
-  restaurantId: string;
-  category: string;
-  image: string;
-  title: string;
-  shortDescription: string;
-  fullDescription: string[];
-  price: number;
-  isPopular: boolean;
-  restaurant?: {
-    title: string;
-  };
-}
+import { MealItem } from "../types/type";
 
 interface ScrollerCardProp {
   Card: MealItem;

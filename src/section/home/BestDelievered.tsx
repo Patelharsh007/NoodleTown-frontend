@@ -4,22 +4,7 @@ import BestDelieveredBox from "../../components/BestDelieveredBox";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBestDelievered } from "../../util/util";
 import BestDeliveredSkeleton from "../../skeleton/BestDeliveredSkeleton";
-
-interface MealItem {
-  id: number;
-  mealId: string;
-  restaurantId: string;
-  category: string;
-  image: string;
-  title: string;
-  shortDescription: string;
-  fullDescription: string[];
-  price: number;
-  isPopular: boolean;
-  restaurant?: {
-    title: string;
-  };
-}
+import { MealItem } from "../../types/type";
 
 const BestDelievered: React.FC = () => {
   const {

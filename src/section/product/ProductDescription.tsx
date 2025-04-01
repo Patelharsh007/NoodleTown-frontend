@@ -9,22 +9,7 @@ import {
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-
-interface MealItem {
-  id: number;
-  mealId: string;
-  restaurantId: string;
-  category: string;
-  image: string;
-  title: string;
-  shortDescription: string;
-  fullDescription: string[];
-  price: number;
-  isPopular: boolean;
-  restaurant?: {
-    title: string;
-  };
-}
+import { MealItem } from "../../types/type";
 
 interface ProductDescriptionProps {
   meal: MealItem | null;

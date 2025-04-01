@@ -19,21 +19,8 @@ import {
   incrementQuantity,
   decrementQuantity,
 } from "../../redux/slices/CartSlice";
-import { CartItem } from "../../types/type";
+import { CartItem, MealItem } from "../../types/type";
 import { RootState } from "../../redux/Store";
-
-interface MealItem {
-  id: number;
-  mealId: string;
-  restaurantId: string;
-  category: string;
-  image: string;
-  title: string;
-  shortDescription: string;
-  fullDescription: string[];
-  price: number;
-  isPopular: boolean;
-}
 
 const SearchMeal: React.FC<{ city: string; value: string }> = ({
   city,

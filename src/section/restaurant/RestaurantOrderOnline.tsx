@@ -12,22 +12,10 @@ import { RootState } from "../../redux/Store";
 import RestaurantMenuCategories from "../../components/RestaurantMenuCategories";
 import RestaurantMenuItems from "../../components/RestaurantMenuItems";
 import { fetchMenuCategories } from "../../util/util";
+import { MealItem } from "../../types/type";
 
 interface restaurantProps {
   id: string;
-}
-
-interface MealItem {
-  id: number;
-  mealId: string;
-  restaurantId: string;
-  category: string;
-  image: string;
-  title: string;
-  shortDescription: string;
-  fullDescription: string[];
-  price: number;
-  isPopular: boolean;
 }
 
 const RestaurantOrderOnline: React.FC<restaurantProps> = ({ id }) => {

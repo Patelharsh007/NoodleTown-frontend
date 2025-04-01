@@ -63,9 +63,9 @@ export interface AuthUserItem {
 
 //mealItemType used in mealitem data and
 export interface MealItem {
-  id: string;
+  id: number;
+  mealId: string;
   restaurantId: string;
-  restaurantName: string;
   category: string;
   image: string;
   title: string;
@@ -73,11 +73,13 @@ export interface MealItem {
   fullDescription: string[];
   price: number;
   isPopular: boolean;
+  restaurant?: RestaurantItem;
 }
 
 //restuarantType used in restaurant data
 export interface RestaurantItem {
-  id: string;
+  id: number;
+  restaurantId: string;
   title: string;
   logo: string;
   posterImages: string[];
@@ -87,7 +89,7 @@ export interface RestaurantItem {
   isOpen: boolean;
   timing: string;
   menuImages: string[];
-  categories: string[];
   isFeatured: boolean;
   rating: number;
+  meals?: MealItem[];
 }

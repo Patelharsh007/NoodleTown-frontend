@@ -1,20 +1,7 @@
 import { Grid2, Box, Stack, Typography } from "@mui/material";
 import React from "react";
-
 import { Link } from "react-router-dom";
-
-interface MealItem {
-  id: number;
-  mealId: string;
-  restaurantId: string;
-  category: string;
-  image: string;
-  title: string;
-  shortDescription: string;
-  fullDescription: string[];
-  price: number;
-  isPopular: boolean;
-}
+import { MealItem } from "../types/type";
 
 interface foodByWeatherCardProp {
   Card: MealItem;

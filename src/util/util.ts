@@ -140,3 +140,44 @@ export const fetchCarosuelItems = async (category: string) => {
     throw new Error("An error occurred while fetching data");
   }
 };
+
+//search values
+export const fetchSearchRestaurants = async (city: string, value: string) => {
+  let url = "";
+  console.log(city, value);
+  if (city && value) {
+    url = `${BASE_URL}/restaurant/searchRestaurant?city=${city}&value=${value}`;
+  } else {
+    url = `${BASE_URL}/restaurant/searchRestaurant`;
+  }
+  try {
+    const response = await axios.get(url);
+    if (response.data.status === "success") {
+      return response.data.restaurantData;
+    } else {
+      throw new Error(response.data.message || "Failed to fetch data.");
+    }
+  } catch (error) {
+    throw new Error("An error occurred while fetching data");
+  }
+};
+export const fetchSearchMeals = async (city: string, value: string) => {
+  let url = "";
+  console.log(city, value);
+  if (city && value) {
+    url = `${BASE_URL}/restaurant/searchMeal?city=${city}&value=${value}`;
+  } else {
+    url = `${BASE_URL}/restaurant/searchMeal`;
+  }
+  try {
+    console.log(url);
+    const response = await axios.get(url);
+    if (response.data.status === "success") {
+      return response.data.mealsData;
+    } else {
+      throw new Error(response.data.message || "Failed to fetch data.");
+    }
+  } catch (error) {
+    throw new Error("An error occurred while fetching data");
+  }
+};

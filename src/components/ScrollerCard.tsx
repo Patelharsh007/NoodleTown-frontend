@@ -87,9 +87,11 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
             width={"70px"}
             height={"31px"}
             borderRadius={"3px"}
-            boxShadow={"0px 4px 8px 0px #191F2C40"}
             sx={{
-              backgroundColor: "#191F2C",
+              ...(Card.isPopular && {
+                boxShadow: "0px 4px 8px 0px #191F2C40",
+                backgroundColor: "#191F2C",
+              }),
             }}
           >
             <Typography
@@ -102,7 +104,7 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
               textAlign={"center"}
               padding={"7px 0"}
             >
-              Popular
+              {Card.isPopular ? <>Popular</> : <></>}
             </Typography>
           </Box>
           <Link

@@ -84,7 +84,7 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
           spacing={{ xs: 1, sm: 2 }}
           marginTop={{ xs: "20px", sm: "30px" }}
           direction={{ xs: "column", sm: "row" }}
-          paddingRight={"16px"}
+          paddingRight={{ xs: "0", sm: "16px" }}
           sx={{
             overflowY: { sm: "auto" },
             maxHeight: { sm: "75vh" },

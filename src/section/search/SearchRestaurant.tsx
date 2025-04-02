@@ -3,26 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchSearchRestaurants } from "../../util/util";
+import { RestaurantItem } from "../../types/type";
 
 interface SearchRestaurantProp {
   city: string;
   value: string;
-}
-
-interface RestaurantItem {
-  id: number;
-  restaurantId: string;
-  title: string;
-  logo: string;
-  posterImages: string[];
-  cuisines: string[];
-  avgCostPerPerson: number;
-  address: string;
-  isOpen: boolean;
-  timing: string;
-  menuImages: string[];
-  isFeatured: boolean;
-  rating: number;
 }
 
 const SearchRestaurant: React.FC<SearchRestaurantProp> = ({ city, value }) => {

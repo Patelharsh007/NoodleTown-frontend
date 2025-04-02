@@ -17,7 +17,7 @@ export const SearchPage: React.FC = () => {
       <Container sx={{ paddingTop: 4 }}>
         <Box>
           <Typography variant="h4" gutterBottom>
-            Search Results:
+            Search Results for: {searchValue?.toUpperCase()}
           </Typography>
         </Box>
 

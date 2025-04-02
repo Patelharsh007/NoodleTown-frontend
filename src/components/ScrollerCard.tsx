@@ -1,46 +1,95 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ShoppingBag } from "@mui/icons-material";
 import { Box, Typography, Stack } from "@mui/material";
-
-import { useDispatch, useSelector } from "react-redux";
-import { addToCart, removeFromCart } from "../redux/slices/CartSlice";
-import { showInfoToast } from "./ToastContainer";
-
-import { RootState } from "../redux/Store";
+import { showErrorToast, showSuccessToast } from "./ToastContainer";
 import { Link } from "react-router-dom";
 import { MealItem } from "../types/type";
+
+import {
+  addToCartBackend,
+  isItemInCartBackend,
+  removeFromCartBackend,
+} from "../util/util";
 
 interface ScrollerCardProp {
   Card: MealItem;
 }
 
 const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
-  const dispatch = useDispatch();
+  const [inCart, setInCart] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+  useEffect(() => {
+    const verifyUser = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/api/user/verifyUser",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include", // Include cookies for authentication
+          }
+        );
 
-  const isItemInCart = (mealId: string) => {
-    return cartItems.some((item) => item.id === mealId);
-  };
+        const result = await response.json();
 
-  const handleAddToCart = () => {
-    if (isItemInCart(Card.mealId)) {
-      dispatch(removeFromCart(Card.mealId));
-      showInfoToast(`${Card.title} removed from cart`);
-    } else {
-      dispatch(
-        addToCart({
-          itemId: Card.mealId,
-          id: Card.mealId,
-          price: Card.price,
-          quantity: 1,
-          image: Card.image,
-          name: Card.title,
-          restaurantId: Card.restaurantId,
-          category: Card.category,
-          description: Card.shortDescription,
-        })
-      );
+        if (result.status === "success") {
+          console.log("User verified:", result.user);
+          setIsAuthenticated(true); // Set authentication status
+        } else {
+          console.warn("User is not authenticated.");
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Error verifying user:", error);
+        setIsAuthenticated(false);
+      }
+    };
+
+    verifyUser();
+  }, []);
+
+  useEffect(() => {
+    const isItemInCart = async (mealId: string) => {
+      if (!isAuthenticated) {
+        console.warn("User is not authenticated. Skipping cart check.");
+        setInCart(false);
+        return;
+      }
+
+      try {
+        const result = await isItemInCartBackend(mealId);
+        setInCart(result);
+      } catch (error) {
+        console.error("Error checking if item is in cart:", error);
+        setInCart(false);
+      }
+    };
+
+    isItemInCart(Card.mealId);
+  }, [isAuthenticated, Card.mealId]);
+
+  const handleBagClick = async () => {
+    if (!isAuthenticated) {
+      showErrorToast("Access denied. Please log in.");
+      return;
+    }
+
+    try {
+      if (inCart) {
+        const result = await removeFromCartBackend(Card.mealId);
+        setInCart(false);
+        showSuccessToast(result.message);
+      } else {
+        const result = await addToCartBackend(Card.mealId);
+        setInCart(true);
+        showSuccessToast(result.message);
+      }
+    } catch (error) {
+      console.error("Error adding/removing item from cart:", error);
+      showErrorToast("An error occurred. Please try again.");
     }
   };
 
@@ -207,7 +256,7 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
           />
           <Box
             component={"button"}
-            onClick={handleAddToCart}
+            onClick={handleBagClick}
             id={"circle"}
             width={"33px"}
             height={"33px"}
@@ -219,14 +268,12 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
             zIndex={3}
             sx={{
               cursor: "pointer",
-              backgroundColor: isItemInCart(Card.mealId) ? "#F6B716" : "#fff",
-              color: isItemInCart(Card.mealId) ? "#fff" : "#000000",
+              backgroundColor: inCart ? "#F6B716" : "#fff",
+              color: inCart ? "#fff" : "#000000",
               transition: "all 0.3s ease",
               "&:hover": {
-                backgroundColor: isItemInCart(Card.mealId)
-                  ? "#ff8c00"
-                  : "#F6B716",
-                color: isItemInCart(Card.mealId) ? "#fff" : "#000000",
+                backgroundColor: inCart ? "#ff8c00" : "#F6B716",
+                color: inCart ? "#fff" : "#000000",
 
                 transform: "scale(1.1)",
                 "& .MuiSvgIcon-root": {

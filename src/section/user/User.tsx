@@ -11,25 +11,70 @@ import {
   Avatar,
 } from "@mui/material";
 import { clearUser } from "../../redux/slices/AuthUserSlice";
-import { showSuccessToast } from "../../components/ToastContainer";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "../../components/ToastContainer";
+import axios from "axios";
 
 const User: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const { authUser } = useSelector((state: RootState) => state.authUser);
   const [loading, setLoading] = useState(true);
 
-  const { authUser } = useSelector((state: RootState) => state.authUser);
+  useEffect(() => {
+    const verifyUser = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/api/user/verifyUser",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        const result = await response.json();
+
+        if (result.status !== "success") {
+          console.warn("User is not authenticated.");
+
+          dispatch(clearUser());
+        }
+      } catch (error) {
+        console.error("Error verifying user:", error);
+      }
+    };
+    verifyUser();
+  }, []);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
   }, []);
 
   // Handle logout action
-  const handleLogout = () => {
-    dispatch(clearUser());
-    navigate("/home");
-    showSuccessToast("Log-Out Successfully");
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/logout",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.status === "success") {
+        dispatch(clearUser());
+        showSuccessToast("Log-Out Successfully");
+        // navigate("/home");
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+      showErrorToast("Something went erong");
+    }
   };
 
   // Navigate to the orders page

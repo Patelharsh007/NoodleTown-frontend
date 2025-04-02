@@ -2,6 +2,7 @@ import axios from "axios";
 const BASE_URL = "http://localhost:8080/api";
 
 //-------------------------Menu Page----------------------------
+
 //get Top Brands ---- Menu/tobrand
 export const fetchTopBrands = async () => {
   try {
@@ -174,6 +175,58 @@ export const fetchSearchMeals = async (city: string, value: string) => {
     const response = await axios.get(url);
     if (response.data.status === "success") {
       return response.data.mealsData;
+    } else {
+      throw new Error(response.data.message || "Failed to fetch data.");
+    }
+  } catch (error) {
+    throw new Error("An error occurred while fetching data");
+  }
+};
+
+//-------------------------Cart Mangement----------------------------
+export const isItemInCartBackend = async (mealId: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/cart/cartMeal/${mealId}`, {
+      withCredentials: true, // Include cookies for authentication
+    });
+    if (response.data.isInCart === true) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    throw new Error("An error occurred while fetching data");
+  }
+};
+
+export const addToCartBackend = async (mealId: string) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/cart/addToCart/${mealId}`,
+      {}, // Pass an empty body if required
+      {
+        withCredentials: true, // Include cookies for authentication
+      }
+    );
+    if (response.data.status === "success") {
+      return response.data;
+    } else {
+      throw new Error(response.data.message || "Failed to fetch data.");
+    }
+  } catch (error) {
+    throw new Error("An error occurred while fetching data");
+  }
+};
+export const removeFromCartBackend = async (mealId: string) => {
+  try {
+    const response = await axios.delete(
+      `${BASE_URL}/cart/removeFromCart/${mealId}`,
+      {
+        withCredentials: true,
+      }
+    );
+    if (response.data.status === "success") {
+      return response.data;
     } else {
       throw new Error(response.data.message || "Failed to fetch data.");
     }

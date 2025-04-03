@@ -13,42 +13,31 @@ import {
 
 interface ScrollerCardProp {
   Card: MealItem;
-  isAuthenticated: boolean;
 }
 
-const ScrollerCard: React.FC<ScrollerCardProp> = ({
-  Card,
-  isAuthenticated,
-}) => {
+const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
   const [inCart, setInCart] = useState<boolean>(false);
-
   useEffect(() => {
-    if (isAuthenticated) {
-      isItemInCart(Card.mealId);
+    if (Card?.mealId) {
+      isItemInCart(Card.mealId); // Check if the item is in the cart whenever Card.mealId changes
     }
-  }, [isAuthenticated, Card.mealId]);
+  }, [Card.mealId]);
 
   const isItemInCart = async (mealId: string) => {
-    if (!isAuthenticated) {
-      // console.warn("User is not authenticated. Skipping cart check.");
-      setInCart(false);
-      return;
-    }
-
     try {
       const result = await isItemInCartBackend(mealId);
       setInCart(result);
     } catch (error) {
-      console.error("Error checking if item is in cart:", error);
+      if (error instanceof Error) {
+        console.error("Error checking if item is in cart:", error.message);
+      } else {
+        console.error("Unknown error occurred while checking cart status.");
+      }
       setInCart(false);
     }
   };
-  const handleBagClick = async () => {
-    if (!isAuthenticated) {
-      showErrorToast("Access denied. Please log in.");
-      return;
-    }
 
+  const handleBagClick = async () => {
     try {
       if (inCart) {
         const result = await removeFromCartBackend(Card.mealId);
@@ -60,8 +49,15 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({
         showSuccessToast(result.message);
       }
     } catch (error) {
-      console.error("Error adding/removing item from cart:", error);
-      showErrorToast("An error occurred. Please try again.");
+      if (error instanceof Error) {
+        console.error("Error adding/removing item from cart:", error.message);
+        showErrorToast(error.message || "An error occurred. Please try again.");
+      } else {
+        console.error(
+          "Unknown error occurred while adding/removing item from cart."
+        );
+        showErrorToast("An error occurred. Please try again.");
+      }
     }
   };
 

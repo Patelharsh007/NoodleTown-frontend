@@ -13,7 +13,7 @@ import { MealItem } from "../../types/type";
 import {
   addToCartBackend,
   decrementCartMealBackend,
-  getItemQuantitty,
+  getItemQuantity,
   incrementCartMealBackend,
   isItemInCartBackend,
 } from "../../util/util";
@@ -33,7 +33,9 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
   let [quantity, setQuantity] = useState<number>(0);
 
   useEffect(() => {
-    isItemInCart(meal.mealId);
+    if (meal.mealId) {
+      isItemInCart(meal.mealId);
+    }
   }, [meal, inCart, quantity]);
 
   const isItemInCart = async (mealId: string) => {
@@ -42,31 +44,33 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
       getMealQuantity(mealId);
       setInCart(result);
     } catch (error) {
-      // console.error("Error checking if item is in cart:", error);
-      setInCart(false);
+      if (error instanceof Error) {
+        console.error("Error checking if item is in cart:", error.message);
+        setInCart(false);
+        console.error("Unknown error occurred while checking cart status.");
+        setInCart(false);
+      }
     }
   };
 
   const onAddToCart = async (mealId: string) => {
-    // if (!isAuthenticated) {
-    //   showErrorToast("Access denied. Please log in.");
-    //   return;
-    // }
     try {
       const result = await addToCartBackend(mealId);
       getMealQuantity(mealId);
       setInCart(true);
       showSuccessToast(result.message);
     } catch (error) {
-      // console.error("Error adding/removing item from cart:", error);
-      showErrorToast("An error occurred. Please try again.");
+      if (error instanceof Error) {
+        showErrorToast(error.message || "An error occurred. Please try again.");
+      } else {
+        showErrorToast(
+          "An error occurred while adding item to the cart. Please try again."
+        );
+      }
     }
   };
+
   const onIncrement1 = async (mealId: string) => {
-    // if (!isAuthenticated) {
-    //   showErrorToast("Access denied. Please log in.");
-    //   return;
-    // }
     try {
       const result = await incrementCartMealBackend(mealId);
       getMealQuantity(mealId);
@@ -74,42 +78,53 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
       showInfoToast(result.message);
     } catch (error) {
       if (error instanceof Error) {
-        showErrorToast(error.message || "An error occurred. Please try again.");
+        showErrorToast(
+          error.message ||
+            "An error occurred while incrementing. Please try again."
+        );
       } else {
-        showErrorToast("An error occurred. Please try again.");
+        showErrorToast(
+          "An unexpected error occurred while incrementing the item. Please try again."
+        );
       }
     }
   };
+
   const onDecrement1 = async (mealId: string) => {
-    // if (!isAuthenticated) {
-    //   showErrorToast("Access denied. Please log in.");
-    //   return;
-    // }
     try {
       if (quantity === 1) {
         const result = await decrementCartMealBackend(mealId);
-        showErrorToast("Item removed from cart");
+        showSuccessToast("Item removed from cart");
         setInCart(false);
         return;
       }
+
       const result = await decrementCartMealBackend(mealId);
       getMealQuantity(mealId);
       setInCart(true);
       showInfoToast(result.message);
     } catch (error) {
       if (error instanceof Error) {
-        showErrorToast("Item removed from cart.");
+        showErrorToast(
+          error.message ||
+            "An error occurred while decrementing. Please try again."
+        );
       } else {
-        showErrorToast("An error occurred. Please try again.");
+        showErrorToast(
+          "An unexpected error occurred while decrementing the item. Please try again."
+        );
       }
     }
   };
 
   const getMealQuantity = async (mealId: string) => {
     try {
-      const result = await getItemQuantitty(mealId);
+      const result = await getItemQuantity(mealId);
       setQuantity(result);
     } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error fetching meal quantity:", error.message);
+      }
       setQuantity(0);
     }
   };

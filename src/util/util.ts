@@ -185,18 +185,55 @@ export const fetchSearchMeals = async (city: string, value: string) => {
 };
 
 //-------------------------Cart Mangement----------------------------
+// export const isItemInCartBackend = async (mealId: string) => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/cart/cartMeal/${mealId}`, {
+//       withCredentials: true, // Include cookies for authentication
+//     });
+//     return response.data.isInCart;
+//   } catch (error) {
+//     throw new Error("An error occurred while fetching data");
+//   }
+// };
+
 export const isItemInCartBackend = async (mealId: string) => {
   try {
     const response = await axios.get(`${BASE_URL}/cart/cartMeal/${mealId}`, {
-      withCredentials: true, // Include cookies for authentication
+      withCredentials: true,
     });
     return response.data.isInCart;
   } catch (error) {
-    throw new Error("An error occurred while fetching data");
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to check if item is in the cart."
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while checking item in cart."
+      );
+    }
   }
 };
 
-export const getItemQuantitty = async (mealId: string) => {
+// export const getItemQuantitty = async (mealId: string) => {
+//   try {
+//     const response = await axios.get(`${BASE_URL}/cart/cartMeal/${mealId}`, {
+//       withCredentials: true, // Include cookies for authentication
+//     });
+//     if (response.data.status === "success") {
+//       if (response.data.isInCart === true) {
+//         return response.data.cartItem.quantity;
+//       } else {
+//         throw new Error(response.data.message);
+//       }
+//     } else {
+//       throw new Error(response.data.message || "Failed to fetch data.");
+//     }
+//   } catch (error) {
+//     throw new Error("An error occurred while fetching data");
+//   }
+// };
+export const getItemQuantity = async (mealId: string) => {
   try {
     const response = await axios.get(`${BASE_URL}/cart/cartMeal/${mealId}`, {
       withCredentials: true, // Include cookies for authentication
@@ -211,15 +248,42 @@ export const getItemQuantitty = async (mealId: string) => {
       throw new Error(response.data.message || "Failed to fetch data.");
     }
   } catch (error) {
-    throw new Error("An error occurred while fetching data");
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to get item quantity."
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while fetching item quantity."
+      );
+    }
   }
 };
 
+// export const addToCartBackend = async (mealId: string) => {
+//   try {
+//     const response = await axios.post(
+//       `${BASE_URL}/cart/addToCart/${mealId}`,
+//       {}, //empty -- body for post rquest
+//       {
+//         withCredentials: true,
+//       }
+//     );
+//     if (response.data.status === "success") {
+//       return response.data;
+//     } else {
+//       showErrorToast(response.data.message);
+//       throw new Error(response.data.message || "Failed to fetch data.");
+//     }
+//   } catch (error) {
+//     throw new Error("An error occurred while fetching data");
+//   }
+// };
 export const addToCartBackend = async (mealId: string) => {
   try {
     const response = await axios.post(
       `${BASE_URL}/cart/addToCart/${mealId}`,
-      {}, //empty -- body for post rquest
+      {}, // Empty body for POST request
       {
         withCredentials: true,
       }
@@ -228,12 +292,42 @@ export const addToCartBackend = async (mealId: string) => {
       return response.data;
     } else {
       showErrorToast(response.data.message);
-      throw new Error(response.data.message || "Failed to fetch data.");
+      throw new Error(
+        response.data.message || "Failed to add item to the cart."
+      );
     }
   } catch (error) {
-    throw new Error("An error occurred while fetching data");
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message ||
+          "An error occurred while adding to the cart."
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while adding item to the cart."
+      );
+    }
   }
 };
+
+// export const removeFromCartBackend = async (mealId: string) => {
+//   try {
+//     const response = await axios.delete(
+//       `${BASE_URL}/cart/removeFromCart/${mealId}`,
+//       {
+//         withCredentials: true,
+//       }
+//     );
+//     if (response.data.status === "success") {
+//       return response.data;
+//     } else {
+//       return response.data;
+//     }
+//   } catch (error) {
+//     throw new Error("An error occurred while fetching data");
+//   }
+// };
+// Function to remove an item from the cart
 export const removeFromCartBackend = async (mealId: string) => {
   try {
     const response = await axios.delete(
@@ -248,14 +342,49 @@ export const removeFromCartBackend = async (mealId: string) => {
       return response.data;
     }
   } catch (error) {
-    throw new Error("An error occurred while fetching data");
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message ||
+          "An error occurred while removing from the cart."
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while removing item from the cart."
+      );
+    }
   }
 };
+
+// export const incrementCartMealBackend = async (mealId: string) => {
+//   try {
+//     const response = await axios.put(
+//       `${BASE_URL}/cart/increment/${mealId}`,
+//       {}, //empty body for put request
+//       {
+//         withCredentials: true,
+//       }
+//     );
+//     if (response.data.status === "success") {
+//       return response.data;
+//     } else {
+//       throw new Error(response.data.message || "An unknown error occurred.");
+//     }
+//   } catch (error) {
+//     if (axios.isAxiosError(error) && error.response) {
+//       throw new Error(
+//         error.response.data.message ||
+//           "An error occurred while processing the request."
+//       );
+//     } else {
+//       throw new Error("An unexpected error occurred.");
+//     }
+//   }
+// };
 export const incrementCartMealBackend = async (mealId: string) => {
   try {
     const response = await axios.put(
       `${BASE_URL}/cart/increment/${mealId}`,
-      {}, //empty body for put request
+      {}, // Empty body for PUT request
       {
         withCredentials: true,
       }
@@ -269,18 +398,46 @@ export const incrementCartMealBackend = async (mealId: string) => {
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(
         error.response.data.message ||
-          "An error occurred while processing the request."
+          "An error occurred while processing the increment request."
       );
     } else {
-      throw new Error("An unexpected error occurred.");
+      throw new Error(
+        "An unexpected error occurred while incrementing item quantity."
+      );
     }
   }
 };
+
+// export const decrementCartMealBackend = async (mealId: string) => {
+//   try {
+//     const response = await axios.put(
+//       `${BASE_URL}/cart/decrement/${mealId}`,
+//       {}, //empty body for put request
+//       {
+//         withCredentials: true,
+//       }
+//     );
+//     if (response.data.status === "success") {
+//       return response.data;
+//     } else {
+//       return response.data;
+//     }
+//   } catch (error) {
+//     if (axios.isAxiosError(error) && error.response) {
+//       throw new Error(
+//         error.response.data.message ||
+//           "An error occurred while processing the request."
+//       );
+//     } else {
+//       throw new Error("An unexpected error occurred.");
+//     }
+//   }
+// };
 export const decrementCartMealBackend = async (mealId: string) => {
   try {
     const response = await axios.put(
       `${BASE_URL}/cart/decrement/${mealId}`,
-      {}, //empty body for put request
+      {}, // Empty body
       {
         withCredentials: true,
       }
@@ -294,10 +451,12 @@ export const decrementCartMealBackend = async (mealId: string) => {
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(
         error.response.data.message ||
-          "An error occurred while processing the request."
+          "An error occurred while processing the decrement request."
       );
     } else {
-      throw new Error("An unexpected error occurred.");
+      throw new Error(
+        "An unexpected error occurred while decrementing item quantity."
+      );
     }
   }
 };

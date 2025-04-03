@@ -13,64 +13,36 @@ import {
 
 interface ScrollerCardProp {
   Card: MealItem;
+  isAuthenticated: boolean;
 }
 
-const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
+const ScrollerCard: React.FC<ScrollerCardProp> = ({
+  Card,
+  isAuthenticated,
+}) => {
   const [inCart, setInCart] = useState<boolean>(false);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
-    const verifyUser = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:8080/api/user/verifyUser",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include", // Include cookies for authentication
-          }
-        );
-
-        const result = await response.json();
-
-        if (result.status === "success") {
-          console.log("User verified:", result.user);
-          setIsAuthenticated(true); // Set authentication status
-        } else {
-          console.warn("User is not authenticated.");
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error("Error verifying user:", error);
-        setIsAuthenticated(false);
-      }
-    };
-
-    verifyUser();
-  }, []);
-
-  useEffect(() => {
-    const isItemInCart = async (mealId: string) => {
-      if (!isAuthenticated) {
-        console.warn("User is not authenticated. Skipping cart check.");
-        setInCart(false);
-        return;
-      }
-
-      try {
-        const result = await isItemInCartBackend(mealId);
-        setInCart(result);
-      } catch (error) {
-        console.error("Error checking if item is in cart:", error);
-        setInCart(false);
-      }
-    };
-
-    isItemInCart(Card.mealId);
+    if (isAuthenticated) {
+      isItemInCart(Card.mealId);
+    }
   }, [isAuthenticated, Card.mealId]);
 
+  const isItemInCart = async (mealId: string) => {
+    if (!isAuthenticated) {
+      // console.warn("User is not authenticated. Skipping cart check.");
+      setInCart(false);
+      return;
+    }
+
+    try {
+      const result = await isItemInCartBackend(mealId);
+      setInCart(result);
+    } catch (error) {
+      console.error("Error checking if item is in cart:", error);
+      setInCart(false);
+    }
+  };
   const handleBagClick = async () => {
     if (!isAuthenticated) {
       showErrorToast("Access denied. Please log in.");

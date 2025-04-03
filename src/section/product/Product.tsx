@@ -4,14 +4,12 @@ import { Box, Container, Grid2, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import {
-  addToCart,
   incrementQuantity,
   decrementQuantity,
 } from "../../redux/slices/CartSlice";
 import ProductDescription from "./ProductDescription";
 import { fetchMealDetailById } from "../../util/util";
 import ProductSkeleton from "../../skeleton/ProductSkeleton";
-import { MealItem } from "../../types/type";
 
 interface productDetailProp {
   id: string;
@@ -19,7 +17,6 @@ interface productDetailProp {
 
 const Product: React.FC<productDetailProp> = ({ id }) => {
   const dispatch = useDispatch();
-  const cartItems = useSelector((state: RootState) => state.cart.items);
 
   const {
     data: meal,
@@ -29,26 +26,6 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
     queryKey: ["mealDetails", id],
     queryFn: () => fetchMealDetailById(id),
   });
-
-  const isItemInCart = (id: string) => cartItems.some((item) => item.id === id);
-  const getItemQuantity = (id: string) =>
-    cartItems.find((item) => item.id === id)?.quantity || 0;
-
-  const handleAddToCart = (meal: MealItem) => {
-    dispatch(
-      addToCart({
-        id: meal.mealId,
-        itemId: meal.mealId,
-        price: meal.price,
-        quantity: 1,
-        image: meal.image,
-        name: meal.title,
-        category: meal.category,
-        description: meal.shortDescription,
-        restaurantId: meal.restaurantId || "default", // Add this line
-      })
-    );
-  };
 
   const handleIncrement = (itemId: string) => {
     dispatch(incrementQuantity(itemId));
@@ -96,14 +73,15 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
               />
             </Grid2>
 
-            <ProductDescription
-              meal={meal}
-              onDecrement={handleDecrement}
-              onIncrement={handleIncrement}
-              onAddToCart={handleAddToCart}
-              onGetItemQuantity={getItemQuantity}
-              onIsItemInCart={isItemInCart}
-            />
+            {meal ? (
+              <ProductDescription
+                meal={meal}
+                onDecrement={handleDecrement}
+                onIncrement={handleIncrement}
+              />
+            ) : (
+              <>Something went wrong</>
+            )}
           </>
         )}
       </Grid2>

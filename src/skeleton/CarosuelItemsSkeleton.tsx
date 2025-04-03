@@ -6,6 +6,7 @@ const CarosuelItemsSkeleton = () => {
     <>
       {[...Array(4)].map((_, index) => (
         <Skeleton
+          key={index}
           variant="rectangular"
           animation="wave"
           width={"250px"}

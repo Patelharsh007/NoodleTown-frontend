@@ -1,4 +1,5 @@
 import axios from "axios";
+import { showErrorToast } from "../components/ToastContainer";
 const BASE_URL = "http://localhost:8080/api";
 
 //-------------------------Menu Page----------------------------
@@ -189,10 +190,25 @@ export const isItemInCartBackend = async (mealId: string) => {
     const response = await axios.get(`${BASE_URL}/cart/cartMeal/${mealId}`, {
       withCredentials: true, // Include cookies for authentication
     });
-    if (response.data.isInCart === true) {
-      return true;
+    return response.data.isInCart;
+  } catch (error) {
+    throw new Error("An error occurred while fetching data");
+  }
+};
+
+export const getItemQuantitty = async (mealId: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/cart/cartMeal/${mealId}`, {
+      withCredentials: true, // Include cookies for authentication
+    });
+    if (response.data.status === "success") {
+      if (response.data.isInCart === true) {
+        return response.data.cartItem.quantity;
+      } else {
+        throw new Error(response.data.message);
+      }
     } else {
-      return false;
+      throw new Error(response.data.message || "Failed to fetch data.");
     }
   } catch (error) {
     throw new Error("An error occurred while fetching data");
@@ -203,14 +219,15 @@ export const addToCartBackend = async (mealId: string) => {
   try {
     const response = await axios.post(
       `${BASE_URL}/cart/addToCart/${mealId}`,
-      {}, // Pass an empty body if required
+      {}, //empty -- body for post rquest
       {
-        withCredentials: true, // Include cookies for authentication
+        withCredentials: true,
       }
     );
     if (response.data.status === "success") {
       return response.data;
     } else {
+      showErrorToast(response.data.message);
       throw new Error(response.data.message || "Failed to fetch data.");
     }
   } catch (error) {
@@ -228,7 +245,7 @@ export const removeFromCartBackend = async (mealId: string) => {
     if (response.data.status === "success") {
       return response.data;
     } else {
-      throw new Error(response.data.message || "Failed to fetch data.");
+      return response.data;
     }
   } catch (error) {
     throw new Error("An error occurred while fetching data");

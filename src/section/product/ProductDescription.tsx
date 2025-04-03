@@ -5,29 +5,118 @@ import {
   Typography,
   Button,
   ButtonGroup,
+  Card,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { MealItem } from "../../types/type";
+import {
+  addToCartBackend,
+  getItemQuantitty,
+  isItemInCartBackend,
+  removeFromCartBackend,
+} from "../../util/util";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "../../components/ToastContainer";
 
 interface ProductDescriptionProps {
-  meal: MealItem | null;
+  meal: MealItem;
   onIncrement: (id: string) => void;
   onDecrement: (id: string) => void;
-  onAddToCart: (meal: MealItem) => void;
-  onGetItemQuantity: (id: string) => number;
-  onIsItemInCart: (id: string) => boolean;
 }
 
 const ProductDescription: React.FC<ProductDescriptionProps> = ({
   meal,
   onDecrement,
   onIncrement,
-  onAddToCart,
-  onGetItemQuantity,
-  onIsItemInCart,
 }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [inCart, setInCart] = useState<boolean>(false);
+  const [quantity, setQuantity] = useState<number>(0);
+
+  useEffect(() => {
+    const verifyUser = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/api/user/verifyUser",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+          // console.log("User verified:", result.user);
+          setIsAuthenticated(true); // Set authentication status
+        } else {
+          console.warn("User is not authenticated.");
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Error verifying user:", error);
+        setIsAuthenticated(false);
+      }
+    };
+
+    verifyUser();
+  }, []);
+
+  useEffect(() => {
+    isItemInCart(meal.mealId);
+    getMealQuantity(meal.mealId);
+  }, [isAuthenticated, meal]);
+
+  const isItemInCart = async (mealId: string) => {
+    if (!isAuthenticated) {
+      console.warn("User is not authenticated. Skipping cart check.");
+      setInCart(false);
+      return;
+    }
+
+    try {
+      const result = await isItemInCartBackend(mealId);
+      setInCart(result);
+    } catch (error) {
+      console.error("Error checking if item is in cart:", error);
+      setInCart(false);
+    }
+  };
+
+  const onAddToCart = async (meal: MealItem) => {
+    if (!isAuthenticated) {
+      showErrorToast("Access denied. Please log in.");
+      return;
+    }
+    try {
+      const result = await addToCartBackend(meal.mealId);
+      setInCart(true);
+      showSuccessToast(result.message);
+    } catch (error) {
+      console.error("Error adding/removing item from cart:", error);
+      showErrorToast("An error occurred. Please try again.");
+    }
+  };
+
+  const getMealQuantity = async (mealId: string) => {
+    try {
+      const result = await getItemQuantitty(mealId);
+      setQuantity(result);
+      // showSuccessToast(result);
+    } catch (error) {
+      setQuantity(0);
+      // console.error("Error getting quantity from cart:", error);
+      // showErrorToast("An error occurred. Please try again.");
+    }
+  };
+
   return (
     <Grid2 size={{ sm: 12, md: 7 }}>
       {meal && (
@@ -101,7 +190,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({
               {meal.category}
             </Typography>
 
-            {!onIsItemInCart(meal.mealId) ? (
+            {!inCart ? (
               <Button
                 onClick={() => onAddToCart(meal)}
                 sx={{
@@ -159,7 +248,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({
                   disableRipple
                 >
                   <Typography fontFamily="Poppins" fontSize="18px">
-                    {onGetItemQuantity(meal.mealId)}
+                    {/* {onGetItemQuantity(meal.mealId)} */ quantity}
                   </Typography>
                 </Button>
                 <Button

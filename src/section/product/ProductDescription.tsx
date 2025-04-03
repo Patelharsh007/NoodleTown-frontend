@@ -28,52 +28,15 @@ interface ProductDescriptionProps {
 }
 
 const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  // const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [inCart, setInCart] = useState<boolean>(false);
   let [quantity, setQuantity] = useState<number>(0);
 
   useEffect(() => {
-    const verifyUser = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:8080/api/user/verifyUser",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          }
-        );
-
-        const result = await response.json();
-
-        if (result.status === "success") {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error("Error verifying user:", error);
-        setIsAuthenticated(false);
-      }
-    };
-
-    verifyUser();
-  }, []);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      isItemInCart(meal.mealId);
-    }
-  }, [isAuthenticated, meal, inCart, quantity]);
+    isItemInCart(meal.mealId);
+  }, [meal, inCart, quantity]);
 
   const isItemInCart = async (mealId: string) => {
-    if (!isAuthenticated) {
-      setInCart(false);
-      return;
-    }
-
     try {
       const result = await isItemInCartBackend(mealId);
       getMealQuantity(mealId);
@@ -85,10 +48,10 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
   };
 
   const onAddToCart = async (mealId: string) => {
-    if (!isAuthenticated) {
-      showErrorToast("Access denied. Please log in.");
-      return;
-    }
+    // if (!isAuthenticated) {
+    //   showErrorToast("Access denied. Please log in.");
+    //   return;
+    // }
     try {
       const result = await addToCartBackend(mealId);
       getMealQuantity(mealId);
@@ -100,10 +63,10 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
     }
   };
   const onIncrement1 = async (mealId: string) => {
-    if (!isAuthenticated) {
-      showErrorToast("Access denied. Please log in.");
-      return;
-    }
+    // if (!isAuthenticated) {
+    //   showErrorToast("Access denied. Please log in.");
+    //   return;
+    // }
     try {
       const result = await incrementCartMealBackend(mealId);
       getMealQuantity(mealId);
@@ -118,10 +81,10 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
     }
   };
   const onDecrement1 = async (mealId: string) => {
-    if (!isAuthenticated) {
-      showErrorToast("Access denied. Please log in.");
-      return;
-    }
+    // if (!isAuthenticated) {
+    //   showErrorToast("Access denied. Please log in.");
+    //   return;
+    // }
     try {
       if (quantity === 1) {
         const result = await decrementCartMealBackend(mealId);

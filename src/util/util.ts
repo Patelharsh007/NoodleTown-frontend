@@ -131,7 +131,7 @@ export const fetchCarosuelItems = async (category: string) => {
     url = `${BASE_URL}/meal/carosuelItems?category=${category}`;
   }
   try {
-    console.log(url);
+    // console.log(url);
     const response = await axios.get(url);
     if (response.data.status === "success") {
       return response.data.carosuelItem;
@@ -249,5 +249,55 @@ export const removeFromCartBackend = async (mealId: string) => {
     }
   } catch (error) {
     throw new Error("An error occurred while fetching data");
+  }
+};
+export const incrementCartMealBackend = async (mealId: string) => {
+  try {
+    const response = await axios.put(
+      `${BASE_URL}/cart/increment/${mealId}`,
+      {}, //empty body for put request
+      {
+        withCredentials: true,
+      }
+    );
+    if (response.data.status === "success") {
+      return response.data;
+    } else {
+      throw new Error(response.data.message || "An unknown error occurred.");
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message ||
+          "An error occurred while processing the request."
+      );
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
+  }
+};
+export const decrementCartMealBackend = async (mealId: string) => {
+  try {
+    const response = await axios.put(
+      `${BASE_URL}/cart/decrement/${mealId}`,
+      {}, //empty body for put request
+      {
+        withCredentials: true,
+      }
+    );
+    if (response.data.status === "success") {
+      return response.data;
+    } else {
+      return response.data;
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message ||
+          "An error occurred while processing the request."
+      );
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
   }
 };

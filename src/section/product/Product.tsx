@@ -27,14 +27,6 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
     queryFn: () => fetchMealDetailById(id),
   });
 
-  const handleIncrement = (itemId: string) => {
-    dispatch(incrementQuantity(itemId));
-  };
-
-  const handleDecrement = (itemId: string) => {
-    dispatch(decrementQuantity(itemId));
-  };
-
   if (error) {
     return (
       <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }}>
@@ -74,11 +66,7 @@ const Product: React.FC<productDetailProp> = ({ id }) => {
             </Grid2>
 
             {meal ? (
-              <ProductDescription
-                meal={meal}
-                onDecrement={handleDecrement}
-                onIncrement={handleIncrement}
-              />
+              <ProductDescription meal={meal} />
             ) : (
               <>Something went wrong</>
             )}

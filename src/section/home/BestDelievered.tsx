@@ -11,7 +11,11 @@ const BestDelievered: React.FC = () => {
     data: bestMeals,
     isLoading,
     error,
-  } = useQuery({ queryKey: ["BestDeivered"], queryFn: fetchBestDelievered });
+  } = useQuery({
+    queryKey: ["BestDeivered"],
+    queryFn: fetchBestDelievered,
+    staleTime: 5 * 60 * 1000, // 5min
+  });
 
   // If there is an error (network error or server error)
   if (error) {

@@ -19,7 +19,7 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
   const [inCart, setInCart] = useState<boolean>(false);
   useEffect(() => {
     if (Card?.mealId) {
-      isItemInCart(Card.mealId); // Check if the item is in the cart whenever Card.mealId changes
+      isItemInCart(Card.mealId);
     }
   }, [Card.mealId]);
 

@@ -2,7 +2,7 @@ import axios from "axios";
 import { showErrorToast } from "../components/ToastContainer";
 const BASE_URL = "http://localhost:8080/api";
 
-//-------------------------Menu Page----------------------------
+//-----------+------------Menu Page----------------------------
 
 //get Top Brands ---- Menu/tobrand
 export const fetchTopBrands = async () => {

@@ -10,7 +10,11 @@ const FoodByWeather: React.FC = () => {
     data: weatherMeal,
     isLoading,
     error,
-  } = useQuery({ queryKey: ["weatherMeals"], queryFn: fetchRandomWeatherMeal });
+  } = useQuery({
+    queryKey: ["weatherMeals"],
+    queryFn: fetchRandomWeatherMeal,
+    staleTime: 5 * 60 * 1000, // 5min
+  });
 
   return (
     <>

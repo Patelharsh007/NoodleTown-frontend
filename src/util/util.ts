@@ -185,6 +185,44 @@ export const fetchSearchMeals = async (city: string, value: string) => {
 };
 
 //-------------------------Cart Mangement----------------------------
+export const getUserCart = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/cart/allCartData`, {
+      withCredentials: true,
+    });
+    return response.data.isInCart;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to check if item is in the cart."
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while checking item in cart."
+      );
+    }
+  }
+};
+
+export const getCartItemByMealId = async (mealId: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/cart/cartMeal/${mealId}`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to check if item is in the cart."
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while checking item in cart."
+      );
+    }
+  }
+};
+
 // export const isItemInCartBackend = async (mealId: string) => {
 //   try {
 //     const response = await axios.get(`${BASE_URL}/cart/cartMeal/${mealId}`, {

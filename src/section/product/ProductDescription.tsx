@@ -6,16 +6,16 @@ import {
   Button,
   ButtonGroup,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MealItem } from "../../types/type";
 import {
+  getCartItemByMealId,
   addToCartBackend,
   decrementCartMealBackend,
-  getItemQuantity,
   incrementCartMealBackend,
-  isItemInCartBackend,
 } from "../../util/util";
 import {
   showErrorToast,
@@ -28,38 +28,21 @@ interface ProductDescriptionProps {
 }
 
 const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
-  // const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [inCart, setInCart] = useState<boolean>(false);
-  let [quantity, setQuantity] = useState<number>(0);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (meal.mealId) {
-      isItemInCart(meal.mealId);
-    }
-  }, [meal, inCart, quantity]);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["productCart", meal.mealId],
+    queryFn: () => getCartItemByMealId(meal.mealId),
+    staleTime: 5 * 60 * 1000,
+  });
 
-  const isItemInCart = async (mealId: string) => {
-    try {
-      const result = await isItemInCartBackend(mealId);
-      getMealQuantity(mealId);
-      setInCart(result);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error checking if item is in cart:", error.message);
-        setInCart(false);
-        console.error("Unknown error occurred while checking cart status.");
-        setInCart(false);
-      }
-    }
-  };
-
-  const onAddToCart = async (mealId: string) => {
-    try {
-      const result = await addToCartBackend(mealId);
-      getMealQuantity(mealId);
-      setInCart(true);
-      showSuccessToast(result.message);
-    } catch (error) {
+  const addToCartMutation = useMutation({
+    mutationFn: (mealId: string) => addToCartBackend(mealId),
+    onSuccess: (addData, variables) => {
+      showSuccessToast(addData.message);
+      queryClient.invalidateQueries({ queryKey: ["productCart", meal.mealId] });
+    },
+    onError: (error) => {
       if (error instanceof Error) {
         showErrorToast(error.message || "An error occurred. Please try again.");
       } else {
@@ -67,43 +50,36 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
           "An error occurred while adding item to the cart. Please try again."
         );
       }
-    }
-  };
-
-  const onIncrement1 = async (mealId: string) => {
-    try {
-      const result = await incrementCartMealBackend(mealId);
-      getMealQuantity(mealId);
-      setInCart(true);
-      showInfoToast(result.message);
-    } catch (error) {
+    },
+  });
+  const incrementItemMutation = useMutation({
+    mutationFn: (mealId: string) => incrementCartMealBackend(mealId),
+    onSuccess: (incrementData, variables) => {
+      showInfoToast(incrementData.message);
+      queryClient.invalidateQueries({ queryKey: ["productCart", meal.mealId] });
+    },
+    onError: (error) => {
       if (error instanceof Error) {
-        showErrorToast(
-          error.message ||
-            "An error occurred while incrementing. Please try again."
-        );
+        showErrorToast(error.message || "An error occurred. Please try again.");
       } else {
         showErrorToast(
-          "An unexpected error occurred while incrementing the item. Please try again."
+          "An error occurred while adding item to the cart. Please try again."
         );
       }
-    }
-  };
+    },
+  });
 
-  const onDecrement1 = async (mealId: string) => {
-    try {
-      if (quantity === 1) {
-        const result = await decrementCartMealBackend(mealId);
+  const decrementItemMutation = useMutation({
+    mutationFn: (mealId: string) => decrementCartMealBackend(mealId),
+    onSuccess: (decrementData, variables) => {
+      if (decrementData && data.cartItem.quantity === 1) {
         showSuccessToast("Item removed from cart");
-        setInCart(false);
-        return;
+      } else {
+        showInfoToast(decrementData.message);
       }
-
-      const result = await decrementCartMealBackend(mealId);
-      getMealQuantity(mealId);
-      setInCart(true);
-      showInfoToast(result.message);
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ["productCart", meal.mealId] });
+    },
+    onError: (error) => {
       if (error instanceof Error) {
         showErrorToast(
           error.message ||
@@ -114,20 +90,64 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
           "An unexpected error occurred while decrementing the item. Please try again."
         );
       }
-    }
-  };
+    },
+  });
 
-  const getMealQuantity = async (mealId: string) => {
-    try {
-      const result = await getItemQuantity(mealId);
-      setQuantity(result);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error fetching meal quantity:", error.message);
-      }
-      setQuantity(0);
-    }
-  };
+  // const onAddToCart = async (mealId: string) => {
+  //   try {
+  //     const result = await addToCartBackend(mealId);
+  //     showSuccessToast(result.message);
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       showErrorToast(error.message || "An error occurred. Please try again.");
+  //     } else {
+  //       showErrorToast(
+  //         "An error occurred while adding item to the cart. Please try again."
+  //       );
+  //     }
+  //   }
+  // };
+
+  // const onIncrement1 = async (mealId: string) => {
+  //   try {
+  //     const result = await incrementCartMealBackend(mealId);
+  //     showInfoToast(result.message);
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       showErrorToast(
+  //         error.message ||
+  //           "An error occurred while incrementing. Please try again."
+  //       );
+  //     } else {
+  //       showErrorToast(
+  //         "An unexpected error occurred while incrementing the item. Please try again."
+  //       );
+  //     }
+  //   }
+  // };
+
+  // const onDecrement1 = async (mealId: string) => {
+  //   try {
+  //     if (data.cartItem.quantity === 1) {
+  //       const result = await decrementCartMealBackend(mealId);
+  //       showSuccessToast("Item removed from cart");
+  //       return;
+  //     }
+  //     const result = await decrementCartMealBackend(mealId);
+  //     showInfoToast(result.message);
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       showErrorToast(
+  //         error.message ||
+  //           "An error occurred while decrementing. Please try again."
+  //       );
+  //     } else {
+  //       showErrorToast(
+  //         "An unexpected error occurred while decrementing the item. Please try again."
+  //       );
+  //     }
+  //   }
+  // };
 
   return (
     <Grid2 size={{ sm: 12, md: 7 }}>
@@ -202,9 +222,28 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
               {meal.category}
             </Typography>
 
-            {!inCart ? (
+            {isLoading ? (
               <Button
-                onClick={() => onAddToCart(meal.mealId)}
+                // onClick={() => onAddToCart(meal.mealId)}
+                disabled={isLoading}
+                sx={{
+                  padding: "12px 24px",
+                  borderRadius: "8px",
+                  width: { xs: "100%", sm: "auto" },
+                  backgroundColor: "#FFA500",
+                  color: "#fff",
+                  "&:hover": {
+                    backgroundColor: "#FFC300",
+                  },
+                }}
+              >
+                <Typography fontFamily="Poppins" fontWeight={500}>
+                  Add to Cart
+                </Typography>
+              </Button>
+            ) : data && !data.isInCart ? (
+              <Button
+                onClick={() => addToCartMutation.mutate(meal.mealId)}
                 sx={{
                   padding: "12px 24px",
                   borderRadius: "8px",
@@ -232,7 +271,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
                 }}
               >
                 <Button
-                  onClick={() => onDecrement1(meal.mealId)}
+                  onClick={() => decrementItemMutation.mutate(meal.mealId)}
                   sx={{
                     flex: 1,
                     backgroundColor: "#999999",
@@ -260,12 +299,11 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
                   disableRipple
                 >
                   <Typography fontFamily="Poppins" fontSize="18px">
-                    {/* {onGetItemQuantity(meal.mealId)} */ quantity}
+                    {data && data.cartItem.quantity}
                   </Typography>
                 </Button>
                 <Button
-                  // onClick={() => onIncrement(meal.mealId)}
-                  onClick={() => onIncrement1(meal.mealId)}
+                  onClick={() => incrementItemMutation.mutate(meal.mealId)}
                   sx={{
                     flex: 1,
                     backgroundColor: "#FFA500",

@@ -54,6 +54,7 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
   } = useQuery({
     queryKey: ["filterMenu", id, Category],
     queryFn: () => fetchMenu(id, Category),
+    staleTime: 5 * 60 * 1000, // 5min
   });
 
   return (

@@ -17,6 +17,7 @@ const RestaurantMenu: React.FC<restaurantProps> = ({ id }) => {
   } = useQuery({
     queryKey: ["restaurantDetails", id],
     queryFn: () => fetchRestaurantDetailById(id),
+    staleTime: 10 * 60 * 1000, // 5min
   });
 
   if (error) {

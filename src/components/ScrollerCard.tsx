@@ -1,63 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { ShoppingBag } from "@mui/icons-material";
 import { Box, Typography, Stack } from "@mui/material";
-import { showErrorToast, showSuccessToast } from "./ToastContainer";
 import { Link } from "react-router-dom";
+import useCart from "../hooks/useCart";
 import { MealItem } from "../types/type";
-
-import {
-  addToCartBackend,
-  isItemInCartBackend,
-  removeFromCartBackend,
-} from "../util/util";
 
 interface ScrollerCardProp {
   Card: MealItem;
 }
 
 const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
-  const [inCart, setInCart] = useState<boolean>(false);
-  useEffect(() => {
-    if (Card?.mealId) {
-      isItemInCart(Card.mealId);
-    }
-  }, [Card.mealId]);
-
-  const isItemInCart = async (mealId: string) => {
-    try {
-      const result = await isItemInCartBackend(mealId);
-      setInCart(result);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error checking if item is in cart:", error.message);
-      } else {
-        console.error("Unknown error occurred while checking cart status.");
-      }
-      setInCart(false);
-    }
-  };
+  const { data, isLoading, error, addToCart, removeFromCart } = useCart(
+    Card.mealId
+  );
 
   const handleBagClick = async () => {
-    try {
-      if (inCart) {
-        const result = await removeFromCartBackend(Card.mealId);
-        setInCart(false);
-        showSuccessToast(result.message);
-      } else {
-        const result = await addToCartBackend(Card.mealId);
-        setInCart(true);
-        showSuccessToast(result.message);
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error adding/removing item from cart:", error.message);
-        showErrorToast(error.message || "An error occurred. Please try again.");
-      } else {
-        console.error(
-          "Unknown error occurred while adding/removing item from cart."
-        );
-        showErrorToast("An error occurred. Please try again.");
-      }
+    if (data.isInCart) {
+      removeFromCart(Card.mealId);
+    } else {
+      addToCart(Card.mealId);
     }
   };
 
@@ -236,12 +197,12 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
             zIndex={3}
             sx={{
               cursor: "pointer",
-              backgroundColor: inCart ? "#F6B716" : "#fff",
-              color: inCart ? "#fff" : "#000000",
+              backgroundColor: data && data.isInCart ? "#F6B716" : "#fff",
+              color: data && data.isInCart ? "#fff" : "#000000",
               transition: "all 0.3s ease",
               "&:hover": {
-                backgroundColor: inCart ? "#ff8c00" : "#F6B716",
-                color: inCart ? "#fff" : "#000000",
+                backgroundColor: data && data.isInCart ? "#ff8c00" : "#F6B716",
+                color: data && data.isInCart ? "#fff" : "#000000",
 
                 transform: "scale(1.1)",
                 "& .MuiSvgIcon-root": {

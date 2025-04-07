@@ -9,145 +9,16 @@ import {
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import useCart from "../../hooks/useCart";
 import { MealItem } from "../../types/type";
-import {
-  getCartItemByMealId,
-  addToCartBackend,
-  decrementCartMealBackend,
-  incrementCartMealBackend,
-} from "../../util/util";
-import {
-  showErrorToast,
-  showInfoToast,
-  showSuccessToast,
-} from "../../components/ToastContainer";
 
 interface ProductDescriptionProps {
   meal: MealItem;
 }
 
 const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
-  const queryClient = useQueryClient();
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["productCart", meal.mealId],
-    queryFn: () => getCartItemByMealId(meal.mealId),
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const addToCartMutation = useMutation({
-    mutationFn: (mealId: string) => addToCartBackend(mealId),
-    onSuccess: (addData, variables) => {
-      showSuccessToast(addData.message);
-      queryClient.invalidateQueries({ queryKey: ["productCart", meal.mealId] });
-    },
-    onError: (error) => {
-      if (error instanceof Error) {
-        showErrorToast(error.message || "An error occurred. Please try again.");
-      } else {
-        showErrorToast(
-          "An error occurred while adding item to the cart. Please try again."
-        );
-      }
-    },
-  });
-  const incrementItemMutation = useMutation({
-    mutationFn: (mealId: string) => incrementCartMealBackend(mealId),
-    onSuccess: (incrementData, variables) => {
-      showInfoToast(incrementData.message);
-      queryClient.invalidateQueries({ queryKey: ["productCart", meal.mealId] });
-    },
-    onError: (error) => {
-      if (error instanceof Error) {
-        showErrorToast(error.message || "An error occurred. Please try again.");
-      } else {
-        showErrorToast(
-          "An error occurred while adding item to the cart. Please try again."
-        );
-      }
-    },
-  });
-
-  const decrementItemMutation = useMutation({
-    mutationFn: (mealId: string) => decrementCartMealBackend(mealId),
-    onSuccess: (decrementData, variables) => {
-      if (decrementData && data.cartItem.quantity === 1) {
-        showSuccessToast("Item removed from cart");
-      } else {
-        showInfoToast(decrementData.message);
-      }
-      queryClient.invalidateQueries({ queryKey: ["productCart", meal.mealId] });
-    },
-    onError: (error) => {
-      if (error instanceof Error) {
-        showErrorToast(
-          error.message ||
-            "An error occurred while decrementing. Please try again."
-        );
-      } else {
-        showErrorToast(
-          "An unexpected error occurred while decrementing the item. Please try again."
-        );
-      }
-    },
-  });
-
-  // const onAddToCart = async (mealId: string) => {
-  //   try {
-  //     const result = await addToCartBackend(mealId);
-  //     showSuccessToast(result.message);
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       showErrorToast(error.message || "An error occurred. Please try again.");
-  //     } else {
-  //       showErrorToast(
-  //         "An error occurred while adding item to the cart. Please try again."
-  //       );
-  //     }
-  //   }
-  // };
-
-  // const onIncrement1 = async (mealId: string) => {
-  //   try {
-  //     const result = await incrementCartMealBackend(mealId);
-  //     showInfoToast(result.message);
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       showErrorToast(
-  //         error.message ||
-  //           "An error occurred while incrementing. Please try again."
-  //       );
-  //     } else {
-  //       showErrorToast(
-  //         "An unexpected error occurred while incrementing the item. Please try again."
-  //       );
-  //     }
-  //   }
-  // };
-
-  // const onDecrement1 = async (mealId: string) => {
-  //   try {
-  //     if (data.cartItem.quantity === 1) {
-  //       const result = await decrementCartMealBackend(mealId);
-  //       showSuccessToast("Item removed from cart");
-  //       return;
-  //     }
-  //     const result = await decrementCartMealBackend(mealId);
-  //     showInfoToast(result.message);
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       showErrorToast(
-  //         error.message ||
-  //           "An error occurred while decrementing. Please try again."
-  //       );
-  //     } else {
-  //       showErrorToast(
-  //         "An unexpected error occurred while decrementing the item. Please try again."
-  //       );
-  //     }
-  //   }
-  // };
+  const { data, isLoading, error, addToCart, incrementItem, decrementItem } =
+    useCart(meal.mealId);
 
   return (
     <Grid2 size={{ sm: 12, md: 7 }}>
@@ -243,7 +114,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
               </Button>
             ) : data && !data.isInCart ? (
               <Button
-                onClick={() => addToCartMutation.mutate(meal.mealId)}
+                onClick={() => addToCart(meal.mealId)}
                 sx={{
                   padding: "12px 24px",
                   borderRadius: "8px",
@@ -271,7 +142,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
                 }}
               >
                 <Button
-                  onClick={() => decrementItemMutation.mutate(meal.mealId)}
+                  onClick={() => decrementItem(meal.mealId)}
                   sx={{
                     flex: 1,
                     backgroundColor: "#999999",
@@ -303,7 +174,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
                   </Typography>
                 </Button>
                 <Button
-                  onClick={() => incrementItemMutation.mutate(meal.mealId)}
+                  onClick={() => incrementItem(meal.mealId)}
                   sx={{
                     flex: 1,
                     backgroundColor: "#FFA500",

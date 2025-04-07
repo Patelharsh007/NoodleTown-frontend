@@ -33,7 +33,16 @@ export interface NewAddress {
 }
 
 //CartItem for CartSlice
+//CartItem for CartSlice
 export interface CartItem {
+  id: number;
+  mealId: string;
+  email: string;
+  quantity: number;
+  meal: MealItem;
+}
+
+export interface CartItem1 {
   id: string;
   itemId: string;
   name: string;

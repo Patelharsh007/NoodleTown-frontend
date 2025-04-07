@@ -4,10 +4,10 @@ import {
   showInfoToast,
   showSuccessToast,
 } from "../../components/ToastContainer";
-import { CartItem } from "../../types/type";
+import { CartItem1 } from "../../types/type";
 
 interface CartState {
-  items: CartItem[];
+  items: CartItem1[];
 }
 
 const loadCartFromLocalStorage = (): CartState => {
@@ -26,7 +26,7 @@ const CartSlice = createSlice({
   name: "cart",
   initialState: loadCartFromLocalStorage(),
   reducers: {
-    addToCart: (state, action: PayloadAction<CartItem>) => {
+    addToCart: (state, action: PayloadAction<CartItem1>) => {
       state.items.push({ ...action.payload, quantity: 1 });
       showSuccessToast(`${action.payload.name} added to cart succesfully`);
       saveCartToLocalStorage(state);

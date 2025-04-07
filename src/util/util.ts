@@ -190,7 +190,11 @@ export const getUserCart = async () => {
     const response = await axios.get(`${BASE_URL}/cart/allCartData`, {
       withCredentials: true,
     });
-    return response.data.isInCart;
+    if (response.data && response.data.cartItem) {
+      return response.data.cartItem;
+    } else {
+      return [];
+    }
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(
@@ -318,6 +322,29 @@ export const decrementCartMealBackend = async (mealId: string) => {
         withCredentials: true,
       }
     );
+    if (response.data.status === "success") {
+      return response.data;
+    } else {
+      return response.data;
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message ||
+          "An error occurred while processing the decrement request."
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while decrementing item quantity."
+      );
+    }
+  }
+};
+export const emptyCartBackend = async () => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/cart/clearCart`, {
+      withCredentials: true,
+    });
     if (response.data.status === "success") {
       return response.data;
     } else {

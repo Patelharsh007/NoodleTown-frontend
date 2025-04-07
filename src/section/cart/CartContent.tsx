@@ -1,4 +1,4 @@
-import { Box, Button, Grid2, Stack, Typography } from "@mui/material";
+import { Box, Button, Grid2, Stack, Typography, Skeleton } from "@mui/material";
 import React from "react";
 import CartCard from "../../components/CartCard";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,34 +9,56 @@ import {
 import { RootState } from "../../redux/Store";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
+import { useQuery } from "@tanstack/react-query";
+import { CartItem, MealItem } from "../../types/type";
+import { getUserCart } from "../../util/util";
 
 const CartContent = () => {
-  const dispatch = useDispatch();
+  const auth = useSelector((state: RootState) => state.authUser.authUser);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["cartItems", auth.email],
+    queryFn: getUserCart,
+    staleTime: 1 * 60 * 1000,
+  });
+
   const navigate = useNavigate();
-
-  const cartItems = useSelector((state: RootState) => state.cart.items);
-
-  const handleIncrement = (itemId: string) => {
-    dispatch(incrementQuantity(itemId));
-  };
-
-  const handleDecrement = (itemId: string) => {
-    dispatch(decrementQuantity(itemId));
-  };
 
   return (
     <>
       <Box maxWidth={"1600px"} width={"90%"} margin={"auto"}>
         <Grid2 container spacing={3} margin={"30px 0"}>
-          {cartItems.length > 0 ? (
-            cartItems.map((item) => (
-              <CartCard
-                item={item}
-                onIncrement={handleIncrement}
-                onDecrement={handleDecrement}
-                key={item.id}
-              />
-            ))
+          {isLoading ? (
+            <>
+              {[...Array(3)].map((_, index) => (
+                <Grid2 key={index} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+                  <Box
+                    padding={{ xs: "15px", sm: "30px" }}
+                    borderRadius={"17px"}
+                    sx={{ backgroundColor: "#F9F9F9" }}
+                  >
+                    <Skeleton
+                      variant="rectangular"
+                      width="100%"
+                      height={190}
+                      sx={{ borderRadius: "16px" }}
+                    />
+                    <Stack spacing={1.5} sx={{ marginTop: "15px" }}>
+                      <Skeleton variant="text" width="60%" height={30} />
+                      <Skeleton variant="text" width="40%" height={30} />
+                      <Skeleton variant="text" width="80%" height={20} />
+                      <Skeleton
+                        variant="rectangular"
+                        width="100%"
+                        height={40}
+                      />
+                    </Stack>
+                  </Box>
+                </Grid2>
+              ))}
+            </>
+          ) : data && data.length > 0 ? (
+            data.map((item: CartItem) => <CartCard item={item} key={item.id} />)
           ) : (
             <>
               <Stack margin={"auto"}>

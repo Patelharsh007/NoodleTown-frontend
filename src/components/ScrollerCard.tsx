@@ -2,7 +2,7 @@ import React from "react";
 import { ShoppingBag } from "@mui/icons-material";
 import { Box, Typography, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
-import useCart from "../hooks/useCart";
+import useCart from "../hooks/useCartMeal";
 import { MealItem } from "../types/type";
 
 interface ScrollerCardProp {

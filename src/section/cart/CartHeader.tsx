@@ -1,21 +1,41 @@
 import React from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
-
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-
-import { useSelector, useDispatch } from "react-redux";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { emptyCartBackend, getUserCart } from "../../util/util";
+import {
+  showSuccessToast,
+  showErrorToast,
+} from "../../components/ToastContainer";
 import { RootState } from "../../redux/Store";
-
-import { clearCart } from "../../redux/slices/CartSlice";
+import { useSelector } from "react-redux";
 
 const CartHeader: React.FC = () => {
-  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const auth = useSelector((state: RootState) => state.authUser.authUser);
 
-  const handleClearCart = () => {
-    dispatch(clearCart());
-  };
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["cartItems", auth.email],
+    queryFn: getUserCart,
+    staleTime: 1 * 60 * 1000,
+  });
+
+  const clearCart = useMutation({
+    mutationFn: emptyCartBackend,
+    onSuccess: (clearCart) => {
+      showSuccessToast(clearCart.message);
+      queryClient.invalidateQueries({ queryKey: ["cartItems", auth.email] });
+    },
+    onError: (error) => {
+      showErrorToast(
+        error instanceof Error
+          ? error.message
+          : "An error occurred while adding item to the cart."
+      );
+    },
+  });
+
   return (
     <>
       <Box maxWidth={"1600px"} width={"90%"} margin={"auto"} marginTop={"50px"}>
@@ -34,13 +54,13 @@ const CartHeader: React.FC = () => {
             marginBottom={"30px"}
             textAlign={"left"}
           >
-            Your Cart {cartItems.length > 0 ? `(${cartItems.length})` : ""}
+            Your Cart {data && data.length > 0 ? `(${data.length})` : ""}
           </Typography>
 
-          {cartItems.length > 0 && (
+          {data && data.length > 0 && (
             <Button
               startIcon={<DeleteOutlineIcon />}
-              onClick={handleClearCart}
+              onClick={() => clearCart.mutate()}
               sx={{
                 alignSelf: { xs: "flex-end", sm: "center" },
                 color: "#666",

@@ -19,7 +19,7 @@ import {
   incrementQuantity,
   decrementQuantity,
 } from "../../redux/slices/CartSlice";
-import { CartItem, MealItem } from "../../types/type";
+import { CartItem1, MealItem } from "../../types/type";
 import { RootState } from "../../redux/Store";
 
 const SearchMeal: React.FC<{ city: string; value: string }> = ({
@@ -40,11 +40,11 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
   });
 
   const isItemInCart = (mealId: string) => {
-    return cartItems.some((item: CartItem) => item.id === mealId);
+    return cartItems.some((item: CartItem1) => item.id === mealId);
   };
 
   const getItemQuantity = (mealId: string) => {
-    const cartItem = cartItems.find((item: CartItem) => item.id === mealId);
+    const cartItem = cartItems.find((item: CartItem1) => item.id === mealId);
     return cartItem ? cartItem.quantity : 0;
   };
 

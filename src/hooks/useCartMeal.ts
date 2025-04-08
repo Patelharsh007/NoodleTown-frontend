@@ -133,6 +133,9 @@ const useCart = () => {
     removeFromCart: removeFromCartMutation.mutate,
     incrementItem: incrementItemMutation.mutate,
     decrementItem: decrementItemMutation.mutate,
+    isAdding: addToCartMutation.isPending,
+    isIncrementing: incrementItemMutation.isPending,
+    isDecrementing: decrementItemMutation.isPending,
   };
 };
 

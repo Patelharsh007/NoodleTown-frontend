@@ -23,13 +23,15 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
 }) => {
   const dispatch = useDispatch();
 
+  // Use objects to track loading state for each meal by its ID
+  const [loadingStates, setLoadingStates] = useState<{
+    [key: string]: boolean;
+  }>({});
+
   const {
-    cart,
+    cart = [],
     isLoadingCart,
     errorCart,
-    // data,
-    // isLoading,
-    // error,
     addToCart,
     incrementItem,
     decrementItem,
@@ -44,34 +46,18 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
     queryFn: () => fetchSearchMeals(city, value),
   });
 
-  const isItemInCart = (mealId: string) => {
-    if (cart && cart.length > 0) {
-      return cart.find((item: CartItem) => item.mealId === mealId);
-    } else {
-      return false;
-    }
-  };
-
-  const getItemQuantity = (mealId: string) => {
-    const cartItem = cart.find((item: CartItem) => item.mealId === mealId);
-    return cartItem ? cartItem.quantity : 0;
-  };
+  const isItemInCart = (mealId: string) =>
+    cart.length > 0 && cart?.some((item: CartItem) => item.mealId === mealId);
+  const getItemQuantity = (mealId: string) =>
+    cart?.find((item: CartItem) => item.mealId === mealId)?.quantity || 0;
 
   const handleAddToCart = (meal: MealItem) => {
-    if (!meal) return;
-
-    if (!isItemInCart(meal.mealId)) {
-      addToCart(meal.mealId);
-    }
+    if (!meal || isItemInCart(meal.mealId)) return;
+    addToCart(meal.mealId);
   };
 
-  const handleIncrementMeal = (mealId: string) => {
-    incrementItem(mealId);
-  };
-
-  const handleDecrementMeal = (mealId: string) => {
-    decrementItem(mealId);
-  };
+  const handleIncrementMeal = (mealId: string) => incrementItem(mealId);
+  const handleDecrementMeal = (mealId: string) => decrementItem(mealId);
 
   if (error) {
     return (

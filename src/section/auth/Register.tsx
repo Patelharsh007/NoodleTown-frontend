@@ -1,8 +1,9 @@
+//
+
 import React, { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
-
 import { SignUpForm } from "../../form/SignUpForm";
 import { assets } from "../../assets/assets";
 import { showErrorToast, showInfoToast } from "../../components/ToastContainer";
@@ -17,51 +18,91 @@ export const Register: React.FC = () => {
     return <Navigate to="/user" />;
   }
 
-  const handleSignUp = async (
-    fullName: string,
-    email: string,
-    password: string
-  ) => {
-    const signUpInfo = {
-      userName: fullName,
-      email: email,
-      password: password,
-    };
+  const handleSignUp = async (formData: any) => {
+    const { fullName, email, password, profileImage } = formData;
+
+    if (!fullName || !email || !password || !profileImage) {
+      if (!profileImage) {
+        showErrorToast("Upload profile picture.");
+        return;
+      }
+      showErrorToast("All fields are required.");
+      return;
+    }
+
+    const form = new FormData();
+    form.append("userName", fullName);
+    form.append("email", email);
+    form.append("password", password);
+    form.append("profileImage", profileImage); // Append the File object
+
+    console.log("form", form);
+
     setLoading(true);
 
     try {
-      const url = "http://localhost:8080/api/auth/register";
-
-      const response = await fetch(url, {
+      const response = await fetch("http://localhost:8080/api/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(signUpInfo),
+        body: form, // Send the FormData object directly
+        // Do NOT set the Content-Type header here.
       });
 
       const result = await response.json();
 
       if (result.status === "success") {
-        showInfoToast(`${result.message}`);
-        // dispatch(signUp({ email, password }));
+        showInfoToast(result.message);
         navigate("/auth/login");
-      } else if (result.status === "error") {
-        // Handle validation errors
-        if (result.errors && result.errors.length > 0) {
-          result.errors.forEach((error: { field: string; message: string }) => {
-            // Display error messages for each field
-            showErrorToast(`${error.message}`);
-          });
-        } else {
-          showErrorToast(`${result.message}`);
-        }
+      } else {
+        showErrorToast(result.message || "Registration failed.");
       }
     } catch (error) {
-      console.log("Error during fetch:", error);
       showErrorToast("An unexpected error occurred. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
+
+  // const handleSignUp = async (formData: any) => {
+  //   const { fullName, email, password, profileImage } = formData;
+
+  //   if (!fullName || !email || !password || !profileImage) {
+  //     showErrorToast("All fields are required.");
+  //     return;
+  //   }
+
+  //   // const form = { fullName, email, password, profileImage };
+  //   const form = new FormData();
+  //   form.append("fullName", fullName);
+  //   form.append("email", email);
+  //   form.append("password", password);
+  //   form.append("profileImage", profileImage);
+  //   console.log("form", form);
+
+  //   setLoading(true);
+
+  //   try {
+  //     const response = await fetch("http://localhost:8080/api/auth/register", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(form),
+  //     });
+
+  //     const result = await response.json();
+
+  //     if (result.status === "success") {
+  //       showInfoToast(result.message);
+  //       navigate("/auth/login");
+  //     } else {
+  //       showErrorToast(result.message || "Registration failed.");
+  //     }
+  //   } catch (error) {
+  //     showErrorToast("An unexpected error occurred. Please try again later.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <Box
@@ -89,37 +130,13 @@ export const Register: React.FC = () => {
           textAlign: "center",
         }}
       >
-        <Box
-          component="img"
-          src={assets.images.auth.authLogo}
-          alt="Noodletown"
-          sx={{
-            width: "80px",
-            height: "80px",
-            display: "block",
-            margin: "0 auto 20px",
-          }}
-        />
-
         <Typography
           variant="h4"
-          sx={{
-            fontWeight: 600,
-            color: "#333",
-            mb: 1,
-            fontSize: { xs: "1.5rem", sm: "2rem" },
-          }}
+          sx={{ fontWeight: 600, mb: 1, fontSize: "2rem" }}
         >
           Create Account
         </Typography>
-
-        <Typography
-          sx={{
-            color: "#666",
-            mb: 3,
-            fontSize: "0.9rem",
-          }}
-        >
+        <Typography sx={{ color: "#666", mb: 3, fontSize: "0.9rem" }}>
           Join us for delicious adventures!
         </Typography>
 
@@ -149,7 +166,6 @@ export const Register: React.FC = () => {
         >
           Login
         </Typography>
-        {/* </Button> */}
 
         <Link
           to="/home"

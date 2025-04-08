@@ -43,6 +43,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
             id: user.id,
             email: user.email,
             userName: user.userName,
+            profileImage: user.profileImage,
           })
         );
         // showSuccessToast("User Authenticated");

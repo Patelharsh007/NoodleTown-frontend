@@ -68,6 +68,7 @@ export interface AuthUserItem {
   id: number | null;
   email: string | null;
   userName: string | null;
+  profileImage: string | null;
 }
 
 //mealItemType used in mealitem data and

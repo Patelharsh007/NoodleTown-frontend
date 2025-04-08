@@ -19,9 +19,7 @@ interface CartCardProp {
 }
 
 const CartCard: React.FC<CartCardProp> = ({ item }) => {
-  const { data, isLoading, error, incrementItem, decrementItem } = useCart(
-    item.mealId
-  );
+  const { cart, incrementItem, decrementItem } = useCart();
 
   return (
     <Grid2 key={item.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
@@ -91,7 +89,7 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
               display: "-webkit-box",
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
-              WebkitLineClamp: 2,
+              WebkitLineClamp: 1,
               textOverflow: "ellipsis",
             }}
           >
@@ -132,7 +130,12 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
                 color: "#000000",
               }}
             >
-              {item && data && data.cartItem.quantity}
+              {(item &&
+                cart &&
+                cart.find(
+                  (cartItem: CartItem) => cartItem.mealId === item.mealId
+                )?.quantity) ||
+                0}
             </Button>
             <Button
               onClick={() => incrementItem(item.mealId)}

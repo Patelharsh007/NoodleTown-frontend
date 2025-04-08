@@ -14,13 +14,8 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSearchMeals } from "../../util/util";
-import {
-  addToCart,
-  incrementQuantity,
-  decrementQuantity,
-} from "../../redux/slices/CartSlice";
-import { CartItem1, MealItem } from "../../types/type";
-import { RootState } from "../../redux/Store";
+import { CartItem, CartItem1, MealItem } from "../../types/type";
+import useCart from "../../hooks/useCartMeal";
 
 const SearchMeal: React.FC<{ city: string; value: string }> = ({
   city,
@@ -28,7 +23,17 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const {
+    cart,
+    isLoadingCart,
+    errorCart,
+    // data,
+    // isLoading,
+    // error,
+    addToCart,
+    incrementItem,
+    decrementItem,
+  } = useCart();
 
   const {
     data: meals,
@@ -40,11 +45,15 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
   });
 
   const isItemInCart = (mealId: string) => {
-    return cartItems.some((item: CartItem1) => item.id === mealId);
+    if (cart && cart.length > 0) {
+      return cart.find((item: CartItem) => item.mealId === mealId);
+    } else {
+      return false;
+    }
   };
 
   const getItemQuantity = (mealId: string) => {
-    const cartItem = cartItems.find((item: CartItem1) => item.id === mealId);
+    const cartItem = cart.find((item: CartItem) => item.mealId === mealId);
     return cartItem ? cartItem.quantity : 0;
   };
 
@@ -52,28 +61,16 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
     if (!meal) return;
 
     if (!isItemInCart(meal.mealId)) {
-      dispatch(
-        addToCart({
-          id: meal.mealId,
-          itemId: meal.mealId,
-          name: meal.title,
-          price: meal.price,
-          quantity: 1,
-          image: meal.image,
-          restaurantId: meal.restaurantId,
-          category: meal.category,
-          description: meal.shortDescription,
-        })
-      );
+      addToCart(meal.mealId);
     }
   };
 
   const handleIncrementMeal = (mealId: string) => {
-    dispatch(incrementQuantity(mealId));
+    incrementItem(mealId);
   };
 
   const handleDecrementMeal = (mealId: string) => {
-    dispatch(decrementQuantity(mealId));
+    decrementItem(mealId);
   };
 
   if (error) {
@@ -198,7 +195,7 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
                     <ButtonGroup
                       disableElevation
                       sx={{
-                        height: "45px",
+                        height: "37px",
                         width: "175px",
                         "& .MuiButtonGroup-grouped:not(:last-of-type)": {
                           borderColor: "transparent",
@@ -259,6 +256,7 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
                     <Button
                       onClick={() => handleAddToCart(meal)}
                       sx={{
+                        height: "37px",
                         backgroundColor: "#FFA500",
                         color: "#fff",
                         "&:hover": {

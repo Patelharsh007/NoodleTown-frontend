@@ -287,9 +287,9 @@ export const removeFromCartBackend = async (mealId: string) => {
 
 export const incrementCartMealBackend = async (mealId: string) => {
   try {
-    const response = await axios.put(
+    const response = await axios.patch(
       `${BASE_URL}/cart/increment/${mealId}`,
-      {}, // Empty body for PUT request
+      {}, // No body data is needed
       {
         withCredentials: true,
       }
@@ -315,9 +315,9 @@ export const incrementCartMealBackend = async (mealId: string) => {
 
 export const decrementCartMealBackend = async (mealId: string) => {
   try {
-    const response = await axios.put(
+    const response = await axios.patch(
       `${BASE_URL}/cart/decrement/${mealId}`,
-      {}, // Empty body
+      {}, // No body data is needed
       {
         withCredentials: true,
       }

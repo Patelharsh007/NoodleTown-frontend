@@ -9,9 +9,10 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useCart from "../hooks/useCartMeal";
+import { CartItem } from "../types/type";
 
 interface MealItem {
   id: number;
@@ -33,8 +34,25 @@ interface RestaurantOrderMenuItemsProps {
 const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
   meal,
 }) => {
-  const { data, isLoading, error, addToCart, incrementItem, decrementItem } =
-    useCart(meal.mealId);
+  const [isInCart, setIsInCart] = useState<boolean>(false);
+
+  const {
+    cart,
+    isLoadingCart,
+    errorCart,
+    addToCart,
+    incrementItem,
+    decrementItem,
+  } = useCart();
+
+  useEffect(() => {
+    if (cart && cart.length > 0) {
+      const itemInCart = cart.some(
+        (cartItem: CartItem) => cartItem.mealId === meal.mealId
+      );
+      setIsInCart(itemInCart);
+    }
+  }, [cart, meal.mealId]);
 
   return (
     <React.Fragment key={meal.mealId}>
@@ -101,10 +119,10 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
             ₹{meal.price}
           </Typography>
 
-          {isLoading ? (
+          {isLoadingCart ? (
             <>
               <Button
-                disabled={isLoading}
+                disabled={isLoadingCart}
                 sx={{
                   height: "37px",
                   width: "175px",
@@ -135,7 +153,7 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
             </>
           ) : (
             <>
-              {data && data.isInCart ? (
+              {cart.length > 0 && isInCart ? (
                 <ButtonGroup
                   disableElevation
                   sx={{
@@ -183,10 +201,15 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
                         md: "18px",
                       }}
                     >
-                      {isLoading ? (
+                      {isLoadingCart ? (
                         <CircularProgress />
+                      ) : cart.length > 0 && isInCart ? (
+                        cart.find(
+                          (cartItem: CartItem) =>
+                            cartItem.mealId === meal.mealId
+                        )?.quantity || 0
                       ) : (
-                        data && data.cartItem.quantity
+                        0
                       )}
                     </Typography>
                   </Button>

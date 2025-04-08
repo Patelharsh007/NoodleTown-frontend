@@ -12,15 +12,10 @@ import { assets } from "../../assets/assets";
 import { useQuery } from "@tanstack/react-query";
 import { CartItem, MealItem } from "../../types/type";
 import { getUserCart } from "../../util/util";
+import useCart from "../../hooks/useCartMeal";
 
 const CartContent = () => {
-  const auth = useSelector((state: RootState) => state.authUser.authUser);
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["cartItems", auth.email],
-    queryFn: getUserCart,
-    staleTime: 1 * 60 * 1000,
-  });
+  const { cart, isLoadingCart, errorCart } = useCart();
 
   const navigate = useNavigate();
 
@@ -28,9 +23,9 @@ const CartContent = () => {
     <>
       <Box maxWidth={"1600px"} width={"90%"} margin={"auto"}>
         <Grid2 container spacing={3} margin={"30px 0"}>
-          {isLoading ? (
+          {isLoadingCart ? (
             <>
-              {[...Array(3)].map((_, index) => (
+              {[...Array(4)].map((_, index) => (
                 <Grid2 key={index} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
                   <Box
                     padding={{ xs: "15px", sm: "30px" }}
@@ -57,8 +52,8 @@ const CartContent = () => {
                 </Grid2>
               ))}
             </>
-          ) : data && data.length > 0 ? (
-            data.map((item: CartItem) => <CartCard item={item} key={item.id} />)
+          ) : cart && cart.length > 0 ? (
+            cart.map((item: CartItem) => <CartCard item={item} key={item.id} />)
           ) : (
             <>
               <Stack margin={"auto"}>

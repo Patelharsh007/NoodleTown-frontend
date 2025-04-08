@@ -6,19 +6,34 @@ import {
   Button,
   ButtonGroup,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import useCart from "../../hooks/useCartMeal";
-import { MealItem } from "../../types/type";
+import { CartItem, MealItem } from "../../types/type";
 
 interface ProductDescriptionProps {
   meal: MealItem;
 }
 
 const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
-  const { data, isLoading, error, addToCart, incrementItem, decrementItem } =
-    useCart(meal.mealId);
+  const [isInCart, setIsInCart] = useState<boolean>(false);
+  const { cart, isLoadingCart, addToCart, incrementItem, decrementItem } =
+    useCart();
+
+  useEffect(() => {
+    console.log("use effect called");
+
+    if (cart && cart.length > 0) {
+      const itemInCart = cart.some(
+        (cartItem: CartItem) => cartItem.mealId === meal.mealId
+      );
+      console.log("item in cart", itemInCart);
+      setIsInCart(itemInCart);
+    } else {
+      setIsInCart(false);
+    }
+  }, [cart, meal]);
 
   return (
     <Grid2 size={{ sm: 12, md: 7 }}>
@@ -93,10 +108,10 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
               {meal.category}
             </Typography>
 
-            {isLoading ? (
+            {isLoadingCart ? (
               <Button
                 // onClick={() => onAddToCart(meal.mealId)}
-                disabled={isLoading}
+                disabled={isLoadingCart}
                 sx={{
                   padding: "12px 24px",
                   borderRadius: "8px",
@@ -112,7 +127,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
                   Add to Cart
                 </Typography>
               </Button>
-            ) : data && !data.isInCart ? (
+            ) : !isInCart ? (
               <Button
                 onClick={() => addToCart(meal.mealId)}
                 sx={{
@@ -170,7 +185,16 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
                   disableRipple
                 >
                   <Typography fontFamily="Poppins" fontSize="18px">
-                    {data && data.cartItem.quantity}
+                    {cart &&
+                    cart.length > 0 &&
+                    cart.find(
+                      (cartItem: CartItem) => cartItem.mealId === meal.mealId
+                    )
+                      ? cart.find(
+                          (cartItem: CartItem) =>
+                            cartItem.mealId === meal.mealId
+                        )?.quantity || 0
+                      : 0}
                   </Typography>
                 </Button>
                 <Button

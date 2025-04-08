@@ -1,21 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ShoppingBag } from "@mui/icons-material";
 import { Box, Typography, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
 import useCart from "../hooks/useCartMeal";
-import { MealItem } from "../types/type";
+import { CartItem, MealItem } from "../types/type";
 
 interface ScrollerCardProp {
   Card: MealItem;
 }
 
 const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
-  const { data, isLoading, error, addToCart, removeFromCart } = useCart(
-    Card.mealId
-  );
+  const [isInCart, setIsInCart] = useState<boolean>(false);
+  const { cart, isLoadingCart, errorCart, addToCart, removeFromCart } =
+    useCart();
+
+  // Effect to update color based on cart changes
+  useEffect(() => {
+    if (cart && cart.length > 0) {
+      const itemInCart = cart.some(
+        (cartItem: CartItem) => cartItem.mealId === Card.mealId
+      );
+      setIsInCart(itemInCart);
+    }
+  }, [cart, Card.mealId]);
 
   const handleBagClick = async () => {
-    if (data.isInCart) {
+    if (isInCart) {
       removeFromCart(Card.mealId);
     } else {
       addToCart(Card.mealId);
@@ -197,12 +207,12 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
             zIndex={3}
             sx={{
               cursor: "pointer",
-              backgroundColor: data && data.isInCart ? "#F6B716" : "#fff",
-              color: data && data.isInCart ? "#fff" : "#000000",
+              backgroundColor: isInCart ? "#F6B716" : "#fff",
+              color: isInCart ? "#fff" : "#000000",
               transition: "all 0.3s ease",
               "&:hover": {
-                backgroundColor: data && data.isInCart ? "#ff8c00" : "#F6B716",
-                color: data && data.isInCart ? "#fff" : "#000000",
+                backgroundColor: isInCart ? "#ff8c00" : "#F6B716",
+                color: isInCart ? "#fff" : "#000000",
 
                 transform: "scale(1.1)",
                 "& .MuiSvgIcon-root": {

@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/Store";
+import { useDispatch } from "react-redux";
 import { clearUser, setUser } from "../redux/slices/AuthUserSlice";
 import { showErrorToast } from "./ToastContainer";
-import Home from "../pages/Home";
 import { useNavigate } from "react-router-dom";
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
@@ -11,7 +9,6 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const authUser = useSelector((state: RootState) => state.authUser.authUser);
 
   useEffect(() => {
     verifyToken();

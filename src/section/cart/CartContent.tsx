@@ -1,17 +1,9 @@
-import { Box, Button, Grid2, Stack, Typography, Skeleton } from "@mui/material";
 import React from "react";
+import { Box, Button, Grid2, Stack, Typography, Skeleton } from "@mui/material";
 import CartCard from "../../components/CartCard";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  incrementQuantity,
-  decrementQuantity,
-} from "../../redux/slices/CartSlice";
-import { RootState } from "../../redux/Store";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
-import { useQuery } from "@tanstack/react-query";
-import { CartItem, MealItem } from "../../types/type";
-import { getUserCart } from "../../util/util";
+import { CartItem } from "../../types/type";
 import useCart from "../../hooks/useCartMeal";
 
 const CartContent = () => {

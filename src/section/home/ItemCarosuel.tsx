@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Container, Skeleton, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import ScrollerCard from "../../components/ScrollerCard";
 import { assets } from "../../assets/assets";
-
 import { fetchCarosuelCategories, fetchCarosuelItems } from "../../util/util";
 import { useQuery } from "@tanstack/react-query";
 import CarosuelCategoriesSkeleton from "../../skeleton/CarosuelCategoriesSkeleton";

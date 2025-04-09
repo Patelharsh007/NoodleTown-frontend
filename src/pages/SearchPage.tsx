@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import { useParams } from "react-router-dom";
-import { Box, Container, Typography, Grid2, Stack, Chip } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import SearchRestaurant from "../section/search/SearchRestaurant";
 import SearchMeal from "../section/search/SearchMeal";
 

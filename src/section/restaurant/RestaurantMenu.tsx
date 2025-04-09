@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Box, Container, Grid2, Skeleton, Typography } from "@mui/material";
+import { Box, Container, Grid2, Typography } from "@mui/material";
 import { fetchRestaurantDetailById } from "../../util/util";
 import RestaurantMenuSkeleton from "../../skeleton/RestaurantMenuSkeleton";
 

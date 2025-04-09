@@ -1,14 +1,6 @@
 import { Container, Grid2, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addToCart,
-  decrementQuantity,
-  incrementQuantity,
-} from "../../redux/slices/CartSlice";
-import { RootState } from "../../redux/Store";
-
 import RestaurantMenuCategories from "../../components/RestaurantMenuCategories";
 import RestaurantMenuItems from "../../components/RestaurantMenuItems";
 import { fetchMenuCategories } from "../../util/util";

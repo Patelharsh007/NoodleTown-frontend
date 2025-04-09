@@ -1,12 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Box, Container, Grid2, Typography } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/Store";
-import {
-  incrementQuantity,
-  decrementQuantity,
-} from "../../redux/slices/CartSlice";
 import ProductDescription from "./ProductDescription";
 import { fetchMealDetailById } from "../../util/util";
 import ProductSkeleton from "../../skeleton/ProductSkeleton";
@@ -16,8 +10,6 @@ interface productDetailProp {
 }
 
 const Product: React.FC<productDetailProp> = ({ id }) => {
-  const dispatch = useDispatch();
-
   const {
     data: meal,
     isLoading,

@@ -4,9 +4,6 @@ import FaceIcon from "@mui/icons-material/Face";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Link } from "react-router-dom";
 import { Badge, Stack, Box } from "@mui/material";
-
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/Store";
 import useCart from "../hooks/useCartMeal";
 
 interface NavbarProps {

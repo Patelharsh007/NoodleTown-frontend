@@ -1,4 +1,4 @@
-import { Grid2, Stack, Button, Typography, Skeleton } from "@mui/material";
+import { Grid2, Stack, Button, Typography } from "@mui/material";
 import React from "react";
 import RestaurantMenuCategoriesSkeleton from "../skeleton/RestaurantMenuCategoriesSkeleton";
 

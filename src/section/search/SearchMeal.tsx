@@ -8,26 +8,18 @@ import {
   Skeleton,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { useDispatch, useSelector } from "react-redux";
 import { fetchSearchMeals } from "../../util/util";
-import { CartItem, CartItem1, MealItem } from "../../types/type";
+import { CartItem, MealItem } from "../../types/type";
 import useCart from "../../hooks/useCartMeal";
 
 const SearchMeal: React.FC<{ city: string; value: string }> = ({
   city,
   value,
 }) => {
-  const dispatch = useDispatch();
-
-  // Use objects to track loading state for each meal by its ID
-  const [loadingStates, setLoadingStates] = useState<{
-    [key: string]: boolean;
-  }>({});
-
   const {
     cart = [],
     isLoadingCart,

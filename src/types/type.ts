@@ -16,6 +16,7 @@ export interface OrderItem {
   discount: number;
   total: number;
   status: OrderStatus;
+  deliveryCharges: number;
 }
 
 export type OrderStatus =

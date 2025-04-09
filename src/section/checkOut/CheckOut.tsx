@@ -3,7 +3,7 @@ import AddressSection from "./AddressSection";
 import OrderSummary from "./OrderSummary";
 import { AddressItem } from "../../types/type";
 import { mockAddresses, mockCartItems } from "../../data/MockData";
-import { Box, Button, Grid2, Typography } from "@mui/material";
+import { Box, Grid2, Typography } from "@mui/material";
 import {
   showSuccessToast,
   showErrorToast,
@@ -37,7 +37,6 @@ const CheckOut = () => {
       (addr) => addr.id === selectedAddressId
     );
 
-    // In a real application, you would send this data to your backend
     const fullOrder = {
       ...orderData,
       address: {
@@ -52,7 +51,6 @@ const CheckOut = () => {
 
     console.log("Order placed:", fullOrder);
 
-    // Show success toast
     showSuccessToast("Order placed successfully!");
 
     // In a real app, you would redirect to an order confirmation page

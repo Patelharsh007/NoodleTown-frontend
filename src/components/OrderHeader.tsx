@@ -53,7 +53,7 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({ order, onDeleteOrder }) => {
               }}
             />
             <IconButton
-              onClick={() => onDeleteOrder(order.id)}
+              onClick={() => onDeleteOrder(String(order.id))}
               color="error"
               sx={{ fontSize: { xs: "16px", sm: "20px" } }}
             >
@@ -80,7 +80,7 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({ order, onDeleteOrder }) => {
               color="text.secondary"
               fontSize={{ xs: "12px", sm: "14px" }}
             >
-              {new Date(order.Date).toLocaleDateString()}
+              {new Date(order.orderedAt).toLocaleDateString()}
             </Typography>
           </Stack>
           <Stack direction="row" spacing={"4px"}>
@@ -99,7 +99,7 @@ const OrderHeader: React.FC<OrderHeaderProps> = ({ order, onDeleteOrder }) => {
                 wordBreak: "break-word",
               }}
             >
-              {order.address}
+              {String(order.address)}
             </Typography>
           </Stack>
         </Stack>

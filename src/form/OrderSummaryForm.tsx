@@ -58,11 +58,18 @@ const OrderSummaryForm = () => {
 
     //  order object
     const order: OrderItem = {
-      id: String(Date.now()), // unique id
+      id: Math.random(), // unique id
       user_email: authUser.email,
-      Date: new Date().toISOString(), // date
-      address: `${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.pincode}`,
+      orderedAt: new Date().toISOString(), // date
+      address: {
+        id: Math.random().toString(),
+        street: selectedAddress.street,
+        city: selectedAddress.city,
+        state: selectedAddress.state,
+        pincode: selectedAddress.pincode,
+      },
       items: cartItems.map((item) => ({
+        id: Math.random().toString(),
         itemName: item.name,
         quantity: item.quantity,
         price: item.price,
@@ -74,7 +81,7 @@ const OrderSummaryForm = () => {
       ),
       discount: discount,
       total: total,
-      status: "placed",
+      status: "pending",
     };
 
     dispatch(placeOrder(order));

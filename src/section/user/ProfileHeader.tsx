@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { User } from "../../types/type";
-import { Camera, ShoppingCart, LogOut, Lock } from "lucide-react";
-import { Button, Box, Typography, IconButton, Tooltip } from "@mui/material";
+import { ShoppingCart, LogOut, Lock, Camera } from "lucide-react";
+import { Button, Box, Typography, IconButton } from "@mui/material";
 import { Link } from "react-router-dom";
 
 interface ProfileHeaderProps {
@@ -17,8 +17,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onLogout,
   onPasswordUpdate,
 }) => {
-  const [isHovering, setIsHovering] = useState(false);
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       onUpdateProfileImage(e.target.files[0]);
@@ -50,22 +48,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           gap: 3,
         }}
       >
-        {/* Avatar with upload overlay */}
+        {/* Avatar */}
         <Box
           sx={{
-            position: "relative",
             width: 96,
             height: 96,
             borderRadius: "50%",
             overflow: "hidden",
-            border: "2px solid #FFA500", // orange-200
+            border: "2px solid #FFA500",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "#FFF4E0", // orange-50
+            backgroundColor: "#FFF4E0",
           }}
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
         >
           {user.profileImage ? (
             <img
@@ -81,32 +76,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               {getInitials()}
             </Typography>
           )}
-
-          <label
-            htmlFor="avatar-upload"
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              borderRadius: "50%",
-              cursor: "pointer",
-              opacity: isHovering ? 1 : 0,
-              transition: "opacity 0.2s",
-            }}
-          >
-            <Camera style={{ color: "white" }} size={24} />
-            <span className="sr-only">Update profile picture</span>
-          </label>
-          <input
-            id="avatar-upload"
-            type="file"
-            accept="image/*"
-            style={{ display: "none" }}
-            onChange={handleFileChange}
-          />
         </Box>
 
         {/* User info and buttons */}
@@ -134,6 +103,21 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               sx={{ gap: 1 }}
             >
               My Cart
+            </Button>
+
+            <Button
+              variant="outlined"
+              startIcon={<Camera size={16} />}
+              component="label"
+              sx={{ gap: 1 }}
+            >
+              Update Profile Image
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
             </Button>
 
             <Button

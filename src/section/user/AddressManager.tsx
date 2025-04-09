@@ -1,21 +1,22 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { AddressItem } from "../../types/type";
 import {
-  Button,
-  TextField,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  Box,
+  Button,
+  TextField,
+  Grid,
   Typography,
-  Container,
+  IconButton,
+  Box,
 } from "@mui/material";
-import { Trash, Edit, Plus, Home } from "lucide-react";
+import { MapPin, Plus, Pencil, Trash2 } from "lucide-react";
+
 import {
-  showSuccessToast,
   showErrorToast,
-  showInfoToast,
+  showSuccessToast,
 } from "../../components/ToastContainer";
 
 interface AddressManagerProps {
@@ -28,272 +29,264 @@ interface AddressManagerProps {
   onDeleteAddress: (id: string) => Promise<void>;
 }
 
-const INITIAL_ADDRESS = {
-  street: "",
-  city: "",
-  state: "",
-  pincode: "",
-};
-
-const AddressManager = ({
+const AddressManager: React.FC<AddressManagerProps> = ({
   addresses,
   onAddAddress,
   onUpdateAddress,
   onDeleteAddress,
-}: AddressManagerProps) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentAddressId, setCurrentAddressId] = useState<string | null>(null);
-  const [addressForm, setAddressForm] = useState(INITIAL_ADDRESS);
-  const [isLoading, setIsLoading] = useState(false);
+}) => {
+  const [open, setOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
+  const [editingAddress, setEditingAddress] = useState<AddressItem | null>(
+    null
+  );
+  const [newAddress, setNewAddress] = useState<Omit<AddressItem, "id">>({
+    street: "",
+    city: "",
+    state: "",
+    pincode: "",
+    country: "",
+  });
 
-  const handleOpenAddressDialog = (address?: AddressItem) => {
-    if (address) {
-      setAddressForm({
-        street: address.street,
-        city: address.city,
-        state: address.state,
-        pincode: address.pincode,
-      });
-      setCurrentAddressId(address.id);
-      setIsEditing(true);
-    } else {
-      setAddressForm(INITIAL_ADDRESS);
-      setCurrentAddressId(null);
-      setIsEditing(false);
-    }
-    setIsDialogOpen(true);
+  const handleOpen = () => {
+    setOpen(true);
+    setEditingAddress(null);
+    setNewAddress({
+      street: "",
+      city: "",
+      state: "",
+      pincode: "",
+      country: "",
+    });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleClose = () => {
+    setOpen(false);
+    setEditingAddress(null);
+  };
 
-    if (
-      !addressForm.street ||
-      !addressForm.city ||
-      !addressForm.state ||
-      !addressForm.pincode
-    ) {
-      showInfoToast("Please fill in all address fields.");
-      return;
-    }
+  const handleOpenDeleteDialog = (id: string) => {
+    setAddressToDelete(id);
+    setDeleteDialogOpen(true);
+  };
 
-    setIsLoading(true);
+  const handleCloseDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+    setAddressToDelete(null);
+  };
 
+  const handleSubmit = async () => {
     try {
-      if (isEditing && currentAddressId) {
-        await onUpdateAddress(currentAddressId, addressForm);
-        showSuccessToast("Address updated");
+      if (editingAddress) {
+        await onUpdateAddress(editingAddress.id, newAddress);
+        showSuccessToast("Address updated successfully");
       } else {
-        await onAddAddress(addressForm);
-        showSuccessToast("Address added");
+        await onAddAddress(newAddress);
+        showSuccessToast("Address added successfully");
       }
-      setIsDialogOpen(false);
+      handleClose();
     } catch (error) {
-      showErrorToast("Failed to save address. Please try again.");
-    } finally {
-      setIsLoading(false);
+      showErrorToast("Failed to save address");
     }
   };
 
-  const handleDeleteAddress = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this address?")) {
+  const handleDelete = async () => {
+    if (addressToDelete) {
       try {
-        await onDeleteAddress(id);
-        showSuccessToast("Address deleted");
+        await onDeleteAddress(addressToDelete);
+        showSuccessToast("Address deleted successfully");
+        handleCloseDeleteDialog();
       } catch (error) {
-        showErrorToast("Failed to delete address. Please try again.");
+        showErrorToast("Failed to delete address");
       }
     }
+  };
+
+  const handleEdit = (address: AddressItem) => {
+    setEditingAddress(address);
+    setNewAddress({
+      street: address.street,
+      city: address.city,
+      state: address.state,
+      pincode: address.pincode,
+      country: address.country || "",
+    });
+    setOpen(true);
   };
 
   return (
-    <Container sx={{ paddingY: 4 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 3,
-        }}
-      >
-        <Typography variant="h5" fontWeight="600">
-          Saved Addresses
-        </Typography>
+    <Box>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+        <Typography variant="h6">My Addresses</Typography>
         <Button
           variant="contained"
-          onClick={() => handleOpenAddressDialog()}
-          startIcon={<Plus size={16} />}
-          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          startIcon={<Plus />}
+          onClick={handleOpen}
+          sx={{ textTransform: "none" }}
         >
-          Add Address
+          Add New Address
         </Button>
       </Box>
 
-      {addresses.length === 0 ? (
-        <Box
-          sx={{
-            textAlign: "center",
-            padding: 4,
-            backgroundColor: "white",
-            borderRadius: 2,
-            boxShadow: 1,
-          }}
-        >
-          <Home
-            style={{
-              margin: "0 auto",
-              height: "48px",
-              width: "48px",
-              color: "rgba(0, 0, 0, 0.6)",
-            }}
-          />
-          <Typography variant="h6" sx={{ marginTop: 2 }}>
-            No addresses yet
-          </Typography>
-          <Typography sx={{ color: "rgba(0, 0, 0, 0.6)", marginTop: 1 }}>
-            Add your delivery address to make checkout easier
-          </Typography>
-        </Box>
-      ) : (
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "1fr",
-            gap: 2,
-            marginTop: 3,
-          }}
-        >
-          {addresses.map((address) => (
+      <Grid container spacing={3}>
+        {addresses.map((address) => (
+          <Grid item xs={12} sm={6} md={4} key={address.id}>
             <Box
-              key={address.id}
               sx={{
-                position: "relative",
-                padding: 3,
-                backgroundColor: "white",
+                p: 2,
+                border: "1px solid",
+                borderColor: "divider",
                 borderRadius: 2,
-                boxShadow: 1,
+                position: "relative",
               }}
             >
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <MapPin size={20} style={{ marginRight: 8 }} />
+                <Typography variant="subtitle1" fontWeight={500}>
+                  {address.street}
+                </Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary" mb={1}>
+                {address.city}, {address.state} - {address.pincode}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {address.country}
+              </Typography>
               <Box
                 sx={{
                   position: "absolute",
-                  top: 2,
-                  right: 2,
+                  top: 8,
+                  right: 8,
                   display: "flex",
                   gap: 1,
                 }}
               >
-                <Button
-                  variant="outlined"
+                <IconButton
                   size="small"
-                  onClick={() => handleOpenAddressDialog(address)}
-                  sx={{ minWidth: "32px", padding: 0.5 }}
+                  onClick={() => handleEdit(address)}
+                  sx={{ color: "primary.main" }}
                 >
-                  <Edit style={{ width: "16px", height: "16px" }} />
-                  <span style={{ display: "none" }}>Edit</span>
-                </Button>
-                <Button
-                  variant="outlined"
+                  <Pencil size={16} />
+                </IconButton>
+                <IconButton
                   size="small"
-                  onClick={() => handleDeleteAddress(address.id)}
-                  sx={{ minWidth: "32px", padding: 0.5 }}
+                  onClick={() => handleOpenDeleteDialog(address.id)}
+                  sx={{ color: "error.main" }}
                 >
-                  <Trash style={{ width: "16px", height: "16px" }} />
-                  <span style={{ display: "none" }}>Delete</span>
-                </Button>
+                  <Trash2 size={16} />
+                </IconButton>
               </Box>
-              <Typography variant="body1" sx={{ marginBottom: 1 }}>
-                {address.street}
-              </Typography>
-              <Typography variant="body2" sx={{ marginBottom: 1 }}>
-                {address.city}, {address.state}
-              </Typography>
-              <Typography variant="body2">PIN: {address.pincode}</Typography>
             </Box>
-          ))}
-        </Box>
-      )}
+          </Grid>
+        ))}
+      </Grid>
 
-      <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          {editingAddress ? "Edit Address" : "Add New Address"}
+        </DialogTitle>
         <DialogContent>
-          <DialogTitle>
-            {isEditing ? "Edit Address" : "Add New Address"}
-          </DialogTitle>
-          <form onSubmit={handleSubmit} style={{ marginTop: "16px" }}>
-            <Box sx={{ marginBottom: 2 }}>
-              <TextField
-                label="Street Address"
-                fullWidth
-                id="street"
-                value={addressForm.street}
-                onChange={(e) =>
-                  setAddressForm({ ...addressForm, street: e.target.value })
-                }
-                placeholder="Street address"
-                required
-                sx={{ marginBottom: 2 }}
-              />
-            </Box>
-            <Box sx={{ marginBottom: 2 }}>
-              <TextField
-                label="City"
-                fullWidth
-                id="city"
-                value={addressForm.city}
-                onChange={(e) =>
-                  setAddressForm({ ...addressForm, city: e.target.value })
-                }
-                placeholder="City"
-                required
-                sx={{ marginBottom: 2 }}
-              />
-            </Box>
-            <Box sx={{ marginBottom: 2 }}>
-              <TextField
-                label="State"
-                fullWidth
-                id="state"
-                value={addressForm.state}
-                onChange={(e) =>
-                  setAddressForm({ ...addressForm, state: e.target.value })
-                }
-                placeholder="State"
-                required
-                sx={{ marginBottom: 2 }}
-              />
-            </Box>
-            <Box sx={{ marginBottom: 2 }}>
-              <TextField
-                label="PIN Code"
-                fullWidth
-                id="pincode"
-                value={addressForm.pincode}
-                onChange={(e) =>
-                  setAddressForm({ ...addressForm, pincode: e.target.value })
-                }
-                placeholder="PIN code"
-                required
-                sx={{ marginBottom: 2 }}
-              />
-            </Box>
-            <DialogActions>
-              <Button variant="outlined" onClick={() => setIsDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={isLoading}
-              >
-                {isLoading ? "Saving..." : "Save Address"}
-              </Button>
-            </DialogActions>
-          </form>
+          <Box sx={{ mt: 2 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Street Address"
+                  value={newAddress.street}
+                  onChange={(e) =>
+                    setNewAddress({ ...newAddress, street: e.target.value })
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="City"
+                  value={newAddress.city}
+                  onChange={(e) =>
+                    setNewAddress({ ...newAddress, city: e.target.value })
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="State"
+                  value={newAddress.state}
+                  onChange={(e) =>
+                    setNewAddress({ ...newAddress, state: e.target.value })
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="PIN Code"
+                  value={newAddress.pincode}
+                  onChange={(e) =>
+                    setNewAddress({ ...newAddress, pincode: e.target.value })
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Country"
+                  value={newAddress.country}
+                  onChange={(e) =>
+                    setNewAddress({ ...newAddress, country: e.target.value })
+                  }
+                />
+              </Grid>
+            </Grid>
+          </Box>
         </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} sx={{ textTransform: "none" }}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            sx={{ textTransform: "none" }}
+          >
+            {editingAddress ? "Update" : "Add"}
+          </Button>
+        </DialogActions>
       </Dialog>
-    </Container>
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleCloseDeleteDialog}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Delete Address</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this address? This action cannot be
+            undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseDeleteDialog}
+            sx={{ textTransform: "none" }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDelete}
+            sx={{ textTransform: "none" }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 };
 

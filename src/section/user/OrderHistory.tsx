@@ -1,9 +1,16 @@
 import { useState } from "react";
-import { Badge, Button, Box, Typography } from "@mui/material";
-import { OrderItem, OrderStatus } from "../../types/type";
-import { format } from "date-fns";
+import { OrderItem } from "../../types/type";
+import {
+  Box,
+  Typography,
+  Button,
+  Chip,
+  Stack,
+  Divider,
+  Paper,
+} from "@mui/material";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import OrderSummary from "./OrderSummary";
+import OrderDetail from "./OrderDetail";
 
 interface OrderHistoryProps {
   orders: OrderItem[];
@@ -12,31 +19,27 @@ interface OrderHistoryProps {
 const OrderHistory = ({ orders }: OrderHistoryProps) => {
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
 
-  const getStatusColor = (status: OrderStatus) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
         return {
-          backgroundColor: "#d1fad6",
-          color: "#2d6a4f",
-          borderColor: "#a5d6a7",
+          bgcolor: "success.light",
+          color: "success.dark",
         };
       case "pending":
         return {
-          backgroundColor: "#fff4e5",
-          color: "#e97d2f",
-          borderColor: "#ffbc80",
+          bgcolor: "warning.light",
+          color: "warning.dark",
         };
       case "cancelled":
         return {
-          backgroundColor: "#f8d7da",
-          color: "#842029",
-          borderColor: "#f5c6cb",
+          bgcolor: "error.light",
+          color: "error.dark",
         };
       default:
         return {
-          backgroundColor: "#e2e8f0",
-          color: "#2d3748",
-          borderColor: "#cbd5e0",
+          bgcolor: "grey.100",
+          color: "grey.800",
         };
     }
   };
@@ -50,23 +53,28 @@ const OrderHistory = ({ orders }: OrderHistoryProps) => {
       <Box
         sx={{
           textAlign: "center",
-          py: 12,
-          backgroundColor: "white",
+          py: 8,
+          backgroundColor: "background.paper",
           borderRadius: 2,
-          boxShadow: 3,
+          border: "1px solid",
+          borderColor: "divider",
         }}
       >
-        <Typography variant="h6" sx={{ color: "gray.600", mb: 2 }}>
+        <Typography variant="h6" color="text.secondary" gutterBottom>
           No orders yet
         </Typography>
-        <Typography sx={{ color: "gray.500", mb: 4 }}>
+        <Typography color="text.secondary" sx={{ mb: 4 }}>
           You haven't placed any orders yet. Start ordering delicious food!
         </Typography>
         <Button
           variant="contained"
           color="primary"
-          component="a"
           href="/restaurants"
+          sx={{
+            textTransform: "none",
+            borderRadius: 2,
+            px: 4,
+          }}
         >
           Browse Restaurants
         </Button>
@@ -75,83 +83,94 @@ const OrderHistory = ({ orders }: OrderHistoryProps) => {
   }
 
   return (
-    <Box sx={{ mt: 4, display: "flex", flexDirection: "column", gap: 4 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       {orders.map((order) => (
-        <Box
+        <Paper
           key={order.id}
+          elevation={0}
           sx={{
-            backgroundColor: "white",
             borderRadius: 2,
-            boxShadow: 3,
+            border: "1px solid",
+            borderColor: "divider",
             overflow: "hidden",
-            cursor: "pointer",
           }}
         >
           <Box
             sx={{
-              p: 4,
+              p: 3,
               display: "flex",
               flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
-              alignItems: "center",
+              alignItems: { xs: "flex-start", sm: "center" },
+              gap: 2,
             }}
-            onClick={() => toggleOrderDetails(order.id)}
           >
             <Box sx={{ flex: 1 }}>
-              <Box
-                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: "500" }}>
+              <Stack direction="row" spacing={2} alignItems="center" mb={2}>
+                <Typography variant="h6" fontWeight={500}>
                   Order #{order.id}
                 </Typography>
-                <Badge
+                <Chip
+                  label={
+                    order.status.charAt(0).toUpperCase() + order.status.slice(1)
+                  }
+                  size="small"
                   sx={{
                     ...getStatusColor(order.status),
-                    padding: "2px 8px",
-                    borderRadius: "16px",
-                    fontSize: "0.75rem",
+                    fontWeight: 500,
+                    borderRadius: 1,
                   }}
-                >
-                  {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                </Badge>
-              </Box>
-              <Typography variant="body2" sx={{ color: "gray.500", mb: 1 }}>
-                {format(new Date(order.orderedAt), "MMM d, yyyy 'at' h:mm a")}
+                />
+              </Stack>
+              <Typography variant="body2" color="text.secondary" mb={1}>
+                {new Date(order.orderedAt).toLocaleDateString()}
               </Typography>
-              <Typography variant="h6" sx={{ fontWeight: "500", mt: 1 }}>
+              <Typography variant="h6" fontWeight={500}>
                 ₹{order.total.toFixed(2)}
-                <Typography variant="body2" sx={{ color: "gray.500", ml: 2 }}>
+                <Typography
+                  component="span"
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ ml: 2 }}
+                >
                   ({order.items.length}{" "}
                   {order.items.length === 1 ? "item" : "items"})
                 </Typography>
               </Typography>
             </Box>
-            <Box sx={{ mt: 3, sm: { mt: 0 } }}>
-              <Button
-                variant="outlined"
-                size="small"
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  minWidth: "auto",
-                  padding: 1,
-                }}
-              >
-                {selectedOrderId === order.id ? (
-                  <>
-                    Hide Details <ChevronDown />
-                  </>
-                ) : (
-                  <>
-                    View Details <ChevronRight />
-                  </>
-                )}
-              </Button>
-            </Box>
+
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => toggleOrderDetails(order.id)}
+              sx={{
+                textTransform: "none",
+                borderRadius: 2,
+                px: 3,
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              {selectedOrderId === order.id ? (
+                <>
+                  Hide Details <ChevronDown size={20} />
+                </>
+              ) : (
+                <>
+                  View Details <ChevronRight size={20} />
+                </>
+              )}
+            </Button>
           </Box>
-          {selectedOrderId === order.id && <OrderSummary order={order} />}
-        </Box>
+
+          {selectedOrderId === order.id && (
+            <>
+              <Divider />
+              <OrderDetail order={order} />
+            </>
+          )}
+        </Paper>
       ))}
     </Box>
   );

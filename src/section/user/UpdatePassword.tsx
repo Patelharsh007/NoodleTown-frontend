@@ -1,28 +1,35 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Button,
-  Input,
-  FormControl,
-  InputLabel,
+  TextField,
+  InputAdornment,
   IconButton,
-  Typography,
   Box,
 } from "@mui/material";
-import { Eye, EyeOff } from "lucide-react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   showErrorToast,
-  showInfoToast,
   showSuccessToast,
 } from "../../components/ToastContainer";
 
-interface UpdatePasswordProps {
+interface UpdatePasswordModalProps {
+  open: boolean;
+  onClose: () => void;
   onUpdatePassword: (
     currentPassword: string,
     newPassword: string
   ) => Promise<void>;
 }
 
-const UpdatePassword = ({ onUpdatePassword }: UpdatePasswordProps) => {
+const UpdatePasswordModal: React.FC<UpdatePasswordModalProps> = ({
+  open,
+  onClose,
+  onUpdatePassword,
+}) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -31,157 +38,160 @@ const UpdatePassword = ({ onUpdatePassword }: UpdatePasswordProps) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     if (newPassword !== confirmPassword) {
-      showInfoToast("New password and confirmation password must match.");
+      showErrorToast("New password and confirmation don't match");
       return;
     }
 
     if (newPassword.length < 8) {
-      showInfoToast("Password must be at least 8 characters long.");
+      showErrorToast("Password must be at least 8 characters long");
       return;
     }
 
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       await onUpdatePassword(currentPassword, newPassword);
-      showSuccessToast("Your password has been updated successfully.");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
+      showSuccessToast("Password updated successfully");
+      handleClose();
     } catch (error) {
-      showErrorToast("Failed to update password. Please try again.");
+      showErrorToast("Failed to update password");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleClose = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+    onClose();
+  };
+
   return (
-    <Box
-      sx={{
-        backgroundColor: "white",
-        borderRadius: 2,
-        boxShadow: 3,
-        padding: 3,
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="sm"
+      PaperProps={{
+        sx: {
+          borderRadius: 2,
+        },
       }}
     >
-      <Typography variant="h6" sx={{ marginBottom: 2 }}>
+      <DialogTitle
+        sx={{
+          fontWeight: 600,
+          borderBottom: 1,
+          borderColor: "divider",
+          pb: 2,
+        }}
+      >
         Update Password
-      </Typography>
-      <form onSubmit={handleSubmit}>
-        <FormControl fullWidth sx={{ marginBottom: 2 }}>
-          <InputLabel htmlFor="currentPassword">Current Password</InputLabel>
-          <Box sx={{ position: "relative" }}>
-            <Input
-              id="currentPassword"
-              type={showCurrentPassword ? "text" : "password"}
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="Enter current password"
-              required
-              endAdornment={
-                <IconButton
-                  sx={{
-                    position: "absolute",
-                    right: 1,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                  }}
-                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                >
-                  {showCurrentPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
-                </IconButton>
-              }
-            />
-          </Box>
-        </FormControl>
+      </DialogTitle>
+      <DialogContent sx={{ mt: 2 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <TextField
+            fullWidth
+            label="Current Password"
+            type={showCurrentPassword ? "text" : "password"}
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    edge="end"
+                  >
+                    {showCurrentPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            required
+          />
 
-        <FormControl fullWidth sx={{ marginBottom: 2 }}>
-          <InputLabel htmlFor="newPassword">New Password</InputLabel>
-          <Box sx={{ position: "relative" }}>
-            <Input
-              id="newPassword"
-              type={showNewPassword ? "text" : "password"}
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Enter new password"
-              required
-              endAdornment={
-                <IconButton
-                  sx={{
-                    position: "absolute",
-                    right: 1,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                  }}
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                >
-                  {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </IconButton>
-              }
-            />
-          </Box>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            sx={{ marginTop: 1 }}
-          >
-            Must be at least 8 characters long.
-          </Typography>
-        </FormControl>
+          <TextField
+            fullWidth
+            label="New Password"
+            type={showNewPassword ? "text" : "password"}
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            helperText="Must be at least 8 characters long."
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    edge="end"
+                  >
+                    {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            required
+          />
 
-        <FormControl fullWidth sx={{ marginBottom: 2 }}>
-          <InputLabel htmlFor="confirmPassword">
-            Confirm New Password
-          </InputLabel>
-          <Box sx={{ position: "relative" }}>
-            <Input
-              id="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm new password"
-              required
-              endAdornment={
-                <IconButton
-                  sx={{
-                    position: "absolute",
-                    right: 1,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                  }}
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
-                </IconButton>
-              }
-            />
-          </Box>
-        </FormControl>
-
+          <TextField
+            fullWidth
+            label="Confirm New Password"
+            type={showConfirmPassword ? "text" : "password"}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    edge="end"
+                  >
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            required
+          />
+        </Box>
+      </DialogContent>
+      <DialogActions
+        sx={{
+          p: 3,
+          borderTop: 1,
+          borderColor: "divider",
+        }}
+      >
         <Button
-          type="submit"
-          fullWidth
+          onClick={handleClose}
+          sx={{
+            textTransform: "none",
+            borderRadius: 2,
+            px: 3,
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
           variant="contained"
-          color="primary"
+          onClick={handleSubmit}
           disabled={isLoading}
-          sx={{ marginTop: 2 }}
+          sx={{
+            textTransform: "none",
+            borderRadius: 2,
+            px: 3,
+          }}
         >
           {isLoading ? "Updating..." : "Update Password"}
         </Button>
-      </form>
-    </Box>
+      </DialogActions>
+    </Dialog>
   );
 };
 
-export default UpdatePassword;
+export default UpdatePasswordModal;

@@ -3,19 +3,19 @@ import { showInfoToast } from "../../components/ToastContainer";
 import { AddressItem } from "../../types/type";
 
 interface AddressState {
-  items: AddressItem[];
+  addresses: AddressItem[];
 }
 
 const loadAddressesFromLocalStorage = (): AddressState => {
   const storedAddress = localStorage.getItem("address");
   if (storedAddress) {
-    return { items: JSON.parse(storedAddress) };
+    return { addresses: JSON.parse(storedAddress) };
   }
-  return { items: [] };
+  return { addresses: [] };
 };
 
 const saveAddressToLocalStorage = (state: AddressState) => {
-  localStorage.setItem("address", JSON.stringify(state.items));
+  localStorage.setItem("address", JSON.stringify(state.addresses));
 };
 
 const AddressSlice = createSlice({
@@ -23,13 +23,13 @@ const AddressSlice = createSlice({
   initialState: loadAddressesFromLocalStorage,
   reducers: {
     addAddress: (state, action: PayloadAction<AddressItem>) => {
-      state.items.push({ ...action.payload });
+      state.addresses.push({ ...action.payload });
       saveAddressToLocalStorage(state);
       showInfoToast(`Address added succesfully`);
     },
 
     removeAddress: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter(
+      state.addresses = state.addresses.filter(
         (address) => address.id !== action.payload
       );
       saveAddressToLocalStorage(state);

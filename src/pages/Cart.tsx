@@ -10,7 +10,7 @@ const Cart = () => {
       <Navbar linkColor="#000000" />
       <CartHeader />
       <CartContent />
-      <CartCheckOut />
+      {/* <CartCheckOut /> */}
     </>
   );
 };

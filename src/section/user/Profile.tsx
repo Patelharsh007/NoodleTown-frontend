@@ -122,7 +122,7 @@ const sampleOrders: OrderItem[] = [
   },
 ];
 
-const ProfilePage: React.FC = () => {
+const UserProfile: React.FC = () => {
   const [user, setUser] = useState<User>(sampleUser);
   const [orders, setOrders] = useState<OrderItem[]>(sampleOrders);
   const [addresses, setAddresses] = useState<AddressItem[]>(sampleAddresses);
@@ -247,4 +247,4 @@ const ProfilePage: React.FC = () => {
   );
 };
 
-export default ProfilePage;
+export default UserProfile;

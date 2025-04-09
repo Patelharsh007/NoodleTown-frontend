@@ -1,7 +1,7 @@
 import React from "react";
 import { User } from "../../types/type";
 import { ShoppingCart, LogOut, Lock, Camera } from "lucide-react";
-import { Button, Box, Typography, IconButton } from "@mui/material";
+import { Button, Box, Typography, Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
 
 interface ProfileHeaderProps {
@@ -49,34 +49,21 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         }}
       >
         {/* Avatar */}
-        <Box
+        <Avatar
+          src={user.profileImage || undefined}
+          alt={user.userName || user.email}
           sx={{
             width: 96,
             height: 96,
-            borderRadius: "50%",
-            overflow: "hidden",
-            border: "2px solid #FFA500",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "#FFF4E0",
+            fontSize: "2rem",
+            bgcolor: "primary.light",
+            color: "primary.contrastText",
+            // border: "2px solid #FFA500",
+            border: "2px solid #333333",
           }}
         >
-          {user.profileImage ? (
-            <img
-              src={user.profileImage}
-              alt={user.userName || user.email}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          ) : (
-            <Typography
-              variant="h5"
-              sx={{ color: "#FFA500", fontWeight: "bold" }}
-            >
-              {getInitials()}
-            </Typography>
-          )}
-        </Box>
+          {getInitials()}
+        </Avatar>
 
         {/* User info and buttons */}
         <Box sx={{ flexGrow: 1, textAlign: { xs: "center", md: "left" } }}>
@@ -99,19 +86,35 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               component={Link}
               to="/cart"
               variant="outlined"
+              sx={{
+                gap: 1,
+                color: "#FFA500",
+                backgroundColor: "#FFF4E0",
+                borderColor: "#FFA500",
+                "&:hover": {
+                  backgroundColor: "#FFE4B5",
+                },
+              }}
               startIcon={<ShoppingCart size={16} />}
-              sx={{ gap: 1 }}
             >
               My Cart
             </Button>
 
             <Button
+              component="label"
               variant="outlined"
               startIcon={<Camera size={16} />}
-              component="label"
-              sx={{ gap: 1 }}
+              sx={{
+                gap: 1,
+                color: "#FFA500",
+                backgroundColor: "#FFF4E0",
+                borderColor: "#FFA500",
+                "&:hover": {
+                  backgroundColor: "#FFE4B5",
+                },
+              }}
             >
-              Update Profile Image
+              Update Profile
               <input
                 type="file"
                 accept="image/*"
@@ -124,7 +127,15 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               variant="outlined"
               startIcon={<Lock size={16} />}
               onClick={onPasswordUpdate}
-              sx={{ gap: 1 }}
+              sx={{
+                gap: 1,
+                color: "#FFA500",
+                backgroundColor: "#FFF4E0",
+                borderColor: "#FFA500",
+                "&:hover": {
+                  backgroundColor: "#FFE4B5",
+                },
+              }}
             >
               Update Password
             </Button>
@@ -136,9 +147,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               sx={{
                 gap: 1,
                 color: "red",
-                borderColor: "red.200",
+                borderColor: "red",
+                backgroundColor: "#f6c1c1",
                 "&:hover": {
-                  backgroundColor: "red.50",
+                  backgroundColor: "#f8a0a0",
                   color: "red.600",
                 },
               }}

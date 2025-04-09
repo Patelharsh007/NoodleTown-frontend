@@ -9,6 +9,7 @@ export const ROUTES = {
   SEARCH: "/search/:selectedCity/:searchValue",
   PRODUCT: "/product/:id",
   USER: "/user",
-  ORDERS: "/orders",
+  ORDERS: "user/orders",
+  CHECKOUT: "/user/checkout",
   NOT_FOUND: "*",
 };

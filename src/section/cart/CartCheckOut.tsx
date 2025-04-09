@@ -3,13 +3,14 @@ import { useSelector } from "react-redux";
 import CartCheckOutAddress from "../../components/CartCheckOutAddress";
 import OrderSummaryForm from "../../form/OrderSummaryForm";
 import { RootState } from "../../redux/Store";
+import useCart from "../../hooks/useCartMeal";
 
 const CartCheckOut = () => {
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const { cart, isLoadingCart, errorCart } = useCart();
   return (
     <>
       <Box maxWidth={"1600px"} width={"90%"} margin={"30px auto 70px"}>
-        {cartItems.length > 0 && (
+        {cart && cart.length > 0 && (
           <Paper
             elevation={0}
             sx={{

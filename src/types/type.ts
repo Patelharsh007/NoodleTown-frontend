@@ -33,16 +33,18 @@ export interface AddressItem {
   city: string;
   state: string;
   pincode: string;
+  country?: string;
 }
 
 export interface NewAddress {
+  id: string;
   street: string;
   city: string;
   state: string;
   pincode: string;
+  country?: string;
 }
 
-//CartItem for CartSlice
 //CartItem for CartSlice
 export interface CartItem {
   id: number;
@@ -50,26 +52,6 @@ export interface CartItem {
   email: string;
   quantity: number;
   meal: MealItem;
-}
-
-export interface CartItem1 {
-  id: string;
-  itemId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  restaurantId: string;
-  category: string;
-  description?: string;
-}
-
-//AuthItem for AuthSlice
-export interface AuthItem {
-  isAuthenticated: boolean;
-  email: string;
-  fullName?: string;
-  password: string;
 }
 
 //AuthItem for AuthUserSlice
@@ -89,7 +71,6 @@ export interface User {
   createdAt?: Date;
 }
 
-//mealItemType used in mealitem data and
 export interface MealItem {
   id: number;
   mealId: string;
@@ -104,7 +85,6 @@ export interface MealItem {
   restaurant?: RestaurantItem;
 }
 
-//restuarantType used in restaurant data
 export interface RestaurantItem {
   id: number;
   restaurantId: string;
@@ -120,4 +100,17 @@ export interface RestaurantItem {
   isFeatured: boolean;
   rating: number;
   meals?: MealItem[];
+}
+
+//removing after backend connected:
+export interface CartItem1 {
+  id: string;
+  itemId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+  restaurantId: string;
+  category: string;
+  description?: string;
 }

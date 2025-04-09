@@ -14,7 +14,8 @@ import { showSuccessToast } from "../components/ToastContainer";
 import { placeOrder } from "../redux/slices/OrderSlice";
 import { deselectAddress } from "../redux/slices/SelectedAddressSlice";
 import { useNavigate } from "react-router-dom";
-import { OrderItem } from "../types/type";
+import { CartItem, OrderItem } from "../types/type";
+import useCart from "../hooks/useCartMeal";
 
 const OrderSummaryForm = () => {
   // Checkout--- totaldiscount etc
@@ -25,12 +26,16 @@ const OrderSummaryForm = () => {
   const navigate = useNavigate();
 
   //Redux
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+  // const cartItems = useSelector((state: RootState) => state.cart.items);
+
+  const { cart, isLoadingCart, errorCart } = useCart();
+
   const selectedAddress = useSelector(
     (state: RootState) => state.seletedAddress.item
   );
 
   const { authUser } = useSelector((state: RootState) => state.authUser);
+
   //coupon logic
   const handleApplyCoupon = () => {
     if (couponCode.length === 6) {
@@ -41,8 +46,8 @@ const OrderSummaryForm = () => {
     }
   };
 
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+  const subtotal = cart.reduce(
+    (sum: number, item: CartItem) => sum + item.meal.price * item.quantity,
     0
   );
 
@@ -50,7 +55,7 @@ const OrderSummaryForm = () => {
   const total = subtotal - discount + deliveryCharges;
 
   const handleCheckout = () => {
-    if (!selectedAddress || cartItems.length === 0) return;
+    if (!selectedAddress || cart.length === 0) return;
 
     if (!authUser.isAuthenticated) {
       return navigate("/auth");
@@ -68,15 +73,15 @@ const OrderSummaryForm = () => {
         state: selectedAddress.state,
         pincode: selectedAddress.pincode,
       },
-      items: cartItems.map((item) => ({
+      items: cart.map((item: CartItem) => ({
         id: Math.random().toString(),
-        itemName: item.name,
+        itemName: item.meal.title,
         quantity: item.quantity,
-        price: item.price,
-        itemTotal: item.price * item.quantity,
+        price: item.meal.price,
+        itemTotal: item.meal.price * item.quantity,
       })),
-      subTotal: cartItems.reduce(
-        (sum, item) => sum + item.price * item.quantity,
+      subTotal: cart.reduce(
+        (sum: number, item: CartItem) => sum + item.meal.price * item.quantity,
         0
       ),
       discount: discount,
@@ -84,7 +89,7 @@ const OrderSummaryForm = () => {
       status: "pending",
     };
 
-    dispatch(placeOrder(order));
+    // dispatch(placeOrder(order));
     setTimeout(() => {
       navigate("/orders");
     }, 1500);
@@ -202,7 +207,7 @@ const OrderSummaryForm = () => {
 
         <Button
           onClick={handleCheckout}
-          disabled={!selectedAddress || cartItems.length === 0}
+          disabled={!selectedAddress || (cart && cart.length === 0)}
           sx={{
             backgroundColor: "#FFA500",
             color: "#fff",

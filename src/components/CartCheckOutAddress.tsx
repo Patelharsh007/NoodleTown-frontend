@@ -7,6 +7,9 @@ import {
   Box,
   Stack,
   Button,
+  IconButton,
+  Paper,
+  Divider,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,7 +27,6 @@ const CartCheckOutAddress = () => {
   const dispatch = useDispatch();
 
   const addressItems = useSelector((state: RootState) => state.address.items);
-
   const selectedAddress = useSelector(
     (state: RootState) => state.seletedAddress.item
   );
@@ -53,67 +55,105 @@ const CartCheckOutAddress = () => {
       </Typography>
 
       {/* Address List */}
-      <RadioGroup
-        value={selectedAddress?.id}
-        onChange={(e) => handleSelectAddress(e)}
-      >
+      <RadioGroup value={selectedAddress?.id} onChange={handleSelectAddress}>
         {addressItems.map((address) => (
-          <Stack
-            direction={"row"}
-            marginBottom={"10px"}
-            alignItems={"center"}
+          <Paper
             key={address.id}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              padding: 2,
+              marginBottom: 2,
+              borderRadius: 2,
+              boxShadow: 3,
+              backgroundColor:
+                selectedAddress?.id === address.id ? "#FFF4E5" : "white", // Highlight selected address
+              "&:hover": {
+                boxShadow: 6,
+                cursor: "pointer",
+              },
+            }}
           >
-            <FormControlLabel
-              key={address.id}
-              value={address.id}
-              control={
-                <Radio
-                  sx={{
-                    color: "#FFA500",
-                    "&.Mui-checked": {
+            {/* Address Details Card */}
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <FormControlLabel
+                value={address.id}
+                control={
+                  <Radio
+                    sx={{
                       color: "#FFA500",
-                    },
-                  }}
-                />
-              }
-              label={
-                <Typography
-                  fontFamily="Poppins"
-                  fontSize={{ xs: "14px", sm: "16px" }}
-                  color="#666"
-                >
-                  {`${address.street}, ${address.city}, ${address.state} - ${address.pincode}`}
-                </Typography>
-              }
-            />
-            <Box
-              component={"button"}
-              fontSize={"0px"}
-              height={"30px"}
-              borderColor={"transparent"}
-              sx={{
-                "&:hover": {
-                  Color: "#f9f9f9",
-                  backgroundColor: "#E8E8E8",
-                },
-              }}
-              onClick={() => {
-                dispatch(removeAddress(address.id));
-              }}
-            >
-              <Remove
-                fontSize={"small"}
-                sx={{ margin: "0px", padding: "0px" }}
+                      "&.Mui-checked": {
+                        color: "#FFA500",
+                      },
+                    }}
+                  />
+                }
+                label={
+                  <Typography
+                    fontFamily="Poppins"
+                    fontSize={16}
+                  >{`Address`}</Typography>
+                }
               />
+              {/* Remove Button */}
+              <IconButton
+                onClick={() => dispatch(removeAddress(address.id))}
+                sx={{
+                  color: "red",
+                  "&:hover": {
+                    backgroundColor: "#f5f5f5",
+                  },
+                }}
+              >
+                <Remove fontSize="small" />
+              </IconButton>
             </Box>
-          </Stack>
+
+            {/* Address Fields */}
+            <Stack spacing={1} sx={{ marginTop: 2 }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography variant="body2" fontWeight="bold">
+                  Street:
+                </Typography>
+                <Typography variant="body2">{address.street}</Typography>
+              </Box>
+              <Divider sx={{ my: 1 }} />
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography variant="body2" fontWeight="bold">
+                  City:
+                </Typography>
+                <Typography variant="body2">{address.city}</Typography>
+              </Box>
+              <Divider sx={{ my: 1 }} />
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography variant="body2" fontWeight="bold">
+                  State:
+                </Typography>
+                <Typography variant="body2">{address.state}</Typography>
+              </Box>
+              <Divider sx={{ my: 1 }} />
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography variant="body2" fontWeight="bold">
+                  Country:
+                </Typography>
+                <Typography variant="body2">{address.country}</Typography>
+              </Box>
+              <Divider sx={{ my: 1 }} />
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography variant="body2" fontWeight="bold">
+                  Pincode:
+                </Typography>
+                <Typography variant="body2">{address.pincode}</Typography>
+              </Box>
+            </Stack>
+          </Paper>
         ))}
       </RadioGroup>
 
+      {/* Add New Address Button */}
       {showAddressForm ? (
-        // Address form to add new address
-        <AddressForm onSetSHowAddressForm={handleSetShowAddressForm} />
+        // Address form to add a new address
+        <AddressForm onSetShowAddressForm={handleSetShowAddressForm} />
       ) : (
         <Button
           onClick={() => setShowAddressForm(true)}
@@ -122,6 +162,8 @@ const CartCheckOutAddress = () => {
             color: "#fff",
             mt: 2,
             "&:hover": { backgroundColor: "#ff8c00" },
+            borderRadius: 1,
+            padding: "10px 20px",
           }}
         >
           Add New Address

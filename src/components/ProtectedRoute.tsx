@@ -16,7 +16,6 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 
   const verifyToken = async () => {
     try {
-      console.log("IN Protected route");
       const response = await fetch(
         "http://localhost:8080/api/user/verifyUser",
         {
@@ -29,11 +28,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
       );
 
       const result = await response.json();
-
-      console.log("Verifying Token");
-
       if (result.status === "success") {
-        console.log(result);
         const { user } = result;
         dispatch(
           setUser({

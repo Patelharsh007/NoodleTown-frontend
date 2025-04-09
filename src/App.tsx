@@ -18,6 +18,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SearchPage } from "./pages/SearchPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
+import CheckoutPage from "./pages/CheckOutPage";
 
 function App() {
   return (
@@ -35,7 +36,14 @@ function App() {
         <Route path={ROUTES.RESTAURANT} element={<RestaurantPage />} />
         <Route path={ROUTES.PRODUCT} element={<ProductDetails />} />
         <Route path={ROUTES.CART} element={<Cart />} />
-        <Route path={ROUTES.USER} element={<UserDetail />} />
+        <Route
+          path={ROUTES.USER}
+          element={
+            <ProtectedRoute>
+              <UserDetail />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path={ROUTES.ORDERS}
           element={
@@ -44,6 +52,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path={ROUTES.CHECKOUT}
+          element={
+            <ProtectedRoute>
+              <CheckoutPage />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
       </Routes>
       <ToastContainer />

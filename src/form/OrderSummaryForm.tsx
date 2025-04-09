@@ -66,6 +66,7 @@ const OrderSummaryForm = () => {
       id: Math.random(), // unique id
       user_email: authUser.email,
       orderedAt: new Date().toISOString(), // date
+      deliveryCharges: 100,
       address: {
         id: Math.random().toString(),
         street: selectedAddress.street,

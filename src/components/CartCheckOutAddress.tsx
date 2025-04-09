@@ -19,6 +19,7 @@ import { selectAddress } from "../redux/slices/SelectedAddressSlice";
 import Remove from "@mui/icons-material/Remove";
 
 import AddressForm from "../form/AddressForm";
+import { AddressItem } from "../types/type";
 
 const CartCheckOutAddress = () => {
   const [showAddressForm, setShowAddressForm] = useState(false);
@@ -26,14 +27,18 @@ const CartCheckOutAddress = () => {
   // Redux
   const dispatch = useDispatch();
 
-  const addressItems = useSelector((state: RootState) => state.address.items);
+  const addressItems = useSelector(
+    (state: RootState) => state.address.addresses
+  );
   const selectedAddress = useSelector(
     (state: RootState) => state.seletedAddress.item
   );
 
   const handleSelectAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedId = e.target.value;
-    const selected = addressItems.find((address) => address.id === selectedId);
+    const selected = addressItems.find(
+      (address: AddressItem) => address.id === selectedId
+    );
     if (selected) {
       dispatch(selectAddress(selected));
     }

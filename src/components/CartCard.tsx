@@ -19,7 +19,8 @@ interface CartCardProp {
 }
 
 const CartCard: React.FC<CartCardProp> = ({ item }) => {
-  const { cart, incrementItem, decrementItem } = useCart();
+  const { cart, incrementItem, decrementItem, isIncrementing, isDecrementing } =
+    useCart();
 
   return (
     <Grid2 key={item.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
@@ -107,6 +108,7 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
           >
             <Button
               onClick={() => decrementItem(item.mealId)}
+              // disabled={isDecrementing}
               variant="outlined"
               sx={{
                 backgroundColor: "#F3F3F3",
@@ -139,6 +141,7 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
             </Button>
             <Button
               onClick={() => incrementItem(item.mealId)}
+              // disabled={isIncrementing}
               variant="outlined"
               sx={{
                 backgroundColor: "#FFA500",

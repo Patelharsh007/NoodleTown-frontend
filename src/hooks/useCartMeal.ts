@@ -106,9 +106,11 @@ const useCart = () => {
         decrementData &&
         cart?.find((cart: CartItem) => cart.mealId === mealId)?.quantity === 1
       ) {
-        queryClient.setQueryData(["cartItems", auth.email], {
-          cartItem: [],
-        });
+        if (cart?.length === 1) {
+          queryClient.setQueryData(["cartItems", auth.email], {
+            cartItem: [],
+          });
+        }
         showSuccessToast("Item removed from cart");
       } else {
         showInfoToast(decrementData.message);

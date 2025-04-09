@@ -29,7 +29,9 @@ const OrderSlice = createSlice({
     },
 
     deleteOrder: (state, action: PayloadAction<string>) => {
-      state.orders = state.orders.filter((item) => item.id !== action.payload);
+      state.orders = state.orders.filter(
+        (item) => item.id !== Number(action.payload)
+      );
       showSuccessToast(`Order deleted succesfully`);
       saveOrderToLocalStorage(state);
     },

@@ -1,10 +1,12 @@
 //Order-Item used in OrderSlice and OrderSummary
 export interface OrderItem {
-  id: string;
+  id: number;
   user_email: string | null;
-  Date: Date | string;
-  address: string;
+  orderedAt: Date | string;
+  address: AddressItem;
   items: {
+    // itemId: number;
+    id: string;
     itemName: string;
     quantity: number;
     price: number;
@@ -13,11 +15,19 @@ export interface OrderItem {
   subTotal: number;
   discount: number;
   total: number;
-  status: string;
+  status: OrderStatus;
 }
+
+export type OrderStatus =
+  | "completed"
+  | "pending"
+  | "cancelled"
+  | "processing"
+  | "shipped";
 
 //Adress used in AddressForm and addressSlice
 export interface AddressItem {
+  // id: number;
   id: string;
   street: string;
   city: string;
@@ -69,6 +79,14 @@ export interface AuthUserItem {
   email: string | null;
   userName: string | null;
   profileImage: string | null;
+}
+
+export interface User {
+  id: number;
+  email: string;
+  userName: string;
+  profileImage: string | null;
+  createdAt?: Date;
 }
 
 //mealItemType used in mealitem data and

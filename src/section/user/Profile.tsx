@@ -1,46 +1,41 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { User, OrderItem, AddressItem } from "../../types/type";
 import ProfileHeader from "./ProfileHeader";
 import OrderHistoryList from "./OrderHistory";
 import AddressManager from "./AddressManager";
 import UpdatePasswordModal from "./UpdatePassword";
-import { Tabs, Tab, Box, Typography } from "@mui/material";
-import { showSuccessToast } from "../../components/ToastContainer";
-import { useDispatch, useSelector } from "react-redux";
-
-import { clearUser } from "../../redux/slices/AuthUserSlice";
+import { Tabs, Tab, Box } from "@mui/material";
+import {
+  showSuccessToast,
+  showErrorToast,
+} from "../../components/ToastContainer";
+import { updateProfileImage } from "../../util/util";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../redux/slices/AuthUserSlice";
 
 const UserProfile: React.FC = () => {
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("orders");
-  const navigate = useNavigate();
+  const [isUpdatingImage, setIsUpdatingImage] = useState(false);
   const dispatch = useDispatch();
 
-  const handleUpdateProfileImage = (file: File) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      showSuccessToast("Profile picture updated successfully");
-    };
-    reader.readAsDataURL(file);
-  };
+  const handleUpdateProfileImage = async (file: File) => {
+    try {
+      setIsUpdatingImage(true);
+      const response = await updateProfileImage(file);
 
-  const handleLogout = () => {
-    dispatch(clearUser());
-    showSuccessToast("You have been logged out successfully");
-    navigate("/");
-  };
-
-  const handleUpdatePassword = async (
-    currentPassword: string,
-    newPassword: string
-  ) => {
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        console.log("Password updated:", { currentPassword, newPassword });
-        resolve();
-      }, 1000);
-    });
+      if (response) {
+        dispatch(setUser(response.user));
+        showSuccessToast("Profile picture updated successfully");
+      }
+    } catch (error) {
+      showErrorToast(
+        error instanceof Error
+          ? error.message
+          : "Failed to update profile picture"
+      );
+    } finally {
+      setIsUpdatingImage(false);
+    }
   };
 
   return (
@@ -48,8 +43,8 @@ const UserProfile: React.FC = () => {
       <Box sx={{ marginBottom: 4 }}>
         <ProfileHeader
           onUpdateProfileImage={handleUpdateProfileImage}
-          onLogout={handleLogout}
           onPasswordUpdate={() => setPasswordDialogOpen(true)}
+          isUpdatingImage={isUpdatingImage}
         />
       </Box>
 
@@ -78,20 +73,19 @@ const UserProfile: React.FC = () => {
             },
           }}
         >
-          <Tab label="Order History" value="orders" />
           <Tab label="Your Addresses" value="addresses" />
+          <Tab label="Order History" value="orders" />
         </Tabs>
 
         <Box sx={{ padding: 1 }}>
-          {activeTab === "orders" && <OrderHistoryList orders={[]} />}
           {activeTab === "addresses" && <AddressManager />}
+          {activeTab === "orders" && <OrderHistoryList orders={[]} />}
         </Box>
       </Box>
 
       <UpdatePasswordModal
         open={passwordDialogOpen}
         onClose={() => setPasswordDialogOpen(false)}
-        onUpdatePassword={handleUpdatePassword}
       />
     </Box>
   );

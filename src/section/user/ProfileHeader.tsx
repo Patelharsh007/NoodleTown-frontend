@@ -1,22 +1,30 @@
 import React from "react";
-import { User } from "../../types/type";
 import { ShoppingCart, LogOut, Lock, Camera } from "lucide-react";
-import { Button, Box, Typography, Avatar } from "@mui/material";
+import { Button, Box, Typography, Avatar, CircularProgress } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { clearUser } from "../../redux/slices/AuthUserSlice";
+import { logout } from "../../util/util";
+import { useQueryClient } from "@tanstack/react-query";
+import { showSuccessToast } from "../../components/ToastContainer";
 
 interface ProfileHeaderProps {
   onUpdateProfileImage: (file: File) => void;
-  onLogout: () => void;
   onPasswordUpdate: () => void;
+  isUpdatingImage: boolean;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onUpdateProfileImage,
-  onLogout,
   onPasswordUpdate,
+  isUpdatingImage,
 }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+
   const userData = useSelector((state: RootState) => state.authUser.authUser);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,6 +38,22 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       return userData.userName.substring(0, 2).toUpperCase();
     }
     return userData.email.substring(0, 2).toUpperCase();
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      // Clear cart query data
+      queryClient.removeQueries({ queryKey: ["cart"] });
+      queryClient.removeQueries({ queryKey: ["cartItems"] });
+      // Clear user data from Redux
+      dispatch(clearUser());
+      showSuccessToast("You have been logged out successfully");
+      navigate("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      showSuccessToast("Failed to logout. Please try again.");
+    }
   };
 
   return (
@@ -105,7 +129,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <Button
               component="label"
               variant="outlined"
-              startIcon={<Camera size={16} />}
+              startIcon={isUpdatingImage ? <CircularProgress size={16} /> : <Camera size={16} />}
+              disabled={isUpdatingImage}
               sx={{
                 gap: 1,
                 color: "#FFA500",
@@ -114,14 +139,20 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 "&:hover": {
                   backgroundColor: "#FFE4B5",
                 },
+                "&.Mui-disabled": {
+                  color: "#999",
+                  backgroundColor: "#f5f5f5",
+                  borderColor: "#ddd",
+                },
               }}
             >
-              Update Profile
+              {isUpdatingImage ? "Updating..." : "Update Profile"}
               <input
                 type="file"
                 accept="image/*"
                 style={{ display: "none" }}
                 onChange={handleFileChange}
+                disabled={isUpdatingImage}
               />
             </Button>
 
@@ -145,7 +176,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <Button
               variant="outlined"
               startIcon={<LogOut size={16} />}
-              onClick={onLogout}
+              onClick={handleLogout}
               sx={{
                 gap: 1,
                 color: "red",

@@ -396,7 +396,7 @@ export const addAddress = async (address: Omit<AddressItem, "id">) => {
       { address },
       { withCredentials: true }
     );
-    
+
     if (response.data.status === "success") {
       return response.data.address;
     } else if (response.data.status === "info") {
@@ -413,14 +413,17 @@ export const addAddress = async (address: Omit<AddressItem, "id">) => {
   }
 };
 
-export const updateAddress = async (addressId: string, updatedFields: Partial<AddressItem>) => {
+export const updateAddress = async (
+  addressId: string,
+  updatedFields: Partial<AddressItem>
+) => {
   try {
     const response = await axios.patch(
       `${BASE_URL}/user/updateAddress/${addressId}`,
       updatedFields,
       { withCredentials: true }
     );
-    
+
     if (response.data.status === "success") {
       return response.data.updatedAddress;
     } else if (response.data.status === "error") {
@@ -430,9 +433,13 @@ export const updateAddress = async (addressId: string, updatedFields: Partial<Ad
     }
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Failed to update address");
+      throw new Error(
+        error.response.data.message || "Failed to update address"
+      );
     } else {
-      throw new Error("An unexpected error occurred while updating the address");
+      throw new Error(
+        "An unexpected error occurred while updating the address"
+      );
     }
   }
 };
@@ -443,7 +450,7 @@ export const deleteAddress = async (addressId: string) => {
       `${BASE_URL}/user/deleteAddress/${addressId}`,
       { withCredentials: true }
     );
-    
+
     if (response.data.status === "success") {
       return response.data;
     } else if (response.data.status === "error") {
@@ -453,15 +460,97 @@ export const deleteAddress = async (addressId: string) => {
     }
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Failed to delete address");
+      throw new Error(
+        error.response.data.message || "Failed to delete address"
+      );
     } else {
-      throw new Error("An unexpected error occurred while deleting the address");
+      throw new Error(
+        "An unexpected error occurred while deleting the address"
+      );
     }
   }
 };
 
-//-------------------------Validation Functions----------------------------
-export const validatePincode = (pincode: string): boolean => {
-  const pincodeRegex = /^\d{5,8}$/;
-  return pincodeRegex.test(pincode);
+export const updatePassword = async (data: {
+  currentPassword: string;
+  newPassword: string;
+  confirmNew: string;
+}) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/user/updatePassword`, data, {
+      withCredentials: true,
+    });
+
+    return response.data;
+  } catch (error: any) {
+    if (error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to update password"
+      );
+    } else if (error.request) {
+      throw new Error("No response received from the server");
+    } else {
+      throw new Error(
+        error.message || "An error occurred while updating password"
+      );
+    }
+  }
+};
+
+export const logout = async (): Promise<void> => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/auth/logout`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Logout failed");
+    }
+  } catch (error: any) {
+    console.error("Logout error:", error);
+    throw new Error(
+      error.response?.data?.message || "An error occurred during logout"
+    );
+  }
+};
+
+//-------------------------User Profile Image Update----------------------------
+export const updateProfileImage = async (file: File) => {
+  try {
+    const formData = new FormData();
+    formData.append("profileImage", file);
+
+    const response = await axios.post(
+      `${BASE_URL}/user/changeProfileImage`,
+      formData,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (response.data.status === "success") {
+      return response.data;
+    } else {
+      throw new Error(
+        response.data.message || "Failed to update profile image"
+      );
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to update profile image"
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while updating profile image"
+      );
+    }
+  }
 };

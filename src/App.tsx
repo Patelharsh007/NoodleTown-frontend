@@ -1,7 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ROUTES } from "./constant/constant";
-
 import "./App.css";
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
@@ -11,7 +10,6 @@ import UserDetail from "./pages/UserDetail";
 import { ToastContainer } from "react-toastify";
 import ProductDetails from "./pages/ProductDetails";
 import ScrollToTop from "./components/ScrollToTop";
-import OrderPage from "./pages/OrderPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 import { Analytics } from "@vercel/analytics/react";
@@ -41,14 +39,6 @@ function App() {
           element={
             <ProtectedRoute>
               <UserDetail />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROUTES.ORDERS}
-          element={
-            <ProtectedRoute>
-              <OrderPage />
             </ProtectedRoute>
           }
         />

@@ -9,26 +9,23 @@ import {
   InputAdornment,
   IconButton,
   Box,
+  CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   showErrorToast,
   showSuccessToast,
 } from "../../components/ToastContainer";
+import { updatePassword } from "../../util/util";
 
 interface UpdatePasswordModalProps {
   open: boolean;
   onClose: () => void;
-  onUpdatePassword: (
-    currentPassword: string,
-    newPassword: string
-  ) => Promise<void>;
 }
 
 const UpdatePasswordModal: React.FC<UpdatePasswordModalProps> = ({
   open,
   onClose,
-  onUpdatePassword,
 }) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -44,18 +41,22 @@ const UpdatePasswordModal: React.FC<UpdatePasswordModalProps> = ({
       return;
     }
 
-    if (newPassword.length < 8) {
-      showErrorToast("Password must be at least 8 characters long");
+    if (newPassword.length < 6) {
+      showErrorToast("Password must be at least 6 characters long");
       return;
     }
 
     setIsLoading(true);
     try {
-      await onUpdatePassword(currentPassword, newPassword);
+      await updatePassword({
+        currentPassword,
+        newPassword,
+        confirmNew: confirmPassword,
+      });
       showSuccessToast("Password updated successfully");
       handleClose();
-    } catch (error) {
-      showErrorToast("Failed to update password");
+    } catch (error: any) {
+      showErrorToast(error.message || "Failed to update password");
     } finally {
       setIsLoading(false);
     }
@@ -89,6 +90,7 @@ const UpdatePasswordModal: React.FC<UpdatePasswordModalProps> = ({
           borderBottom: 1,
           borderColor: "divider",
           pb: 2,
+          color: "#FFA500",
         }}
       >
         Update Password
@@ -113,6 +115,16 @@ const UpdatePasswordModal: React.FC<UpdatePasswordModalProps> = ({
                 </InputAdornment>
               ),
             }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "&:hover fieldset": {
+                  borderColor: "#FFA500",
+                },
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#FFA500",
+              },
+            }}
             required
           />
 
@@ -122,7 +134,7 @@ const UpdatePasswordModal: React.FC<UpdatePasswordModalProps> = ({
             type={showNewPassword ? "text" : "password"}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            helperText="Must be at least 8 characters long."
+            helperText="Must be at least 6 characters long."
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -134,6 +146,16 @@ const UpdatePasswordModal: React.FC<UpdatePasswordModalProps> = ({
                   </IconButton>
                 </InputAdornment>
               ),
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "&:hover fieldset": {
+                  borderColor: "#FFA500",
+                },
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#FFA500",
+              },
             }}
             required
           />
@@ -156,6 +178,16 @@ const UpdatePasswordModal: React.FC<UpdatePasswordModalProps> = ({
                 </InputAdornment>
               ),
             }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "&:hover fieldset": {
+                  borderColor: "#FFA500",
+                },
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#FFA500",
+              },
+            }}
             required
           />
         </Box>
@@ -169,25 +201,45 @@ const UpdatePasswordModal: React.FC<UpdatePasswordModalProps> = ({
       >
         <Button
           onClick={handleClose}
+          disabled={isLoading}
           sx={{
             textTransform: "none",
             borderRadius: 2,
             px: 3,
+            color: "#666",
+            "&:hover": {
+              backgroundColor: "#FFF4E0",
+            },
           }}
         >
           Cancel
         </Button>
         <Button
-          variant="contained"
+          variant="outlined"
           onClick={handleSubmit}
           disabled={isLoading}
           sx={{
             textTransform: "none",
             borderRadius: 2,
             px: 3,
+            color: "#FFA500",
+            backgroundColor: "#FFF4E0",
+            borderColor: "#FFA500",
+            "&:hover": {
+              backgroundColor: "#FFE4B5",
+            },
+            "&.Mui-disabled": {
+              color: "#999",
+              backgroundColor: "#f5f5f5",
+              borderColor: "#ddd",
+            },
           }}
         >
-          {isLoading ? "Updating..." : "Update Password"}
+          {isLoading ? (
+            <CircularProgress size={24} sx={{ color: "#FFA500" }} />
+          ) : (
+            "Update Password"
+          )}
         </Button>
       </DialogActions>
     </Dialog>

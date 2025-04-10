@@ -22,6 +22,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSetShowAddressForm }) => {
 
   const [newAddress, setNewAddress] = useState<NewAddress>({
     id: "",
+    recipientName: "",
     street: "",
     city: "",
     state: "",
@@ -36,6 +37,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSetShowAddressForm }) => {
 
   const handleAddAddress = () => {
     if (
+      !newAddress.recipientName ||
       !newAddress.street ||
       !newAddress.city ||
       !newAddress.state ||
@@ -52,6 +54,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSetShowAddressForm }) => {
     dispatch(addAddress(address));
     setNewAddress({
       id: "",
+      recipientName: "",
       street: "",
       city: "",
       state: "",
@@ -102,7 +105,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSetShowAddressForm }) => {
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  label="Street Address"
+                  label="Recipient Name"
                   fullWidth
                   size="small"
                   value={newAddress.street}

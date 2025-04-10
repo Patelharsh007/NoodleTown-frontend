@@ -15,16 +15,16 @@ import {
   Paper,
   Stack,
   Divider,
+  Skeleton,
 } from "@mui/material";
+import useCart from "../../hooks/useCartMeal";
 
 interface OrderSummaryProps {
-  cart: CartItem[];
   isAddressSelected: boolean;
   onCheckout: (order: any) => void;
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({
-  cart,
   isAddressSelected,
   onCheckout,
 }) => {
@@ -32,9 +32,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const [discount, setDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
 
+  const { cart, isLoadingCart: isLoading, errorCart: error } = useCart();
+
   const subtotal =
-    cart &&
-    cart.reduce((sum, item) => sum + item.meal.price * item.quantity, 0);
+    cart?.reduce(
+      (sum: number, item: CartItem) => sum + item.meal.price * item.quantity,
+      0
+    ) || 0;
   const deliveryCharges = 40;
   const total = subtotal - discount + deliveryCharges;
 
@@ -54,22 +58,74 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   };
 
   const handleCheckout = () => {
+    if (!cart) return;
+
     const order = {
       subTotal: subtotal,
       discount: discount,
       total: total,
       deliveryCharges: deliveryCharges,
-      items:
-        cart &&
-        cart.map((item) => ({
-          itemName: item.meal.title,
-          quantity: item.quantity,
-          price: item.meal.price,
-          itemTotal: item.meal.price * item.quantity,
-        })),
+      items: cart.map((item: CartItem) => ({
+        itemName: item.meal.title,
+        quantity: item.quantity,
+        price: item.meal.price,
+        itemTotal: item.meal.price * item.quantity,
+      })),
     };
     onCheckout(order);
   };
+
+  if (isLoading) {
+    return (
+      <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 1 }}>
+        <Skeleton variant="text" width="60%" height={40} sx={{ mb: 2 }} />
+        <Stack spacing={2}>
+          {[1, 2, 3].map((i) => (
+            <Box key={i} sx={{ display: "flex", gap: 2 }}>
+              <Skeleton variant="rectangular" width={64} height={64} />
+              <Box sx={{ flex: 1 }}>
+                <Skeleton variant="text" width="80%" />
+                <Skeleton variant="text" width="60%" />
+              </Box>
+            </Box>
+          ))}
+        </Stack>
+        <Skeleton variant="text" width="100%" height={40} sx={{ mt: 3 }} />
+        <Skeleton variant="text" width="100%" height={40} sx={{ mt: 1 }} />
+      </Paper>
+    );
+  }
+
+  if (error) {
+    return (
+      <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 1 }}>
+        <Typography color="error" variant="body1">
+          Error loading cart items. Please try again later.
+        </Typography>
+      </Paper>
+    );
+  }
+
+  if (!cart || cart.length === 0) {
+    return (
+      <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 1 }}>
+        <Typography
+          variant="h6"
+          gutterBottom
+          display="flex"
+          alignItems="center"
+        >
+          <ShoppingBag style={{ marginRight: "8px", color: "#FFA500" }} />
+          Order Summary
+        </Typography>
+        <Box sx={{ textAlign: "center", py: 4 }}>
+          <Typography variant="body1" color="text.secondary">
+            Your cart is empty
+          </Typography>
+        </Box>
+      </Paper>
+    );
+  }
 
   return (
     <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 1 }}>
@@ -92,19 +148,19 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       </Typography>
 
       <Box sx={{ maxHeight: "300px", overflowY: "auto", pr: 1, mb: 2 }}>
-        {cart.map((item) => (
+        {cart.map((item: CartItem) => (
           <OrderItemCard key={item.id} item={item} />
         ))}
       </Box>
 
-      <Box sx={{ mb: 2 }}>
+      <Box>
         <Typography variant="body1" fontWeight={500} sx={{ mb: 1 }}>
           Have a coupon?
         </Typography>
         <Stack direction="row" spacing={2}>
           <TextField
             value={couponCode}
-            onChange={(e) => setCouponCode(e.target.value)}
+            onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
             placeholder="Enter coupon code"
             variant="outlined"
             fullWidth
@@ -121,7 +177,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             disabled={!couponCode || couponApplied}
             variant="contained"
             sx={{
-              bgcolor: couponApplied ? "#A5D6A7" : "#FFA500",
+              bgcolor: couponApplied ? "#7DDA58" : "#FFA500",
               "&:hover": {
                 bgcolor: couponApplied ? "#81C784" : "#FF8F00",
               },
@@ -144,8 +200,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         )}
       </Box>
 
-      <Box sx={{ borderTop: "1px solid #E0E0E0", pt: 2, pb: 2 }}>
-        <Stack spacing={2} sx={{ mb: 2 }}>
+      <Box>
+        <Stack spacing={2} sx={{ mb: 2 }} marginTop={"20px"}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="body2" color="textSecondary">
               Subtotal

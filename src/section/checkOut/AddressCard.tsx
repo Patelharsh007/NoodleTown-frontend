@@ -57,10 +57,10 @@ const AddressCard: React.FC<AddressCardProps> = ({
         />
 
         <Box>
-          <Stack spacing={1}>
-            <Typography variant="subtitle1" fontWeight="bold">
-              {address.recipientName}
-            </Typography>
+          <Typography variant="subtitle1" fontWeight="bold" mb={0.5}>
+            {address.recipientName}
+          </Typography>
+          <Stack spacing={0.5}>
             <Typography variant="body2">{address.street}</Typography>
             <Typography variant="body2">
               {address.city}, {address.state} {address.pincode}

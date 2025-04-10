@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AddressSection from "./AddressSection";
 import OrderSummary from "./OrderSummary";
+
 import { AddressItem, Order } from "../../types/type";
 import { Box, Grid2, Typography } from "@mui/material";
 import {
@@ -19,6 +20,8 @@ const CheckOut = () => {
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
     null
   );
+
+  const [orderData, setOrderData] = useState<Order | null>(null);
 
   const {
     data: addresses,
@@ -52,8 +55,15 @@ const CheckOut = () => {
       orderedAt: new Date().toISOString(),
     };
 
-    console.log("Order placed:", fullOrder);
-    showSuccessToast("Order placed successfully!");
+    setOrderData(fullOrder);
+  };
+
+  const handlePaymentSuccess = () => {
+    if (orderData) {
+      console.log("Order placed:", orderData);
+      showSuccessToast("Order placed successfully!");
+      setOrderData(null);
+    }
   };
 
   return (

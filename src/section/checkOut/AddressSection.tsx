@@ -109,8 +109,14 @@ const AddressSection: React.FC<AddressSectionProps> = ({
       </Typography>
 
       {selectedAddress && (
-        <Box sx={{ mb: 3, p: 2, backgroundColor: "#FFF4E5", borderRadius: 1 }}>
-          <Stack direction="row" spacing={1} alignItems="center" mb={2}>
+        <Box sx={{ 
+          mb: 2, 
+          p: 2, 
+          backgroundColor: "#FFF4E5", 
+          borderRadius: 2,
+          border: "1px solid #FFE0B2"
+        }}>
+          <Stack direction="row" spacing={1} alignItems="center" mb={1.5}>
             <Box
               sx={{
                 width: 8,
@@ -119,22 +125,115 @@ const AddressSection: React.FC<AddressSectionProps> = ({
                 backgroundColor: "#FFA500",
               }}
             />
-            <Typography variant="body2" fontWeight={500} color="text.primary">
+            <Typography variant="body2" fontWeight={700} color="text.primary">
               Delivering to:
             </Typography>
           </Stack>
-          <Stack spacing={0.5}>
-            <Typography variant="body2" fontWeight={500} color="text.primary">
-              {selectedAddress.street}
+          
+          <Box sx={{ pl: 1.5 }}>
+            <Typography 
+              variant="body2" 
+              fontWeight={700} 
+              color="text.primary" 
+              sx={{ mb: 1.5 }}
+            >
+              {selectedAddress.recipientName}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {selectedAddress.city}, {selectedAddress.state} -{" "}
-              {selectedAddress.pincode}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {selectedAddress.country}
-            </Typography>
-          </Stack>
+            
+            <Stack spacing={1}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography 
+                  variant="body2" 
+                  fontWeight={600} 
+                  color="text.secondary"
+                  sx={{ minWidth: "60px" }}
+                >
+                  Street:
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  fontWeight={500} 
+                  color="text.primary"
+                >
+                  {selectedAddress.street}
+                </Typography>
+              </Stack>
+              
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography 
+                  variant="body2" 
+                  fontWeight={600} 
+                  color="text.secondary"
+                  sx={{ minWidth: "60px" }}
+                >
+                  City:
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  fontWeight={500} 
+                  color="text.primary"
+                >
+                  {selectedAddress.city}
+                </Typography>
+              </Stack>
+              
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography 
+                  variant="body2" 
+                  fontWeight={600} 
+                  color="text.secondary"
+                  sx={{ minWidth: "60px" }}
+                >
+                  State:
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  fontWeight={500} 
+                  color="text.primary"
+                >
+                  {selectedAddress.state}
+                </Typography>
+              </Stack>
+              
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography 
+                  variant="body2" 
+                  fontWeight={600} 
+                  color="text.secondary"
+                  sx={{ minWidth: "60px" }}
+                >
+                  Pincode:
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  fontWeight={500} 
+                  color="text.primary"
+                >
+                  {selectedAddress.pincode}
+                </Typography>
+              </Stack>
+              
+              {selectedAddress.country && (
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Typography 
+                    variant="body2" 
+                    fontWeight={600} 
+                    color="text.secondary"
+                    sx={{ minWidth: "60px" }}
+                  >
+                    Country:
+                  </Typography>
+                  <Typography 
+                    variant="body2" 
+                    fontWeight={500} 
+                    color="text.primary"
+                  >
+                    {selectedAddress.country}
+                  </Typography>
+                </Stack>
+              )}
+            </Stack>
+          </Box>
         </Box>
       )}
 

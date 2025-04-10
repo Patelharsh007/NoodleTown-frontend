@@ -44,7 +44,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
     country: "",
   });
 
-  const userData = useSelector((state: RootState) => state.authUser.authUser);
+  const authUser = useSelector((state: RootState) => state.authUser.authUser);
   const queryClient = useQueryClient();
 
   const {
@@ -52,16 +52,16 @@ const AddressSection: React.FC<AddressSectionProps> = ({
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["addresses", userData.email],
+    queryKey: ["addresses", authUser.id],
     queryFn: getUserAddresses,
-    staleTime: 5 * 60 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
   });
 
   const addAddressMutation = useMutation({
     mutationFn: addAddress,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["addresses", userData.email],
+        queryKey: ["addresses", authUser.id],
       });
       showSuccessToast("Address added successfully");
       setNewAddress({

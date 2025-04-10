@@ -14,7 +14,10 @@ import {
   Alert,
 } from "@mui/material";
 import { MapPin, Plus, Pencil, Trash2 } from "lucide-react";
-import { showErrorToast, showSuccessToast } from "../../components/ToastContainer";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "../../components/ToastContainer";
 import { getUserAddresses, deleteAddress } from "../../util/util";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
@@ -23,7 +26,7 @@ import AddAddressModal from "./AddAddressModal";
 import UpdateAddressModal from "./UpdateAddressModal";
 
 const AddressManager: React.FC = () => {
-  const userData = useSelector((state: RootState) => state.authUser.authUser);
+  const authUser = useSelector((state: RootState) => state.authUser.authUser);
   const queryClient = useQueryClient();
 
   const {
@@ -31,16 +34,16 @@ const AddressManager: React.FC = () => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["addresses", userData.email],
+    queryKey: ["addresses", authUser.id],
     queryFn: getUserAddresses,
-    staleTime: 5 * 60 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
   });
 
   const deleteAddressMutation = useMutation({
     mutationFn: (id: string) => deleteAddress(id),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["addresses", userData.email],
+        queryKey: ["addresses", authUser.id],
       });
       showSuccessToast("Address deleted successfully");
       handleCloseDeleteDialog();
@@ -53,7 +56,9 @@ const AddressManager: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
-  const [editingAddress, setEditingAddress] = useState<AddressItem | null>(null);
+  const [editingAddress, setEditingAddress] = useState<AddressItem | null>(
+    null
+  );
 
   const handleOpen = () => {
     setOpen(true);

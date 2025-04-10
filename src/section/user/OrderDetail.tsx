@@ -1,10 +1,10 @@
 import React from "react";
-import { OrderItem } from "../../types/type";
+import { Order } from "../../types/type";
 import { MapPin } from "lucide-react";
 import { Box, Typography, Grid, Divider, Chip } from "@mui/material";
 
 interface OrderDetailProps {
-  order: OrderItem;
+  order: Order;
 }
 
 const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
@@ -99,28 +99,34 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
             Delivery Address
           </Typography>
           <Box bgcolor="white" borderRadius={2} border={1} p={3}>
-            <Box display="flex">
-              <MapPin
-                size={18}
-                className="text-gray-400 flex-shrink-0 mt-1 mr-2"
-              />
-              <Box>
-                <Typography variant="body2" mb={1}>
-                  {order.address.street}
-                </Typography>
-                <Typography variant="body2" mb={1}>
-                  {order.address.city}, {order.address.state}
-                </Typography>
-                <Typography variant="body2" mb={1}>
-                  {order.address.pincode}
-                </Typography>
-                {order.address.country && (
-                  <Typography variant="body2">
-                    {order.address.country}
+            {order.address ? (
+              <Box display="flex">
+                <MapPin
+                  size={18}
+                  className="text-gray-400 flex-shrink-0 mt-1 mr-2"
+                />
+                <Box>
+                  <Typography variant="body2" mb={1}>
+                    {order.address.street}
                   </Typography>
-                )}
+                  <Typography variant="body2" mb={1}>
+                    {order.address.city}, {order.address.state}
+                  </Typography>
+                  <Typography variant="body2" mb={1}>
+                    {order.address.pincode}
+                  </Typography>
+                  {order.address.country && (
+                    <Typography variant="body2">
+                      {order.address.country}
+                    </Typography>
+                  )}
+                </Box>
               </Box>
-            </Box>
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                No delivery address available
+              </Typography>
+            )}
           </Box>
         </Grid>
       </Grid>

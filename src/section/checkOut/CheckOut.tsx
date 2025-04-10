@@ -1,45 +1,58 @@
 import React, { useState } from "react";
 import AddressSection from "./AddressSection";
 import OrderSummary from "./OrderSummary";
-import { AddressItem, OrderItem } from "../../types/type";
-import { mockAddresses, mockCartItems } from "../../data/MockData";
+import { AddressItem, Order } from "../../types/type";
 import { Box, Grid2, Typography } from "@mui/material";
 import {
   showSuccessToast,
   showErrorToast,
   showInfoToast,
 } from "../../components/ToastContainer";
+import useCart from "../../hooks/useCartMeal";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
+import { useQuery } from "@tanstack/react-query";
+import { getUserAddresses } from "../../util/util";
 
 const CheckOut = () => {
-  const [addresses, setAddresses] = useState<AddressItem[]>(mockAddresses);
+  const authUser = useSelector((state: RootState) => state.authUser.authUser);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
     null
   );
 
-  const handleCheckout = (orderData: OrderItem) => {
+  const {
+    data: addresses,
+    isLoading: isLoadingAddresses,
+    error: addressError,
+  } = useQuery({
+    queryKey: ["address", authUser.id],
+    queryFn: getUserAddresses,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const handleCheckout = (orderData: Order) => {
     if (!selectedAddressId) {
       showErrorToast("Please select an address");
       return;
     }
 
-    const selectedAddress = addresses.find(
-      (addr) => addr.id === selectedAddressId
+    const selectedAddress = addresses?.find(
+      (addr: AddressItem) => addr.id === selectedAddressId
     );
 
-    const fullOrder = {
+    if (!selectedAddress) {
+      showErrorToast("Selected address not found");
+      return;
+    }
+
+    const fullOrder: Order = {
       ...orderData,
-      address: {
-        street: selectedAddress?.street,
-        city: selectedAddress?.city,
-        state: selectedAddress?.state,
-        pincode: selectedAddress?.pincode,
-      },
+      address: selectedAddress,
       status: "pending",
       orderedAt: new Date().toISOString(),
     };
 
     console.log("Order placed:", fullOrder);
-
     showSuccessToast("Order placed successfully!");
   };
 
@@ -55,7 +68,7 @@ const CheckOut = () => {
           <Grid2 size={{ xs: 12, sm: 6 }}>
             <Box sx={{ mb: 4 }}>
               <AddressSection
-                addresses={addresses}
+                addresses={addresses || []}
                 selectedAddressId={selectedAddressId}
                 onSelectAddress={setSelectedAddressId}
               />

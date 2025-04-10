@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CartItem, OrderItem, OrderStatus } from "../../types/type";
+import { CartItem, OrderItem, OrderStatus, Order } from "../../types/type";
 import OrderItemCard from "./OrderItemCard";
 import { Check, ShoppingBag } from "lucide-react";
 import {
@@ -20,12 +20,10 @@ import {
 import useCart from "../../hooks/useCartMeal";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
-import { useQuery } from "@tanstack/react-query";
-import { getUserAddresses } from "../../util/util";
 
 interface OrderSummaryProps {
   isAddressSelected: boolean;
-  onCheckout: (order: OrderItem) => void;
+  onCheckout: (order: Order) => void;
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({
@@ -33,16 +31,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   onCheckout,
 }) => {
   const authUser = useSelector((state: RootState) => state.authUser.authUser);
-
-  const {
-    data: address,
-    isLoading: isloadingaddress,
-    error: isaddresserror,
-  } = useQuery({
-    queryKey: ["address", authUser.id],
-    queryFn: getUserAddresses,
-  });
-
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
@@ -75,18 +63,19 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const handleCheckout = () => {
     if (!cart) return;
 
-    const order = {
+    const order: Order = {
       id: Math.random(),
       userId: authUser.id,
       subTotal: subtotal,
       discount: discount,
       total: total,
-      address: address && address[0],
       orderedAt: new Date().toISOString(),
-      status: "completed" as OrderStatus,
+      status: "pending" as OrderStatus,
       deliveryCharges: deliveryCharges,
       items: cart.map((item: CartItem) => ({
+        id: item.mealId,
         itemName: item.meal.title,
+        image: item.meal.image,
         quantity: item.quantity,
         price: item.meal.price,
         itemTotal: item.meal.price * item.quantity,

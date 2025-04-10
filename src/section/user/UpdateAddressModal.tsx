@@ -12,7 +12,10 @@ import {
   Alert,
   Box,
 } from "@mui/material";
-import { showErrorToast, showSuccessToast } from "../../components/ToastContainer";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "../../components/ToastContainer";
 import { updateAddress } from "../../util/util";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
@@ -31,17 +34,19 @@ const UpdateAddressModal: React.FC<UpdateAddressModalProps> = ({
   onClose,
   address,
 }) => {
-  const userData = useSelector((state: RootState) => state.authUser.authUser);
+  const authUser = useSelector((state: RootState) => state.authUser.authUser);
   const queryClient = useQueryClient();
 
-  const [updatedAddress, setUpdatedAddress] = useState<Omit<AddressItem, "id">>({
-    recipientName: "",
-    street: "",
-    city: "",
-    state: "",
-    pincode: "",
-    country: "",
-  });
+  const [updatedAddress, setUpdatedAddress] = useState<Omit<AddressItem, "id">>(
+    {
+      recipientName: "",
+      street: "",
+      city: "",
+      state: "",
+      pincode: "",
+      country: "",
+    }
+  );
 
   useEffect(() => {
     if (address) {
@@ -61,7 +66,7 @@ const UpdateAddressModal: React.FC<UpdateAddressModalProps> = ({
       updateAddress(data.id, data.address),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["addresses", userData.email],
+        queryKey: ["addresses", authUser.id],
       });
       showSuccessToast("Address updated successfully");
       onClose();
@@ -73,7 +78,7 @@ const UpdateAddressModal: React.FC<UpdateAddressModalProps> = ({
 
   const handleSubmit = async () => {
     if (!address) return;
-    
+
     try {
       if (!PINCODE_REGEX.test(updatedAddress.pincode)) {
         showErrorToast("Pincode must be a number between 5-8 digits");
@@ -135,7 +140,10 @@ const UpdateAddressModal: React.FC<UpdateAddressModalProps> = ({
                 label="Street"
                 value={updatedAddress.street}
                 onChange={(e) =>
-                  setUpdatedAddress({ ...updatedAddress, street: e.target.value })
+                  setUpdatedAddress({
+                    ...updatedAddress,
+                    street: e.target.value,
+                  })
                 }
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -175,7 +183,10 @@ const UpdateAddressModal: React.FC<UpdateAddressModalProps> = ({
                 label="State"
                 value={updatedAddress.state}
                 onChange={(e) =>
-                  setUpdatedAddress({ ...updatedAddress, state: e.target.value })
+                  setUpdatedAddress({
+                    ...updatedAddress,
+                    state: e.target.value,
+                  })
                 }
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -195,7 +206,10 @@ const UpdateAddressModal: React.FC<UpdateAddressModalProps> = ({
                 label="Pincode"
                 value={updatedAddress.pincode}
                 onChange={(e) =>
-                  setUpdatedAddress({ ...updatedAddress, pincode: e.target.value })
+                  setUpdatedAddress({
+                    ...updatedAddress,
+                    pincode: e.target.value,
+                  })
                 }
                 error={
                   !PINCODE_REGEX.test(updatedAddress.pincode) &&
@@ -229,7 +243,10 @@ const UpdateAddressModal: React.FC<UpdateAddressModalProps> = ({
                 label="Country"
                 value={updatedAddress.country}
                 onChange={(e) =>
-                  setUpdatedAddress({ ...updatedAddress, country: e.target.value })
+                  setUpdatedAddress({
+                    ...updatedAddress,
+                    country: e.target.value,
+                  })
                 }
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -291,4 +308,4 @@ const UpdateAddressModal: React.FC<UpdateAddressModalProps> = ({
   );
 };
 
-export default UpdateAddressModal; 
+export default UpdateAddressModal;

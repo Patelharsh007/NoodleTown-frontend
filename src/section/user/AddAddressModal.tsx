@@ -26,7 +26,7 @@ interface AddAddressModalProps {
 }
 
 const AddAddressModal: React.FC<AddAddressModalProps> = ({ open, onClose }) => {
-  const userData = useSelector((state: RootState) => state.authUser.authUser);
+  const authUser = useSelector((state: RootState) => state.authUser.authUser);
   const queryClient = useQueryClient();
 
   const [newAddress, setNewAddress] = useState<Omit<AddressItem, "id">>({
@@ -42,7 +42,7 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({ open, onClose }) => {
     mutationFn: addAddress,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["addresses", userData.email],
+        queryKey: ["addresses", authUser.id],
       });
       showSuccessToast("Address added successfully");
       onClose();

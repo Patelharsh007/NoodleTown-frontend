@@ -17,7 +17,7 @@ import { RootState } from "../redux/Store";
 import { CartItem } from "../types/type";
 
 const useCart = () => {
-  const auth = useSelector((state: RootState) => state.authUser.authUser);
+  const authUser = useSelector((state: RootState) => state.authUser.authUser);
   const queryClient = useQueryClient();
 
   // Fetch the user's cart data
@@ -26,7 +26,7 @@ const useCart = () => {
     isLoading: isLoadingCart,
     error: errorCart,
   } = useQuery({
-    queryKey: ["cartItems", auth.email],
+    queryKey: ["cartItems", authUser.id],
     queryFn: getUserCart,
     staleTime: 5 * 60 * 1000,
   });
@@ -36,10 +36,10 @@ const useCart = () => {
     mutationFn: emptyCartBackend,
     onSuccess: (clearCart) => {
       showSuccessToast(clearCart.message);
-      queryClient.setQueryData(["cartItems", auth.email], {
+      queryClient.setQueryData(["cartItems", authUser.id], {
         cartItem: [],
       });
-      queryClient.invalidateQueries({ queryKey: ["cartItems", auth.id] });
+      queryClient.invalidateQueries({ queryKey: ["cartItems", authUser.id] });
     },
     onError: (error) => {
       showErrorToast(
@@ -55,7 +55,7 @@ const useCart = () => {
     mutationFn: (mealId: string) => addToCartBackend(mealId),
     onSuccess: (addData) => {
       showSuccessToast(addData.message);
-      queryClient.invalidateQueries({ queryKey: ["cartItems", auth.email] });
+      queryClient.invalidateQueries({ queryKey: ["cartItems", authUser.id] });
     },
     onError: (error) => {
       showErrorToast(
@@ -71,7 +71,7 @@ const useCart = () => {
     mutationFn: (mealId: string) => removeFromCartBackend(mealId),
     onSuccess: (removeData) => {
       showSuccessToast(removeData.message);
-      queryClient.invalidateQueries({ queryKey: ["cartItems", auth.email] });
+      queryClient.invalidateQueries({ queryKey: ["cartItems", authUser.id] });
     },
     onError: (error) => {
       showErrorToast(
@@ -87,7 +87,7 @@ const useCart = () => {
     mutationFn: (mealId: string) => incrementCartMealBackend(mealId),
     onSuccess: (incrementData) => {
       showInfoToast(incrementData.message);
-      queryClient.invalidateQueries({ queryKey: ["cartItems", auth.email] });
+      queryClient.invalidateQueries({ queryKey: ["cartItems", authUser.id] });
     },
     onError: (error) => {
       showErrorToast(
@@ -107,7 +107,7 @@ const useCart = () => {
         cart?.find((cart: CartItem) => cart.mealId === mealId)?.quantity === 1
       ) {
         if (cart?.length === 1) {
-          queryClient.setQueryData(["cartItems", auth.email], {
+          queryClient.setQueryData(["cartItems", authUser.id], {
             cartItem: [],
           });
         }
@@ -115,7 +115,7 @@ const useCart = () => {
       } else {
         showInfoToast(decrementData.message);
       }
-      queryClient.invalidateQueries({ queryKey: ["cartItems", auth.email] });
+      queryClient.invalidateQueries({ queryKey: ["cartItems", authUser.id] });
     },
     onError: (error) => {
       showErrorToast(

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { OrderItem } from "../../types/type";
+import { Order } from "../../types/type";
 import {
   Box,
   Typography,
@@ -13,39 +13,31 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import OrderDetail from "./OrderDetail";
 
 interface OrderHistoryProps {
-  orders: OrderItem[];
+  orders: Order[];
 }
 
-const OrderHistory = ({ orders }: OrderHistoryProps) => {
-  const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+const OrderHistory: React.FC<OrderHistoryProps> = ({ orders }) => {
+  const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
+
+  const toggleOrderDetails = (orderId: number) => {
+    setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
-        return {
-          bgcolor: "success.light",
-          color: "success.dark",
-        };
+        return { bgcolor: "#E8F5E9", color: "#2E7D32" };
       case "pending":
-        return {
-          bgcolor: "warning.light",
-          color: "warning.dark",
-        };
+        return { bgcolor: "#FFF3E0", color: "#E65100" };
       case "cancelled":
-        return {
-          bgcolor: "error.light",
-          color: "error.dark",
-        };
+        return { bgcolor: "#FFEBEE", color: "#C62828" };
+      case "processing":
+        return { bgcolor: "#E3F2FD", color: "#1565C0" };
+      case "shipped":
+        return { bgcolor: "#F3E5F5", color: "#6A1B9A" };
       default:
-        return {
-          bgcolor: "grey.100",
-          color: "grey.800",
-        };
+        return { bgcolor: "#F5F5F5", color: "#616161" };
     }
-  };
-
-  const toggleOrderDetails = (orderId: number) => {
-    setSelectedOrderId(selectedOrderId === orderId ? null : orderId);
   };
 
   if (!orders.length) {
@@ -89,33 +81,37 @@ const OrderHistory = ({ orders }: OrderHistoryProps) => {
   }
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+    <Box>
       {orders.map((order) => (
         <Paper
           key={order.id}
-          elevation={0}
+          elevation={1}
           sx={{
+            mb: 2,
             borderRadius: 2,
-            border: "1px solid",
-            borderColor: "divider",
             overflow: "hidden",
           }}
         >
-          <Box
-            sx={{
-              p: 3,
-              display: "flex",
-              flexDirection: { xs: "column", sm: "row" },
-              justifyContent: "space-between",
-              alignItems: { xs: "flex-start", sm: "center" },
-              gap: 2,
-            }}
-          >
-            <Box sx={{ flex: 1 }}>
-              <Stack direction="row" spacing={2} alignItems="center" mb={2}>
-                <Typography variant="h6" fontWeight={500}>
-                  Order #{order.id}
+          <Box p={3}>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Stack spacing={1}>
+                <Typography variant="body2" color="text.secondary" mb={1}>
+                  {new Date(order.orderedAt).toLocaleDateString()}
                 </Typography>
+                <Typography variant="h6" fontWeight={500}>
+                  ₹{order.total.toFixed(2)}
+                  <Typography
+                    component="span"
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ ml: 2 }}
+                  >
+                    ({order.items.length}{" "}
+                    {order.items.length === 1 ? "item" : "items"})
+                  </Typography>
+                </Typography>
+              </Stack>
+              <Box display="flex" alignItems="center" gap={2}>
                 <Chip
                   label={
                     order.status.charAt(0).toUpperCase() + order.status.slice(1)
@@ -127,50 +123,27 @@ const OrderHistory = ({ orders }: OrderHistoryProps) => {
                     borderRadius: 1,
                   }}
                 />
-              </Stack>
-              <Typography variant="body2" color="text.secondary" mb={1}>
-                {new Date(order.orderedAt).toLocaleDateString()}
-              </Typography>
-              <Typography variant="h6" fontWeight={500}>
-                ₹{order.total.toFixed(2)}
-                <Typography
-                  component="span"
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ ml: 2 }}
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => toggleOrderDetails(Number(order.id))}
+                  sx={{
+                    textTransform: "none",
+                    borderRadius: 2,
+                    minWidth: 0,
+                    p: 1,
+                  }}
                 >
-                  ({order.items.length}{" "}
-                  {order.items.length === 1 ? "item" : "items"})
-                </Typography>
-              </Typography>
+                  {expandedOrderId === order.id ? (
+                    <ChevronDown size={20} />
+                  ) : (
+                    <ChevronRight size={20} />
+                  )}
+                </Button>
+              </Box>
             </Box>
-
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => toggleOrderDetails(order.id)}
-              sx={{
-                textTransform: "none",
-                borderRadius: 2,
-                px: 3,
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-              }}
-            >
-              {selectedOrderId === order.id ? (
-                <>
-                  Hide Details <ChevronDown size={20} />
-                </>
-              ) : (
-                <>
-                  View Details <ChevronRight size={20} />
-                </>
-              )}
-            </Button>
           </Box>
-
-          {selectedOrderId === order.id && (
+          {expandedOrderId === order.id && (
             <>
               <Divider />
               <OrderDetail order={order} />

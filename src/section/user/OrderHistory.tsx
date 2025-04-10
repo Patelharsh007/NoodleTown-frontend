@@ -67,13 +67,19 @@ const OrderHistory = ({ orders }: OrderHistoryProps) => {
           You haven't placed any orders yet. Start ordering delicious food!
         </Typography>
         <Button
-          variant="contained"
-          color="primary"
+          variant="outlined"
           href="/restaurants"
           sx={{
             textTransform: "none",
             borderRadius: 2,
             px: 4,
+            gap: 1,
+            color: "#FFA500",
+            backgroundColor: "#FFF4E0",
+            borderColor: "#FFA500",
+            "&:hover": {
+              backgroundColor: "#FFE4B5",
+            },
           }}
         >
           Browse Restaurants

@@ -3,20 +3,22 @@ import { User } from "../../types/type";
 import { ShoppingCart, LogOut, Lock, Camera } from "lucide-react";
 import { Button, Box, Typography, Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
 
 interface ProfileHeaderProps {
-  user: User;
   onUpdateProfileImage: (file: File) => void;
   onLogout: () => void;
   onPasswordUpdate: () => void;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
-  user,
   onUpdateProfileImage,
   onLogout,
   onPasswordUpdate,
 }) => {
+  const userData = useSelector((state: RootState) => state.authUser.authUser);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       onUpdateProfileImage(e.target.files[0]);
@@ -24,10 +26,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   };
 
   const getInitials = () => {
-    if (user.userName) {
-      return user.userName.substring(0, 2).toUpperCase();
+    if (userData.userName) {
+      return userData.userName.substring(0, 2).toUpperCase();
     }
-    return user.email.substring(0, 2).toUpperCase();
+    return userData.email.substring(0, 2).toUpperCase();
   };
 
   return (
@@ -50,8 +52,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       >
         {/* Avatar */}
         <Avatar
-          src={user.profileImage || undefined}
-          alt={user.userName || user.email}
+          src={userData.profileImage || undefined}
+          alt={userData.userName || userData.email}
           sx={{
             width: 96,
             height: 96,
@@ -68,10 +70,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         {/* User info and buttons */}
         <Box sx={{ flexGrow: 1, textAlign: { xs: "center", md: "left" } }}>
           <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
-            {user.userName || "Hello there!"}
+            {userData.userName || "Hello there!"}
           </Typography>
           <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
-            {user.email}
+            {userData.email}
           </Typography>
 
           <Box

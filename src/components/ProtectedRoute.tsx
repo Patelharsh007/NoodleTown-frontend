@@ -29,13 +29,13 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 
       const result = await response.json();
       if (result.status === "success") {
-        const { user } = result;
+        const { user, profileImage } = result;
         dispatch(
           setUser({
             id: user.id,
             email: user.email,
             userName: user.userName,
-            profileImage: user.profileImage,
+            profileImage: profileImage,
           })
         );
         // console.log("protected user", user);

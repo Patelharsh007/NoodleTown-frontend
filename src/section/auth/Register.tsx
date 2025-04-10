@@ -9,6 +9,13 @@ import { assets } from "../../assets/assets";
 import { showErrorToast, showInfoToast } from "../../components/ToastContainer";
 import { RootState } from "../../redux/Store";
 
+interface SignUpFormType {
+  fullName: string;
+  email: string;
+  password: string;
+  profileImage: File | null;
+}
+
 export const Register: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -18,7 +25,7 @@ export const Register: React.FC = () => {
     return <Navigate to="/user" />;
   }
 
-  const handleSignUp = async (formData: any) => {
+  const handleSignUp = async (formData: SignUpFormType) => {
     const { fullName, email, password, profileImage } = formData;
 
     if (!fullName || !email || !password || !profileImage) {
@@ -61,48 +68,6 @@ export const Register: React.FC = () => {
       setLoading(false);
     }
   };
-
-  // const handleSignUp = async (formData: any) => {
-  //   const { fullName, email, password, profileImage } = formData;
-
-  //   if (!fullName || !email || !password || !profileImage) {
-  //     showErrorToast("All fields are required.");
-  //     return;
-  //   }
-
-  //   // const form = { fullName, email, password, profileImage };
-  //   const form = new FormData();
-  //   form.append("fullName", fullName);
-  //   form.append("email", email);
-  //   form.append("password", password);
-  //   form.append("profileImage", profileImage);
-  //   console.log("form", form);
-
-  //   setLoading(true);
-
-  //   try {
-  //     const response = await fetch("http://localhost:8080/api/auth/register", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(form),
-  //     });
-
-  //     const result = await response.json();
-
-  //     if (result.status === "success") {
-  //       showInfoToast(result.message);
-  //       navigate("/auth/login");
-  //     } else {
-  //       showErrorToast(result.message || "Registration failed.");
-  //     }
-  //   } catch (error) {
-  //     showErrorToast("An unexpected error occurred. Please try again later.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   return (
     <Box

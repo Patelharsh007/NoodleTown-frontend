@@ -39,7 +39,7 @@ const useCart = () => {
       queryClient.setQueryData(["cartItems", auth.email], {
         cartItem: [],
       });
-      queryClient.invalidateQueries({ queryKey: ["cartItems", auth.email] });
+      queryClient.invalidateQueries({ queryKey: ["cartItems", auth.id] });
     },
     onError: (error) => {
       showErrorToast(

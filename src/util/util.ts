@@ -1,5 +1,6 @@
 import axios from "axios";
 import { showErrorToast } from "../components/ToastContainer";
+import { AddressItem } from "../types/type";
 const BASE_URL = "http://localhost:8080/api";
 
 //-----------+------------Menu Page----------------------------
@@ -385,4 +386,82 @@ export const getUserAddresses = async () => {
       );
     }
   }
+};
+
+//-------------------------User Address Management----------------------------
+export const addAddress = async (address: Omit<AddressItem, "id">) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/user/addAddress`,
+      { address },
+      { withCredentials: true }
+    );
+    
+    if (response.data.status === "success") {
+      return response.data.address;
+    } else if (response.data.status === "info") {
+      throw new Error(response.data.message);
+    } else {
+      throw new Error(response.data.message || "Failed to add address");
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to add address");
+    } else {
+      throw new Error("An unexpected error occurred while adding the address.");
+    }
+  }
+};
+
+export const updateAddress = async (addressId: string, updatedFields: Partial<AddressItem>) => {
+  try {
+    const response = await axios.patch(
+      `${BASE_URL}/user/updateAddress/${addressId}`,
+      updatedFields,
+      { withCredentials: true }
+    );
+    
+    if (response.data.status === "success") {
+      return response.data.updatedAddress;
+    } else if (response.data.status === "error") {
+      throw new Error(response.data.message);
+    } else {
+      throw new Error("Failed to update address");
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to update address");
+    } else {
+      throw new Error("An unexpected error occurred while updating the address");
+    }
+  }
+};
+
+export const deleteAddress = async (addressId: string) => {
+  try {
+    const response = await axios.delete(
+      `${BASE_URL}/user/deleteAddress/${addressId}`,
+      { withCredentials: true }
+    );
+    
+    if (response.data.status === "success") {
+      return response.data;
+    } else if (response.data.status === "error") {
+      throw new Error(response.data.message);
+    } else {
+      throw new Error("Failed to delete address");
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to delete address");
+    } else {
+      throw new Error("An unexpected error occurred while deleting the address");
+    }
+  }
+};
+
+//-------------------------Validation Functions----------------------------
+export const validatePincode = (pincode: string): boolean => {
+  const pincodeRegex = /^\d{5,8}$/;
+  return pincodeRegex.test(pincode);
 };

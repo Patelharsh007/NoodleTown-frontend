@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AddressSection from "./AddressSection";
 import OrderSummary from "./OrderSummary";
-import { AddressItem } from "../../types/type";
+import { AddressItem, OrderItem } from "../../types/type";
 import { mockAddresses, mockCartItems } from "../../data/MockData";
 import { Box, Grid2, Typography } from "@mui/material";
 import {
@@ -16,7 +16,7 @@ const CheckOut = () => {
     null
   );
 
-  const handleCheckout = (orderData: any) => {
+  const handleCheckout = (orderData: OrderItem) => {
     if (!selectedAddressId) {
       showErrorToast("Please select an address");
       return;
@@ -41,9 +41,6 @@ const CheckOut = () => {
     console.log("Order placed:", fullOrder);
 
     showSuccessToast("Order placed successfully!");
-
-    // In a real app, you would redirect to an order confirmation page
-    // and clear the cart
   };
 
   return (

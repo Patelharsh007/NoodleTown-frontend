@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CartItem } from "../../types/type";
+import { CartItem, OrderItem, OrderStatus } from "../../types/type";
 import OrderItemCard from "./OrderItemCard";
 import { Check, ShoppingBag } from "lucide-react";
 import {
@@ -18,23 +18,38 @@ import {
   Skeleton,
 } from "@mui/material";
 import useCart from "../../hooks/useCartMeal";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
+import { useQuery } from "@tanstack/react-query";
+import { getUserAddresses } from "../../util/util";
 
 interface OrderSummaryProps {
   isAddressSelected: boolean;
-  onCheckout: (order: any) => void;
+  onCheckout: (order: OrderItem) => void;
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({
   isAddressSelected,
   onCheckout,
 }) => {
+  const authUser = useSelector((state: RootState) => state.authUser.authUser);
+
+  const {
+    data: address,
+    isLoading: isloadingaddress,
+    error: isaddresserror,
+  } = useQuery({
+    queryKey: ["address", authUser.id],
+    queryFn: getUserAddresses,
+  });
+
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
 
   const { cart, isLoadingCart: isLoading, errorCart: error } = useCart();
 
-  const subtotal =
+  const subtotal: number =
     cart?.reduce(
       (sum: number, item: CartItem) => sum + item.meal.price * item.quantity,
       0
@@ -61,9 +76,14 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     if (!cart) return;
 
     const order = {
+      id: Math.random(),
+      userId: authUser.id,
       subTotal: subtotal,
       discount: discount,
       total: total,
+      address: address && address[0],
+      orderedAt: new Date().toISOString(),
+      status: "completed" as OrderStatus,
       deliveryCharges: deliveryCharges,
       items: cart.map((item: CartItem) => ({
         itemName: item.meal.title,

@@ -1,64 +1,63 @@
 import React, { useState } from "react";
 import { AddressItem } from "../../types/type";
 import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Button,
-  TextField,
   Grid,
   Typography,
   IconButton,
   Box,
+  Skeleton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Alert,
 } from "@mui/material";
 import { MapPin, Plus, Pencil, Trash2 } from "lucide-react";
+import { showErrorToast, showSuccessToast } from "../../components/ToastContainer";
+import { getUserAddresses, deleteAddress } from "../../util/util";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
+import AddAddressModal from "./AddAddressModal";
+import UpdateAddressModal from "./UpdateAddressModal";
 
-import {
-  showErrorToast,
-  showSuccessToast,
-} from "../../components/ToastContainer";
+const AddressManager: React.FC = () => {
+  const userData = useSelector((state: RootState) => state.authUser.authUser);
+  const queryClient = useQueryClient();
 
-interface AddressManagerProps {
-  addresses: AddressItem[];
-  onAddAddress: (address: Omit<AddressItem, "id">) => Promise<void>;
-  onUpdateAddress: (
-    id: string,
-    address: Omit<AddressItem, "id">
-  ) => Promise<void>;
-  onDeleteAddress: (id: string) => Promise<void>;
-}
+  const {
+    data: addresses1,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["addresses", userData.email],
+    queryFn: getUserAddresses,
+    staleTime: 5 * 60 * 60 * 1000,
+  });
 
-const AddressManager: React.FC<AddressManagerProps> = ({
-  addresses,
-  onAddAddress,
-  onUpdateAddress,
-  onDeleteAddress,
-}) => {
+  const deleteAddressMutation = useMutation({
+    mutationFn: (id: string) => deleteAddress(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["addresses", userData.email],
+      });
+      showSuccessToast("Address deleted successfully");
+      handleCloseDeleteDialog();
+    },
+    onError: (error: Error) => {
+      showErrorToast(error.message);
+    },
+  });
+
   const [open, setOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [addressToDelete, setAddressToDelete] = useState<string | null>(null);
-  const [editingAddress, setEditingAddress] = useState<AddressItem | null>(
-    null
-  );
-  const [newAddress, setNewAddress] = useState<Omit<AddressItem, "id">>({
-    street: "",
-    city: "",
-    state: "",
-    pincode: "",
-    country: "",
-  });
+  const [editingAddress, setEditingAddress] = useState<AddressItem | null>(null);
 
   const handleOpen = () => {
     setOpen(true);
     setEditingAddress(null);
-    setNewAddress({
-      street: "",
-      city: "",
-      state: "",
-      pincode: "",
-      country: "",
-    });
   };
 
   const handleClose = () => {
@@ -76,27 +75,10 @@ const AddressManager: React.FC<AddressManagerProps> = ({
     setAddressToDelete(null);
   };
 
-  const handleSubmit = async () => {
-    try {
-      if (editingAddress) {
-        await onUpdateAddress(editingAddress.id, newAddress);
-        showSuccessToast("Address updated successfully");
-      } else {
-        await onAddAddress(newAddress);
-        showSuccessToast("Address added successfully");
-      }
-      handleClose();
-    } catch (error) {
-      showErrorToast("Failed to save address");
-    }
-  };
-
   const handleDelete = async () => {
     if (addressToDelete) {
       try {
-        await onDeleteAddress(addressToDelete);
-        showSuccessToast("Address deleted successfully");
-        handleCloseDeleteDialog();
+        await deleteAddressMutation.mutateAsync(addressToDelete);
       } catch (error) {
         showErrorToast("Failed to delete address");
       }
@@ -105,156 +87,141 @@ const AddressManager: React.FC<AddressManagerProps> = ({
 
   const handleEdit = (address: AddressItem) => {
     setEditingAddress(address);
-    setNewAddress({
-      street: address.street,
-      city: address.city,
-      state: address.state,
-      pincode: address.pincode,
-      country: address.country || "",
-    });
     setOpen(true);
   };
 
   return (
     <Box>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
+      <Box
+        marginTop={"10px"}
+        display={"flex"}
+        justifyContent={"space-between"}
+        mb={3}
+      >
         <Typography variant="h6">My Addresses</Typography>
         <Button
-          variant="contained"
-          startIcon={<Plus />}
+          variant="outlined"
+          startIcon={<Plus size={16} />}
           onClick={handleOpen}
-          sx={{ textTransform: "none" }}
+          sx={{
+            gap: 1,
+            color: "#FFA500",
+            backgroundColor: "#FFF4E0",
+            borderColor: "#FFA500",
+            "&:hover": {
+              backgroundColor: "#FFE4B5",
+            },
+          }}
         >
           Add New Address
         </Button>
       </Box>
 
       <Grid container spacing={3}>
-        {addresses.map((address) => (
-          <Grid item xs={12} sm={6} md={4} key={address.id}>
-            <Box
-              sx={{
-                p: 2,
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 2,
-                position: "relative",
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                <MapPin size={20} style={{ marginRight: 8 }} />
-                <Typography variant="subtitle1" fontWeight={500}>
-                  {address.street}
-                </Typography>
-              </Box>
-              <Typography variant="body2" color="text.secondary" mb={1}>
-                {address.city}, {address.state} - {address.pincode}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {address.country}
-              </Typography>
+        {isLoading ? (
+          <Grid container spacing={3} marginTop={"5px"}>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Box
+                  sx={{
+                    p: 2,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 2,
+                    position: "relative",
+                  }}
+                >
+                  <Skeleton
+                    variant="rectangular"
+                    width="100%"
+                    height={20}
+                    sx={{ mb: 2 }}
+                  />
+                  <Skeleton variant="text" width="80%" sx={{ mb: 1 }} />
+                  <Skeleton variant="text" width="60%" sx={{ mb: 1 }} />
+                  <Skeleton variant="text" width="50%" sx={{ mb: 1 }} />
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
+        ) : error ? (
+          <Grid item xs={12}>
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error.message}
+            </Alert>
+          </Grid>
+        ) : addresses1 && addresses1.length === 0 ? (
+          <Grid item xs={12}>
+            <Alert severity="info" sx={{ mb: 2 }}>
+              No addresses found. Add your first address!
+            </Alert>
+          </Grid>
+        ) : (
+          addresses1 &&
+          addresses1.map((address: AddressItem) => (
+            <Grid item xs={12} sm={6} md={4} key={address.id}>
               <Box
                 sx={{
-                  position: "absolute",
-                  top: 8,
-                  right: 8,
-                  display: "flex",
-                  gap: 1,
+                  p: 2,
+                  border: "1px solid",
+                  borderColor: "divider",
+                  borderRadius: 2,
+                  position: "relative",
                 }}
               >
-                <IconButton
-                  size="small"
-                  onClick={() => handleEdit(address)}
-                  sx={{ color: "primary.main" }}
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                  <MapPin size={20} style={{ marginRight: 8 }} />
+                  <Typography variant="subtitle1" fontWeight={500}>
+                    {address.recipientName}
+                  </Typography>
+                </Box>
+                <Typography variant="body2" color="text.secondary" mb={1}>
+                  {address.street}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mb={1}>
+                  {address.city}, {address.state} - {address.pincode}
+                </Typography>
+                {address.country && (
+                  <Typography variant="body2" color="text.secondary">
+                    {address.country}
+                  </Typography>
+                )}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    display: "flex",
+                    gap: 1,
+                  }}
                 >
-                  <Pencil size={16} />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  onClick={() => handleOpenDeleteDialog(address.id)}
-                  sx={{ color: "error.main" }}
-                >
-                  <Trash2 size={16} />
-                </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleEdit(address)}
+                    sx={{ color: "#FFA500" }}
+                  >
+                    <Pencil size={16} />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleOpenDeleteDialog(address.id)}
+                    sx={{ color: "#FF5252" }}
+                  >
+                    <Trash2 size={16} />
+                  </IconButton>
+                </Box>
               </Box>
-            </Box>
-          </Grid>
-        ))}
+            </Grid>
+          ))
+        )}
       </Grid>
 
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          {editingAddress ? "Edit Address" : "Add New Address"}
-        </DialogTitle>
-        <DialogContent>
-          <Box sx={{ mt: 2 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Street Address"
-                  value={newAddress.street}
-                  onChange={(e) =>
-                    setNewAddress({ ...newAddress, street: e.target.value })
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="City"
-                  value={newAddress.city}
-                  onChange={(e) =>
-                    setNewAddress({ ...newAddress, city: e.target.value })
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="State"
-                  value={newAddress.state}
-                  onChange={(e) =>
-                    setNewAddress({ ...newAddress, state: e.target.value })
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="PIN Code"
-                  value={newAddress.pincode}
-                  onChange={(e) =>
-                    setNewAddress({ ...newAddress, pincode: e.target.value })
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Country"
-                  value={newAddress.country}
-                  onChange={(e) =>
-                    setNewAddress({ ...newAddress, country: e.target.value })
-                  }
-                />
-              </Grid>
-            </Grid>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} sx={{ textTransform: "none" }}>
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            sx={{ textTransform: "none" }}
-          >
-            {editingAddress ? "Update" : "Add"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <AddAddressModal open={open && !editingAddress} onClose={handleClose} />
+      <UpdateAddressModal
+        open={open && !!editingAddress}
+        onClose={handleClose}
+        address={editingAddress}
+      />
 
       <Dialog
         open={deleteDialogOpen}
@@ -262,7 +229,7 @@ const AddressManager: React.FC<AddressManagerProps> = ({
         maxWidth="xs"
         fullWidth
       >
-        <DialogTitle>Delete Address</DialogTitle>
+        <DialogTitle sx={{ color: "#FFA500" }}>Delete Address</DialogTitle>
         <DialogContent>
           <Typography>
             Are you sure you want to delete this address? This action cannot be
@@ -272,15 +239,27 @@ const AddressManager: React.FC<AddressManagerProps> = ({
         <DialogActions>
           <Button
             onClick={handleCloseDeleteDialog}
-            sx={{ textTransform: "none" }}
+            sx={{
+              color: "#666",
+              "&:hover": {
+                backgroundColor: "#FFF4E0",
+              },
+            }}
           >
             Cancel
           </Button>
           <Button
-            variant="contained"
+            variant="outlined"
             color="error"
             onClick={handleDelete}
-            sx={{ textTransform: "none" }}
+            sx={{
+              color: "#FF5252",
+              backgroundColor: "#FFEBEE",
+              borderColor: "#FF5252",
+              "&:hover": {
+                backgroundColor: "#FFCDD2",
+              },
+            }}
           >
             Delete
           </Button>

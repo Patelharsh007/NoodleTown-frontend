@@ -58,15 +58,16 @@ const AddressCard: React.FC<AddressCardProps> = ({
 
         <Box>
           <Stack spacing={1}>
-            <Typography variant="body1" fontWeight={500}>
-              {address.street}
+            <Typography variant="subtitle1" fontWeight="bold">
+              {address.recipientName}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {address.city}, {address.state}, {address.pincode}
+            <Typography variant="body2">{address.street}</Typography>
+            <Typography variant="body2">
+              {address.city}, {address.state} {address.pincode}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {address.country}
-            </Typography>
+            {address.country && (
+              <Typography variant="body2">{address.country}</Typography>
+            )}
           </Stack>
         </Box>
       </Stack>

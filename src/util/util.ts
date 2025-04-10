@@ -372,7 +372,6 @@ export const getUserAddresses = async () => {
       withCredentials: true,
     });
     if (response.data && response.data.addresses) {
-      console.log("Backend", response.data.addresses);
       return response.data.addresses;
     } else {
       return [];
@@ -482,16 +481,14 @@ export const updatePassword = async (data: {
     });
 
     return response.data;
-  } catch (error: any) {
-    if (error.response) {
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
       throw new Error(
         error.response.data.message || "Failed to update password"
       );
-    } else if (error.request) {
-      throw new Error("No response received from the server");
     } else {
       throw new Error(
-        error.message || "An error occurred while updating password"
+        "An unexpected error occurred while updating user's password."
       );
     }
   }
@@ -510,11 +507,12 @@ export const logout = async (): Promise<void> => {
     if (response.status !== 200) {
       throw new Error("Logout failed");
     }
-  } catch (error: any) {
-    console.error("Logout error:", error);
-    throw new Error(
-      error.response?.data?.message || "An error occurred during logout"
-    );
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to logout");
+    } else {
+      throw new Error("An unexpected error occurred while logging out user");
+    }
   }
 };
 
@@ -545,11 +543,11 @@ export const updateProfileImage = async (file: File) => {
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(
-        error.response.data.message || "Failed to update profile image"
+        error.response.data.message || "Failed to update profile picture"
       );
     } else {
       throw new Error(
-        "An unexpected error occurred while updating profile image"
+        "An unexpected error occurred while updating user's profile picture."
       );
     }
   }

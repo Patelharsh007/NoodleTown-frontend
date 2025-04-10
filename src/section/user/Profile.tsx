@@ -11,12 +11,14 @@ import {
 import { updateProfileImage } from "../../util/util";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/slices/AuthUserSlice";
+import useCart from "../../hooks/useCartMeal";
 
 const UserProfile: React.FC = () => {
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("orders");
+  const [activeTab, setActiveTab] = useState("addresses");
   const [isUpdatingImage, setIsUpdatingImage] = useState(false);
   const dispatch = useDispatch();
+  const { emptyCart } = useCart();
 
   const handleUpdateProfileImage = async (file: File) => {
     try {
@@ -35,6 +37,15 @@ const UserProfile: React.FC = () => {
       );
     } finally {
       setIsUpdatingImage(false);
+    }
+  };
+
+  const handleOrderSuccess = async () => {
+    try {
+      await emptyCart();
+      // dispatch(clearCart());
+    } catch (error) {
+      console.error("Error clearing cart:", error);
     }
   };
 

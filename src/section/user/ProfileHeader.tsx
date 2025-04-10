@@ -1,6 +1,12 @@
 import React from "react";
 import { ShoppingCart, LogOut, Lock, Camera } from "lucide-react";
-import { Button, Box, Typography, Avatar, CircularProgress } from "@mui/material";
+import {
+  Button,
+  Box,
+  Typography,
+  Avatar,
+  CircularProgress,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { RootState } from "../../redux/Store";
 import { useNavigate } from "react-router-dom";
@@ -34,18 +40,20 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   };
 
   const getInitials = () => {
-    if (userData.userName) {
+    if (userData?.userName) {
       return userData.userName.substring(0, 2).toUpperCase();
     }
-    return userData.email.substring(0, 2).toUpperCase();
+    if (userData?.email) {
+      return userData.email.substring(0, 2).toUpperCase();
+    }
+    return "U"; // Default initial if both are undefined
   };
 
   const handleLogout = async () => {
     try {
       await logout();
       // Clear cart query data
-      queryClient.removeQueries({ queryKey: ["cart"] });
-      queryClient.removeQueries({ queryKey: ["cartItems"] });
+      queryClient.removeQueries({ queryKey: ["cartItems", userData.id] });
       // Clear user data from Redux
       dispatch(clearUser());
       showSuccessToast("You have been logged out successfully");
@@ -75,24 +83,38 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         }}
       >
         {/* Avatar */}
-        <Avatar
-          src={userData.profileImage || undefined}
-          alt={userData.userName || userData.email}
-          sx={{
-            width: 96,
-            height: 96,
-            fontSize: "2rem",
-            bgcolor: "primary.light",
-            color: "primary.contrastText",
-            // border: "2px solid #FFA500",
-            border: "2px solid #333333",
-          }}
-        >
-          {getInitials()}
-        </Avatar>
+        <Box sx={{ position: "relative" }}>
+          <Avatar
+            src={userData.profileImage || undefined}
+            alt={userData.userName || userData.email}
+            sx={{
+              width: 96,
+              height: 96,
+              fontSize: "2rem",
+              bgcolor: "primary.light",
+              color: "primary.contrastText",
+              border: "2px solid #333333",
+              opacity: isUpdatingImage ? 0.5 : 1,
+            }}
+          >
+            {getInitials()}
+          </Avatar>
+          {isUpdatingImage && (
+            <CircularProgress
+              size={96}
+              sx={{
+                color: "#FFA500",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                zIndex: 1,
+              }}
+            />
+          )}
+        </Box>
 
         {/* User info and buttons */}
-        <Box sx={{ flexGrow: 1, textAlign: { xs: "center", md: "left" } }}>
+        <Box>
           <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
             {userData.userName || "Hello there!"}
           </Typography>
@@ -129,7 +151,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <Button
               component="label"
               variant="outlined"
-              startIcon={isUpdatingImage ? <CircularProgress size={16} /> : <Camera size={16} />}
+              startIcon={
+                isUpdatingImage ? (
+                  <CircularProgress size={16} />
+                ) : (
+                  <Camera size={16} />
+                )
+              }
               disabled={isUpdatingImage}
               sx={{
                 gap: 1,

@@ -9,9 +9,9 @@ import {
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/Store";
-import { clearCart } from "../redux/slices/CartSlice";
+// import { clearCart } from "../redux/slices/CartSlice";
 import { showSuccessToast } from "../components/ToastContainer";
-import { placeOrder } from "../redux/slices/OrderSlice";
+// import { placeOrder } from "../redux/slices/OrderSlice";
 import { deselectAddress } from "../redux/slices/SelectedAddressSlice";
 import { useNavigate } from "react-router-dom";
 import { CartItem, OrderItem } from "../types/type";
@@ -64,7 +64,7 @@ const OrderSummaryForm = () => {
     //  order object
     const order: OrderItem = {
       id: Math.random(), // unique id
-      user_email: authUser.email,
+      userId: authUser.id,
       orderedAt: new Date().toISOString(), // date
       deliveryCharges: 100,
       address: {
@@ -98,8 +98,9 @@ const OrderSummaryForm = () => {
 
     dispatch(deselectAddress());
 
-    setTimeout(() => {
-      dispatch(clearCart());
+    setTimeout(async () => {
+      await emptyCart();
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     }, 3000);
   };
@@ -227,3 +228,6 @@ const OrderSummaryForm = () => {
 };
 
 export default OrderSummaryForm;
+function emptyCart() {
+  throw new Error("Function not implemented.");
+}

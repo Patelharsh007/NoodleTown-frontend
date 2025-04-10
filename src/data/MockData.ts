@@ -3,6 +3,7 @@ import { AddressItem, CartItem } from "../types/type";
 export const mockAddresses: AddressItem[] = [
   {
     id: "1",
+    recipientName: "John Doe",
     street: "123 Main St",
     city: "Mumbai",
     state: "Maharashtra",
@@ -11,6 +12,7 @@ export const mockAddresses: AddressItem[] = [
   },
   {
     id: "2",
+    recipientName: "Jane Smith",
     street: "456 Park Ave",
     city: "Delhi",
     state: "Delhi",
@@ -19,6 +21,7 @@ export const mockAddresses: AddressItem[] = [
   },
   {
     id: "3",
+    recipientName: "Robert Johnson",
     street: "789 Green Rd",
     city: "Bangalore",
     state: "Karnataka",

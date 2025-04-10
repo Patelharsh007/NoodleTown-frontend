@@ -30,6 +30,7 @@ export type OrderStatus =
 export interface AddressItem {
   // id: number;
   id: string;
+  recipientName: string;
   street: string;
   city: string;
   state: string;
@@ -39,6 +40,7 @@ export interface AddressItem {
 
 export interface NewAddress {
   id: string;
+  recipientName: string;
   street: string;
   city: string;
   state: string;
@@ -58,10 +60,10 @@ export interface CartItem {
 //AuthItem for AuthUserSlice
 export interface AuthUserItem {
   isAuthenticated: boolean;
-  id: number | null;
-  email: string | null;
-  userName: string | null;
-  profileImage: string | null;
+  id: number | string;
+  email: string;
+  userName: string;
+  profileImage: string;
 }
 
 export interface User {

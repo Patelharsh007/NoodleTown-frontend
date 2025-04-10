@@ -69,6 +69,7 @@ const OrderSummaryForm = () => {
       deliveryCharges: 100,
       address: {
         id: Math.random().toString(),
+        recipientName: selectedAddress.recipientName,
         street: selectedAddress.street,
         city: selectedAddress.city,
         state: selectedAddress.state,

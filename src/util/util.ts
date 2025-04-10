@@ -363,3 +363,26 @@ export const emptyCartBackend = async () => {
     }
   }
 };
+
+//-------------------------User Profile----------------------------
+export const getUserAddresses = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/user/addresses`, {
+      withCredentials: true,
+    });
+    if (response.data && response.data.addresses) {
+      console.log("Backend", response.data.addresses);
+      return response.data.addresses;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to get addresses");
+    } else {
+      throw new Error(
+        "An unexpected error occurred while checking user's addresses."
+      );
+    }
+  }
+};

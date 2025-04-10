@@ -55,8 +55,12 @@ const UpdatePasswordModal: React.FC<UpdatePasswordModalProps> = ({
       });
       showSuccessToast("Password updated successfully");
       handleClose();
-    } catch (error: any) {
-      showErrorToast(error.message || "Failed to update password");
+    } catch (error) {
+      showErrorToast(
+        error instanceof Error
+          ? error.message
+          : "An error occurred while updating the password."
+      );
     } finally {
       setIsLoading(false);
     }

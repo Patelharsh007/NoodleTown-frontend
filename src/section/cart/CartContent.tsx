@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Grid2, Stack, Typography, Skeleton } from "@mui/material";
+import { Box, Button, Grid2, Stack, Typography, Skeleton } from "@mui/material";
 import CartCard from "../../components/CartCard";
 import { useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
@@ -55,9 +55,7 @@ const CartContent = () => {
       <Box maxWidth={"1600px"} width={"90%"} margin={"auto"}>
         <Grid2 container spacing={3} margin={"30px 0"}>
           {cart.map((item: CartItem) => (
-            <Grid2 key={item.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-              <CartCard item={item} />
-            </Grid2>
+            <CartCard key={item.id} item={item} />
           ))}
         </Grid2>
       </Box>

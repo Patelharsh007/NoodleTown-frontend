@@ -1,17 +1,19 @@
-//Order-Item used in OrderSlice and OrderSummary
 export interface OrderItem {
+  // itemId: number;
+  id: string | number;
+  itemName: string;
+  image: string;
+  quantity: number;
+  price: number;
+  itemTotal: number;
+}
+
+export interface Order {
   id: number;
   userId: number | string;
   orderedAt: Date | string;
-  address: AddressItem;
-  items: {
-    // itemId: number;
-    id: string;
-    itemName: string;
-    quantity: number;
-    price: number;
-    itemTotal: number;
-  }[];
+  address?: AddressItem;
+  items: OrderItem[];
   subTotal: number;
   discount: number;
   total: number;
@@ -26,7 +28,6 @@ export type OrderStatus =
   | "processing"
   | "shipped";
 
-//Adress used in AddressForm and addressSlice
 export interface AddressItem {
   // id: number;
   id: string;

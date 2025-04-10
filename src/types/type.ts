@@ -1,7 +1,7 @@
 //Order-Item used in OrderSlice and OrderSummary
 export interface OrderItem {
   id: number;
-  user_email: string | null;
+  userId: number | string;
   orderedAt: Date | string;
   address: AddressItem;
   items: {
@@ -103,17 +103,4 @@ export interface RestaurantItem {
   isFeatured: boolean;
   rating: number;
   meals?: MealItem[];
-}
-
-//removing after backend connected:
-export interface CartItem1 {
-  id: string;
-  itemId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  restaurantId: string;
-  category: string;
-  description?: string;
 }

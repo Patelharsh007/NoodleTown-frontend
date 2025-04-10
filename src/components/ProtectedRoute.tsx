@@ -38,6 +38,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
             profileImage: user.profileImage,
           })
         );
+        // console.log("protected user", user);
         // showSuccessToast("User Authenticated");
       } else {
         showErrorToast("Access Denied. Please Log-In");

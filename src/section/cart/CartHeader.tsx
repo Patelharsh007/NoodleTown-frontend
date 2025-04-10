@@ -10,7 +10,7 @@ const CartHeader: React.FC = () => {
   const navigate = useNavigate();
 
   const handleCheckout = () => {
-    navigate("/user/checkout");
+    navigate("/checkout");
   };
 
   return (

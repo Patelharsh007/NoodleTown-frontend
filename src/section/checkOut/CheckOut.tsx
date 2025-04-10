@@ -15,17 +15,6 @@ const CheckOut = () => {
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
     null
   );
-  const [cart] = useState(mockCartItems);
-
-  const handleAddAddress = (newAddress: Omit<AddressItem, "id">) => {
-    const address = {
-      ...newAddress,
-      id: Date.now().toString(),
-    };
-    setAddresses([...addresses, address]);
-    setSelectedAddressId(address.id);
-    showSuccessToast("Address added successfully");
-  };
 
   const handleCheckout = (orderData: any) => {
     if (!selectedAddressId) {
@@ -66,21 +55,19 @@ const CheckOut = () => {
 
         <Grid2 container spacing={4}>
           {/* Left Column: Address Section & Payment */}
-          <Grid2 size={{ xs: 12, lg: 6 }}>
+          <Grid2 size={{ xs: 12, sm: 6 }}>
             <Box sx={{ mb: 4 }}>
               <AddressSection
                 addresses={addresses}
                 selectedAddressId={selectedAddressId}
                 onSelectAddress={setSelectedAddressId}
-                onAddAddress={handleAddAddress}
               />
             </Box>
           </Grid2>
 
           {/* Right Column: Order Summary */}
-          <Grid2 size={{ xs: 12, lg: 6 }}>
+          <Grid2 size={{ xs: 12, sm: 6 }}>
             <OrderSummary
-              cart={cart}
               isAddressSelected={!!selectedAddressId}
               onCheckout={handleCheckout}
             />

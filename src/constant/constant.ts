@@ -10,5 +10,7 @@ export const ROUTES = {
   PRODUCT: "/product/:id",
   USER: "/user",
   CHECKOUT: "/checkout",
+  PAYMENT_SUCCESS: "/payment-success",
+  PAYMENT_FAILED: "/payment-failed",
   NOT_FOUND: "*",
 };

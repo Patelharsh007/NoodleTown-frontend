@@ -17,6 +17,8 @@ import { SearchPage } from "./pages/SearchPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import CheckoutPage from "./pages/CheckOutPage";
+import SuccessfulPayment from "./section/checkOut/SuccessfulPayment";
+import FailedPayment from "./section/checkOut/FailedPayment";
 
 function App() {
   return (
@@ -50,7 +52,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-
+        <Route path={ROUTES.PAYMENT_SUCCESS} element={<SuccessfulPayment />} />
+        <Route path={ROUTES.PAYMENT_FAILED} element={<FailedPayment />} />
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
       </Routes>
       <ToastContainer />

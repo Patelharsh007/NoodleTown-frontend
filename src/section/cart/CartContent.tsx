@@ -32,11 +32,7 @@ const CartContent = () => {
                   <Skeleton variant="text" width="60%" height={30} />
                   <Skeleton variant="text" width="40%" height={30} />
                   <Skeleton variant="text" width="80%" height={20} />
-                  <Skeleton
-                    variant="rectangular"
-                    width="100%"
-                    height={40}
-                  />
+                  <Skeleton variant="rectangular" width="100%" height={40} />
                 </Stack>
               </Box>
             </Grid2>
@@ -54,9 +50,10 @@ const CartContent = () => {
     <>
       <Box maxWidth={"1600px"} width={"90%"} margin={"auto"}>
         <Grid2 container spacing={3} margin={"30px 0"}>
-          {cart.map((item: CartItem) => (
-            <CartCard key={item.id} item={item} />
-          ))}
+          {cart &&
+            cart.map((item: CartItem) => (
+              <CartCard key={item.id} item={item} />
+            ))}
         </Grid2>
       </Box>
     </>

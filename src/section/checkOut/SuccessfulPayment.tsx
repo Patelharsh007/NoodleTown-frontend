@@ -1,10 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Button, Paper } from "@mui/material";
 import { CheckCircle2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "../../components/ToastContainer";
+import axios from "axios";
 
 const SuccessfulPayment: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const sessionId = searchParams.get("session_id");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const verifyPayment = async () => {
+      if (!sessionId) return;
+
+      try {
+        const res = await axios.get(
+          `http://localhost:8080/api/order/verifyPayment?session_id=${sessionId}`,
+          { withCredentials: true }
+        );
+        showSuccessToast("🎉 Payment successful!");
+        console.log("Verified Order:", res.data);
+      } catch (error) {
+        console.error("Payment verification failed:", error);
+        showErrorToast("Payment verification failed. Please contact support.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    verifyPayment();
+  }, [sessionId]);
 
   return (
     <Box
@@ -45,8 +76,8 @@ const SuccessfulPayment: React.FC = () => {
         </Typography>
 
         <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-          Your order has been placed successfully. We will send you a confirmation
-          email shortly.
+          Your order has been placed successfully. We will send you a
+          confirmation email shortly.
         </Typography>
 
         <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
@@ -61,7 +92,7 @@ const SuccessfulPayment: React.FC = () => {
           <Button
             variant="contained"
             color="warning"
-            onClick={() => navigate("/orders")}
+            onClick={() => navigate("/user?tab=orders")}
             sx={{ px: 4 }}
           >
             View Orders
@@ -72,4 +103,4 @@ const SuccessfulPayment: React.FC = () => {
   );
 };
 
-export default SuccessfulPayment; 
+export default SuccessfulPayment;

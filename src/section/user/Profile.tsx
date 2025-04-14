@@ -12,6 +12,8 @@ import { updateProfileImage } from "../../util/util";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/slices/AuthUserSlice";
 import useCart from "../../hooks/useCartMeal";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const UserProfile: React.FC = () => {
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
@@ -19,6 +21,22 @@ const UserProfile: React.FC = () => {
   const [isUpdatingImage, setIsUpdatingImage] = useState(false);
   const dispatch = useDispatch();
   const { emptyCart } = useCart();
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const tab = queryParams.get("tab");
+    if (tab === "addresses" || tab === "orders") {
+      setActiveTab(tab);
+    }
+  }, [location.search]);
+
+  const handleTabChange = (e: React.SyntheticEvent, newValue: string) => {
+    setActiveTab(newValue);
+    navigate(`?tab=${newValue}`);
+  };
 
   const handleUpdateProfileImage = async (file: File) => {
     try {

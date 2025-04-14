@@ -1,6 +1,7 @@
 import axios from "axios";
 import { showErrorToast } from "../components/ToastContainer";
 import { AddressItem } from "../types/type";
+import { UUID } from "crypto";
 const BASE_URL = "http://localhost:8080/api";
 
 //-----------+------------Menu Page----------------------------
@@ -549,6 +550,33 @@ export const updateProfileImage = async (file: File) => {
       throw new Error(
         "An unexpected error occurred while updating user's profile picture."
       );
+    }
+  }
+};
+
+//-------------------------Checkout Page----------------------------
+
+export const createPayment = async (discount: number, addressId: string) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/order/createOrder`,
+      { discount: discount, addressId: addressId },
+      { withCredentials: true }
+    );
+
+    if (response.data.status === "success") {
+      return response.data;
+    } else {
+      throw new Error(response.data.message || "Failed to create payment");
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to create payment"
+      );
+    } else {
+      console.log(error);
+      throw new Error("An unexpected error occurred while creating payment");
     }
   }
 };

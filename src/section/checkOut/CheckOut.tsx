@@ -33,32 +33,6 @@ const CheckOut = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const handleCheckout = (orderData: Order) => {
-    if (!selectedAddressId) {
-      showErrorToast("Please select an address");
-      return;
-    }
-
-    const selectedAddress = addresses?.find(
-      (addr: AddressItem) => addr.id === selectedAddressId
-    );
-
-    if (!selectedAddress) {
-      showErrorToast("Selected address not found");
-      return;
-    }
-
-    const fullOrder: Order = {
-      ...orderData,
-      address: selectedAddress,
-      status: "pending",
-      orderedAt: new Date().toISOString(),
-    };
-
-    setOrderData(fullOrder);
-    console.log("order data", fullOrder);
-  };
-
   return (
     <Box sx={{ minHeight: "100vh", py: 4 }}>
       <Box sx={{ maxWidth: "1200px", margin: "0 auto", px: 2 }}>
@@ -102,7 +76,7 @@ const CheckOut = () => {
           <Grid2 size={{ xs: 12, sm: 6 }}>
             <OrderSummary
               isAddressSelected={!!selectedAddressId}
-              onCheckout={handleCheckout}
+              selectedAddressId={selectedAddressId}
             />
           </Grid2>
         </Grid2>

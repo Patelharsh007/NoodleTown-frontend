@@ -20,20 +20,29 @@ import {
 import useCart from "../../hooks/useCartMeal";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
+import { createPayment } from "../../util/util";
+import { useNavigate } from "react-router-dom";
+import { loadStripe } from "@stripe/stripe-js";
 
 interface OrderSummaryProps {
   isAddressSelected: boolean;
-  onCheckout: (order: Order) => void;
+  selectedAddressId: string | null;
 }
 
 const OrderSummary: React.FC<OrderSummaryProps> = ({
   isAddressSelected,
-  onCheckout,
+  selectedAddressId,
 }) => {
   const authUser = useSelector((state: RootState) => state.authUser.authUser);
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
+
+  const stripePromise = loadStripe(
+    "pk_test_51RCJqwDfRsZ5MFTOWEumZBCfll3VQvDmpMmD2oSXKIge7louCqiymjHYh1Zgdy5SuR9X0m7CTfN6z7Zd54QhmL5y00sZy30aD8"
+  );
+
+  const navigate = useNavigate();
 
   const { cart, isLoadingCart: isLoading, errorCart: error } = useCart();
 
@@ -60,28 +69,33 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     }
   };
 
-  const handleCheckout = () => {
-    if (!cart) return;
+  const handleCheckout = async () => {
+    if (!cart || !authUser || !selectedAddressId) return;
 
-    const order: Order = {
-      id: Math.random(),
-      userId: authUser.id,
-      subTotal: subtotal,
-      discount: discount,
-      total: total,
-      orderedAt: new Date().toISOString(),
-      status: "pending" as OrderStatus,
-      deliveryCharges: deliveryCharges,
-      items: cart.map((item: CartItem) => ({
-        id: item.mealId,
-        itemName: item.meal.title,
-        image: item.meal.image,
-        quantity: item.quantity,
-        price: item.meal.price,
-        itemTotal: item.meal.price * item.quantity,
-      })),
-    };
-    onCheckout(order);
+    try {
+      const paymentData = await createPayment(discount, selectedAddressId);
+      console.log("Payment created successfully", paymentData);
+
+      const stripe = await stripePromise;
+      if (!stripe) {
+        showErrorToast("Stripe initialization failed. Please try again.");
+        return;
+      }
+
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: paymentData.session,
+      });
+
+      if (error) {
+        showErrorToast("Payment failed: " + error.message);
+      }
+
+      // Redirect user to payment page or success page
+      navigate("/payment-success");
+      showSuccessToast("Payment created successfully!");
+    } catch (error: any) {
+      showErrorToast(error.message || "Failed to create payment");
+    }
   };
 
   if (isLoading) {

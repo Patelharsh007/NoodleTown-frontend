@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { CartItem, OrderItem, OrderStatus, Order } from "../../types/type";
-import OrderItemCard from "./OrderItemCard";
+import { CartItem } from "../../types/type";
+import OrderItemCardCheckOut from "../../components/OrderItemCardCheckOut";
 import { Check, ShoppingBag } from "lucide-react";
 import {
   showSuccessToast,
@@ -172,7 +172,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
       <Box sx={{ maxHeight: "300px", overflowY: "auto", pr: 1, mb: 2 }}>
         {cart.map((item: CartItem) => (
-          <OrderItemCard key={item.id} item={item} />
+          <OrderItemCardCheckOut key={item.id} item={item} />
         ))}
       </Box>
 

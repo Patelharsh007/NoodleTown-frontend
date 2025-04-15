@@ -17,8 +17,8 @@ import { SearchPage } from "./pages/SearchPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import CheckoutPage from "./pages/CheckOutPage";
-import SuccessfulPayment from "./section/checkOut/SuccessfulPayment";
-import FailedPayment from "./section/checkOut/FailedPayment";
+import SuccessfulPayment from "./pages/SuccessfulPayment";
+import FailedPayment from "./pages/FailedPayment";
 
 function App() {
   return (

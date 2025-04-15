@@ -153,7 +153,7 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
             </>
           ) : (
             <>
-              {cart.length > 0 && isInCart ? (
+              {cart && cart.length > 0 && isInCart ? (
                 <ButtonGroup
                   disableElevation
                   sx={{

@@ -1,25 +1,23 @@
 import React, { useState } from "react";
-import { AddressItem } from "../../types/type";
 import {
   Box,
   Button,
   Typography,
   TextField,
-  IconButton,
   Stack,
-  Divider,
   Paper,
 } from "@mui/material";
 import { Plus, X } from "lucide-react";
-import AddressCard from "./AddressCard";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getUserAddresses, addAddress } from "../../util/util";
+import { AddressItem } from "../../types/type";
 import {
   showErrorToast,
   showSuccessToast,
 } from "../../components/ToastContainer";
+import AddressCardCheckOut from "../../components/AddressCardCheckOut";
 
 const PINCODE_REGEX = /^\d{5,8}$/;
 
@@ -226,7 +224,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
           <Box sx={{ mt: 2 }}>
             {addresses1 && addresses1.length > 0 ? (
               addresses1.map((address: AddressItem) => (
-                <AddressCard
+                <AddressCardCheckOut
                   key={address.id}
                   address={address}
                   isSelected={address.id === selectedAddressId}

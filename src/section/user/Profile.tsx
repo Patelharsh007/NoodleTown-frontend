@@ -20,10 +20,7 @@ const UserProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState("addresses");
   const [isUpdatingImage, setIsUpdatingImage] = useState(false);
   const dispatch = useDispatch();
-  const { emptyCart } = useCart();
-
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -32,11 +29,6 @@ const UserProfile: React.FC = () => {
       setActiveTab(tab);
     }
   }, [location.search]);
-
-  const handleTabChange = (e: React.SyntheticEvent, newValue: string) => {
-    setActiveTab(newValue);
-    navigate(`?tab=${newValue}`);
-  };
 
   const handleUpdateProfileImage = async (file: File) => {
     try {
@@ -55,15 +47,6 @@ const UserProfile: React.FC = () => {
       );
     } finally {
       setIsUpdatingImage(false);
-    }
-  };
-
-  const handleOrderSuccess = async () => {
-    try {
-      await emptyCart();
-      // dispatch(clearCart());
-    } catch (error) {
-      console.error("Error clearing cart:", error);
     }
   };
 

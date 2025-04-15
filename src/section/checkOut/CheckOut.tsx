@@ -50,29 +50,9 @@ const CheckOut = () => {
                 onSelectAddress={setSelectedAddressId}
               />
             </Box>
-
-            {/* Test Buttons for Payment Pages */}
-            <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
-              <Button
-                variant="contained"
-                color="warning"
-                onClick={() => navigate("/payment-success")}
-                fullWidth
-              >
-                View Success Page
-              </Button>
-              <Button
-                variant="outlined"
-                color="warning"
-                onClick={() => navigate("/payment-failed")}
-                fullWidth
-              >
-                View Failed Page
-              </Button>
-            </Box>
           </Grid2>
 
-          {/* Right Column: Order Summary */}
+          {/* Right Column: Order  */}
           <Grid2 size={{ xs: 12, sm: 6 }}>
             <OrderSummary
               isAddressSelected={!!selectedAddressId}

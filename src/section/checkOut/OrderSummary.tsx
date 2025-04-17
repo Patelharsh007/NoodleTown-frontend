@@ -278,7 +278,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
       <Button
         onClick={handleCheckout}
-        disabled={!isAddressSelected || cart.length === 0}
+        disabled={
+          isPaying || isLoading || !isAddressSelected || cart.length === 0
+        }
         variant="contained"
         fullWidth
         sx={{

@@ -81,6 +81,9 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
         maxHeight: "70vh",
         overflow: "auto",
         pr: 1,
+        scrollbarColor: { sm: "#f8f8f8 transparent" },
+        scrollbarWidth: "thin",
+        scrollBehavior: "smooth",
       }}
     >
       {/* Order Summary */}
@@ -136,6 +139,8 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
             <Box sx={{ mt: 1.5, color: "text.secondary" }}>
               <Typography variant="body2">{order.address.street}</Typography>
               <Typography variant="body2">
+                {order.address.recipientName}
+                {""}
                 {order.address.city}, {order.address.state}{" "}
                 {order.address.pincode}
               </Typography>

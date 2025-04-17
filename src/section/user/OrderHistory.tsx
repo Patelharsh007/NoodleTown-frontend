@@ -1,30 +1,56 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Order } from "../../types/type";
+import { useQuery } from "@tanstack/react-query";
 import {
   Box,
   Typography,
   Button,
+  Card,
+  CardContent,
+  Dialog,
+  DialogTitle,
+  DialogContent,
   Chip,
-  Stack,
-  Divider,
-  Paper,
+  CircularProgress,
+  Alert,
 } from "@mui/material";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import {
+  RemoveRedEye as Eye,
+  AccessTime as Clock,
+  Cancel as X,
+  RotateRight as Loader,
+  Inventory as Package,
+} from "@mui/icons-material";
 import OrderDetail from "./OrderDetail";
+import { getOrders } from "../../util/util";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
+import { formatDate } from "date-fns";
 
-interface OrderHistoryProps {
-  orders: Order[];
-}
+const OrderHistory: React.FC = () => {
+  const authUser = useSelector((state: RootState) => state.authUser.authUser);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-const OrderHistory: React.FC<OrderHistoryProps> = ({ orders }) => {
-  const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
+  const {
+    data: orders,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["orders", authUser.email],
+    queryFn: getOrders,
+    staleTime: 5 * 60 * 1000,
+  });
 
-  const toggleOrderDetails = (orderId: number) => {
-    setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
+  const openOrderDetails = (order: Order) => {
+    setSelectedOrder(order);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
+  const closeOrderDetails = () => {
+    setSelectedOrder(null);
+  };
+
+  const getStatusColor = (status: string = "") => {
+    switch (status.toLowerCase()) {
       case "completed":
         return { bgcolor: "#E8F5E9", color: "#2E7D32" };
       case "pending":
@@ -40,38 +66,72 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ orders }) => {
     }
   };
 
-  if (!orders.length) {
+  // Loading state
+  if (isLoading) {
     return (
       <Box
-        sx={{
-          textAlign: "center",
-          py: 8,
-          backgroundColor: "background.paper",
-          borderRadius: 2,
-          border: "1px solid",
-          borderColor: "divider",
-        }}
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        py={6}
       >
-        <Typography variant="h6" color="text.secondary" gutterBottom>
+        <CircularProgress size={48} sx={{ color: "primary.main" }} />
+        <Typography variant="body2" color="text.secondary" mt={2}>
+          Loading your orders...
+        </Typography>
+      </Box>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <Alert severity="error" variant="outlined" sx={{ borderRadius: 1 }}>
+        <Box display="flex" alignItems="center">
+          <Typography variant="body1" fontWeight={500}>
+            Failed to fetch your orders
+          </Typography>
+        </Box>
+        <Typography variant="body2" sx={{ mt: 1 }}>
+          An error occurred while retrieving your orders. Please try again
+          later.
+        </Typography>
+      </Alert>
+    );
+  }
+
+  // Empty state
+  if (!orders || orders.length === 0) {
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        py={6}
+        textAlign="center"
+      >
+        <Box bgcolor="grey.100" borderRadius="50%" p={1.5}>
+          <Package sx={{ fontSize: 32, color: "grey.400" }} />
+        </Box>
+        <Typography variant="h6" fontWeight={500} color="text.primary" mt={2}>
           No orders yet
         </Typography>
-        <Typography color="text.secondary" sx={{ mb: 4 }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          mt={0.5}
+          maxWidth="sm"
+        >
           You haven't placed any orders yet. Start ordering delicious food!
         </Typography>
         <Button
-          variant="outlined"
-          href="/restaurants"
+          variant="contained"
           sx={{
-            textTransform: "none",
-            borderRadius: 2,
-            px: 4,
-            gap: 1,
-            color: "#FFA500",
-            backgroundColor: "#FFF4E0",
-            borderColor: "#FFA500",
-            "&:hover": {
-              backgroundColor: "#FFE4B5",
-            },
+            mt: 3,
+            bgcolor: "warning.main",
+            "&:hover": { bgcolor: "warning.dark" },
           }}
         >
           Browse Restaurants
@@ -80,77 +140,218 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({ orders }) => {
     );
   }
 
+  // Success state with orders
   return (
-    <Box>
-      {orders.map((order) => (
-        <Paper
-          key={order.id}
-          elevation={1}
-          sx={{
-            mb: 2,
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography variant="h5" fontWeight={600}>
+          Your Orders
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {orders.length} {orders.length === 1 ? "order" : "orders"}
+        </Typography>
+      </Box>
+
+      <Box display="flex" flexDirection="column" gap={2}>
+        {orders.map((order: Order) => {
+          const { bgcolor, color } = getStatusColor(order.status);
+
+          return (
+            <Card key={order.id} variant="outlined" sx={{ borderRadius: 2 }}>
+              <CardContent sx={{ p: 0 }}>
+                <Box
+                  display="flex"
+                  flexDirection={{ xs: "column", sm: "row" }}
+                  justifyContent="space-between"
+                  alignItems={{ xs: "flex-start", sm: "center" }}
+                  bgcolor="grey.50"
+                  p={2}
+                  borderBottom={1}
+                  borderColor="divider"
+                >
+                  <Box mb={{ xs: 1, sm: 0 }}>
+                    <Box display="flex" alignItems="center">
+                      <Typography variant="body1" fontWeight={500}>
+                        Order #{order.id}
+                      </Typography>
+                      <Chip
+                        size="small"
+                        label={
+                          order.status.charAt(0).toUpperCase() +
+                          order.status.slice(1)
+                        }
+                        sx={{
+                          ml: 1,
+                          backgroundColor: bgcolor,
+                          color: color,
+                          fontWeight: 500,
+                        }}
+                      />
+                    </Box>
+                    <Typography variant="caption" color="text.secondary">
+                      {formatDate(order.orderedAt, "dd/MM/yyyy")}
+                    </Typography>
+                  </Box>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<Eye fontSize="small" />}
+                    onClick={() => openOrderDetails(order)}
+                    sx={{
+                      borderColor: "warning.light",
+                      color: "warning.main",
+                      "&:hover": {
+                        bgcolor: "warning.50",
+                        borderColor: "warning.main",
+                      },
+                    }}
+                  >
+                    View Details
+                  </Button>
+                </Box>
+
+                <Box p={2}>
+                  <Box
+                    display="flex"
+                    flexDirection={{ xs: "column", sm: "row" }}
+                    justifyContent="space-between"
+                    gap={2}
+                  >
+                    <Box>
+                      <Box display="flex" alignItems="center">
+                        <Typography variant="body2" fontWeight={500}>
+                          Items:{" "}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          ml={0.5}
+                        >
+                          {order.items.length}{" "}
+                          {order.items.length === 1 ? "item" : "items"}
+                        </Typography>
+                      </Box>
+
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        mt={1}
+                        sx={{
+                          maxWidth: 300,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {order.items.map((item) => item.itemName).join(", ")}
+                      </Typography>
+                    </Box>
+
+                    <Box textAlign={{ xs: "left", sm: "right" }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Total amount
+                      </Typography>
+                      <Typography
+                        variant="h6"
+                        color="warning.main"
+                        fontWeight={600}
+                      >
+                        ₹{order.total.toFixed(2)}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Box display="flex" flexWrap="wrap" gap={1} mt={2}>
+                    {order.items.slice(0, 3).map((item) => (
+                      <Box
+                        key={item.id}
+                        width={40}
+                        height={40}
+                        borderRadius={1}
+                        overflow="hidden"
+                        border={1}
+                        borderColor="grey.200"
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.itemName}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                          onError={(e) => {
+                            e.currentTarget.src =
+                              "https://placehold.co/100x100/eeeeee/cccccc?text=Food";
+                          }}
+                        />
+                      </Box>
+                    ))}
+                    {order.items.length > 3 && (
+                      <Box
+                        width={40}
+                        height={40}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        borderRadius={1}
+                        border={1}
+                        borderColor="grey.200"
+                        bgcolor="grey.50"
+                      >
+                        <Typography
+                          variant="caption"
+                          fontWeight={500}
+                          color="text.secondary"
+                        >
+                          +{order.items.length - 3}
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </Box>
+
+      <Dialog
+        open={!!selectedOrder}
+        onClose={closeOrderDetails}
+        fullWidth
+        maxWidth="md"
+        PaperProps={{
+          sx: {
             borderRadius: 2,
-            overflow: "hidden",
+            maxHeight: "90vh", // Ensures the dialog doesn't go off screen
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            bgcolor: "background.default",
+            color: "warning.main",
+            borderBottom: 1,
+            borderColor: "divider",
           }}
         >
-          <Box p={3}>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Stack spacing={1}>
-                <Typography variant="body2" color="text.secondary" mb={1}>
-                  {new Date(order.orderedAt).toLocaleDateString()}
-                </Typography>
-                <Typography variant="h6" fontWeight={500}>
-                  ₹{order.total.toFixed(2)}
-                  <Typography
-                    component="span"
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ ml: 2 }}
-                  >
-                    ({order.items.length}{" "}
-                    {order.items.length === 1 ? "item" : "items"})
-                  </Typography>
-                </Typography>
-              </Stack>
-              <Box display="flex" alignItems="center" gap={2}>
-                <Chip
-                  label={
-                    order.status.charAt(0).toUpperCase() + order.status.slice(1)
-                  }
-                  size="small"
-                  sx={{
-                    ...getStatusColor(order.status),
-                    fontWeight: 500,
-                    borderRadius: 1,
-                  }}
-                />
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={() => toggleOrderDetails(Number(order.id))}
-                  sx={{
-                    textTransform: "none",
-                    borderRadius: 2,
-                    minWidth: 0,
-                    p: 1,
-                  }}
-                >
-                  {expandedOrderId === order.id ? (
-                    <ChevronDown size={20} />
-                  ) : (
-                    <ChevronRight size={20} />
-                  )}
-                </Button>
-              </Box>
-            </Box>
-          </Box>
-          {expandedOrderId === order.id && (
-            <>
-              <Divider />
-              <OrderDetail order={order} />
-            </>
+          Order Details
+          {selectedOrder && (
+            <Typography
+              component="span"
+              variant="body2"
+              color="text.secondary"
+              ml={1}
+            >
+              #{selectedOrder?.id}
+            </Typography>
           )}
-        </Paper>
-      ))}
+        </DialogTitle>
+        <DialogContent sx={{ p: 3, pb: 4 }}>
+          {selectedOrder && <OrderDetail order={selectedOrder} />}
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

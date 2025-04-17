@@ -100,7 +100,7 @@ const UpdatePasswordModal: React.FC<UpdatePasswordModalProps> = ({
         Update Password
       </DialogTitle>
       <DialogContent sx={{ mt: 2 }}>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box display={"flex"} flexDirection={"column"} gap={2} marginTop={2}>
           <TextField
             fullWidth
             label="Current Password"

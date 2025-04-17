@@ -91,7 +91,7 @@ const UserProfile: React.FC = () => {
 
         <Box sx={{ padding: 1 }}>
           {activeTab === "addresses" && <AddressManager />}
-          {activeTab === "orders" && <OrderHistoryList orders={[]} />}
+          {activeTab === "orders" && <OrderHistoryList />}
         </Box>
       </Box>
 

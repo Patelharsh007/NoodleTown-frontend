@@ -580,3 +580,31 @@ export const createPayment = async (discount: number, addressId: string) => {
     }
   }
 };
+
+//-------------------------Order Management----------------------------
+export const getOrders = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/order/getOrders`, {
+      withCredentials: true,
+    });
+
+    if (response.data.status === "success") {
+      return response.data.orders;
+    } else {
+      throw new Error(
+        response.data.message || "Failed to fetched orders detail"
+      );
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to fetched orders detail"
+      );
+    } else {
+      console.log(error);
+      throw new Error(
+        "An unexpected error occurred while fetching orders data"
+      );
+    }
+  }
+};

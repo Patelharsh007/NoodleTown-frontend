@@ -12,13 +12,15 @@ export interface Order {
   id: number;
   userId: number | string;
   orderedAt: Date | string;
-  address?: AddressItem;
+  address: AddressItem;
   items: OrderItem[];
   subTotal: number;
   discount: number;
   total: number;
   status: OrderStatus;
-  deliveryCharges: number;
+  delivery: number;
+  stripePaymentId: string;
+  paymentStatus: PaymentStatus;
 }
 
 export type OrderStatus =
@@ -27,6 +29,8 @@ export type OrderStatus =
   | "cancelled"
   | "processing"
   | "shipped";
+
+export type PaymentStatus = "completed" | "pending" | "failed";
 
 export interface AddressItem {
   // id: number;

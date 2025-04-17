@@ -1,18 +1,13 @@
 import { Container, Grid2, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addToCart,
-  decrementQuantity,
-  incrementQuantity,
-} from "../../redux/slices/CartSlice";
-import { RootState } from "../../redux/Store";
-
 import RestaurantMenuCategories from "../../components/RestaurantMenuCategories";
 import RestaurantMenuItems from "../../components/RestaurantMenuItems";
 import { fetchMenuCategories } from "../../util/util";
 import { MealItem } from "../../types/type";
+import RestaurantMenuItemsSkeleton from "../../skeleton/RestaurantMenuItemsSkeleton";
+
+import { fetchMenu } from "../../util/util";
 
 interface restaurantProps {
   id: string;
@@ -24,58 +19,25 @@ const RestaurantOrderOnline: React.FC<restaurantProps> = ({ id }) => {
 
   const {
     data: categoriesCount,
-    isLoading,
-    error,
+    isLoading: categoryLoad,
+    error: categoryError,
   } = useQuery({
     queryKey: ["MenuCategories", id],
     queryFn: () => fetchMenuCategories(id),
+    staleTime: 2 * 60 * 1000,
+  });
+
+  const {
+    data: meals,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["filterMenu", id, selectedCategory],
+    queryFn: () => fetchMenu(id, selectedCategory),
   });
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
-  };
-
-  //redux cart
-  const dispatch = useDispatch();
-
-  // .selector to get cart items
-  const cartItems = useSelector((state: RootState) => state.cart.items);
-
-  const isItemInCart = (mealId: string) => {
-    return cartItems.some((item) => item.id === mealId);
-  };
-
-  const getItemQuantity = (mealId: string) => {
-    const cartItem = cartItems.find((item) => item.id === mealId);
-    return cartItem ? cartItem.quantity : 0;
-  };
-
-  const handleAddToCart = (meal: MealItem) => {
-    if (!meal) return;
-
-    if (!isItemInCart(meal.mealId)) {
-      dispatch(
-        addToCart({
-          id: meal.mealId,
-          itemId: meal.mealId,
-          name: meal.title,
-          price: meal.price,
-          quantity: 1,
-          image: meal.image,
-          restaurantId: meal.restaurantId,
-          category: meal.category,
-          description: meal.shortDescription,
-        })
-      );
-    }
-  };
-
-  const handleIncrementMeal = (mealId: string) => {
-    dispatch(incrementQuantity(mealId));
-  };
-
-  const handleDecrementMeal = (mealId: string) => {
-    dispatch(decrementQuantity(mealId));
   };
 
   if (error) {
@@ -105,15 +67,68 @@ const RestaurantOrderOnline: React.FC<restaurantProps> = ({ id }) => {
             onCategoryClick={handleCategoryClick}
             isLoading={isLoading}
           />
-          <RestaurantMenuItems
-            id={id}
-            Category={selectedCategory}
-            onAddToCart={handleAddToCart}
-            onIsItemInCart={isItemInCart}
-            onIncrementItem={handleIncrementMeal}
-            onDecrementItem={handleDecrementMeal}
-            onGetItemQuantity={getItemQuantity}
-          />
+          <>
+            <Grid2
+              size={{ xs: 12, sm: 9 }}
+              paddingLeft={{ xs: "0px", sm: "30px" }}
+              marginTop={{ xs: "30px", sm: "0px" }}
+              sx={{
+                height: { xs: "auto", sm: "80vh" },
+                overflowY: "hidden",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Typography
+                fontFamily="Poppins"
+                fontWeight={500}
+                fontSize={{ xs: "26px", sm: "28px", md: "32px" }}
+                lineHeight={{ xs: "38px", sm: "44px", md: "48px" }}
+              >
+                {selectedCategory}
+              </Typography>
+
+              <Grid2
+                container
+                size={12}
+                spacing={{ xs: 1, sm: 2 }}
+                marginTop={{ xs: "20px", sm: "30px" }}
+                direction={{ xs: "column", sm: "row" }}
+                paddingRight={{ xs: "0", sm: "16px" }}
+                sx={{
+                  overflowY: { sm: "auto" },
+                  maxHeight: { sm: "75vh" },
+                  whiteSpace: { sm: "normal" },
+                  msOverflowStyle: { sm: "none" },
+                  scrollbarWidth: { sm: "thin" },
+                  overscrollBehaviorY: { sm: "auto" },
+                  scrollbarColor: { sm: "#f8f8f8 transparent" },
+                  overflowX: "hidden",
+                  "& .MuiTypography-root": {
+                    wordBreak: "break-word",
+                    whiteSpace: "normal",
+                  },
+                  "&::-webkit-scrollbar": {
+                    display: { sm: "none" },
+                  },
+                  "&::-webkit-scrollbar-button": {
+                    display: { sm: "none" },
+                  },
+                  scrollBehavior: "smooth",
+                }}
+              >
+                {/* Skeleton Loader when data is loading */}
+                {isLoading ? (
+                  <RestaurantMenuItemsSkeleton />
+                ) : (
+                  meals &&
+                  meals.map((meal: MealItem) => {
+                    return <RestaurantMenuItems key={meal.id} meal={meal} />;
+                  })
+                )}
+              </Grid2>
+            </Grid2>
+          </>
         </Grid2>
       </Container>
     </>

@@ -27,7 +27,7 @@ import vector2 from "./images/vector2.png";
 import authBg from "./images/auth-bg.jpg";
 import authBg1 from "./images/auth-bg1.jpg";
 import authLogo from "./images/auth-logo.png";
-import emptyCart from "./images/emptyCart.jpg";
+import emptyCart from "./images/emptyCart.png";
 
 export const assets = {
   images: {

@@ -43,7 +43,9 @@ export const Login: React.FC = () => {
         showInfoToast(`${result.message}`);
         const id = result.logUser.id as number;
         const userName = result.logUser.userName as string;
-        dispatch(setUser({ id, userName, email }));
+        const profileImage = result.logUser.profileImage as string;
+
+        dispatch(setUser({ id, userName, email, profileImage }));
         navigate("/user");
       } else if (result.status === "error") {
         // Handle validation errors

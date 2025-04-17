@@ -1,7 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ROUTES } from "./constant/constant";
-
 import "./App.css";
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
@@ -11,13 +10,15 @@ import UserDetail from "./pages/UserDetail";
 import { ToastContainer } from "react-toastify";
 import ProductDetails from "./pages/ProductDetails";
 import ScrollToTop from "./components/ScrollToTop";
-import OrderPage from "./pages/OrderPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 import { Analytics } from "@vercel/analytics/react";
 import { SearchPage } from "./pages/SearchPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
+import CheckoutPage from "./pages/CheckOutPage";
+import SuccessfulPayment from "./pages/SuccessfulPayment";
+import FailedPayment from "./pages/FailedPayment";
 
 function App() {
   return (
@@ -35,15 +36,24 @@ function App() {
         <Route path={ROUTES.RESTAURANT} element={<RestaurantPage />} />
         <Route path={ROUTES.PRODUCT} element={<ProductDetails />} />
         <Route path={ROUTES.CART} element={<Cart />} />
-        <Route path={ROUTES.USER} element={<UserDetail />} />
         <Route
-          path={ROUTES.ORDERS}
+          path={ROUTES.USER}
           element={
             <ProtectedRoute>
-              <OrderPage />
+              <UserDetail />
             </ProtectedRoute>
           }
         />
+        <Route
+          path={ROUTES.CHECKOUT}
+          element={
+            <ProtectedRoute>
+              <CheckoutPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path={ROUTES.PAYMENT_SUCCESS} element={<SuccessfulPayment />} />
+        <Route path={ROUTES.PAYMENT_FAILED} element={<FailedPayment />} />
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
       </Routes>
       <ToastContainer />

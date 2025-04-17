@@ -4,16 +4,14 @@ import FaceIcon from "@mui/icons-material/Face";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Link } from "react-router-dom";
 import { Badge, Stack, Box } from "@mui/material";
-
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/Store";
+import useCart from "../hooks/useCartMeal";
 
 interface NavbarProps {
   linkColor?: string;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ linkColor }) => {
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const { cart } = useCart();
 
   return (
     <>
@@ -95,7 +93,7 @@ const Navbar: React.FC<NavbarProps> = ({ linkColor }) => {
                 }}
               >
                 <Badge
-                  badgeContent={cartItems.length}
+                  badgeContent={cart && cart.length}
                   sx={{
                     "& .MuiBadge-badge": {
                       backgroundColor: "#ffc300",

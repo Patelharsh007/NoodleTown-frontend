@@ -11,32 +11,29 @@ import {
 import { Link } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-
+import useCart from "../hooks/useCartMeal";
 import { CartItem } from "../types/type";
 
 interface CartCardProp {
   item: CartItem;
-  onIncrement: (id: string) => void;
-  onDecrement: (id: string) => void;
 }
 
-const CartCard: React.FC<CartCardProp> = ({
-  item,
-  onIncrement,
-  onDecrement,
-}) => {
+const CartCard: React.FC<CartCardProp> = ({ item }) => {
+  const { cart, incrementItem, decrementItem, isIncrementing, isDecrementing } =
+    useCart();
+
   return (
-    <Grid2 key={item.name} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+    <Grid2 key={item.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
       <Box
         padding={{ xs: "15px", sm: "30px" }}
         borderRadius={"17px"}
         sx={{ backgroundColor: "#F9F9F9" }}
       >
-        <Link to={`/product/${item.id}`}>
+        <Link to={`/product/${item.mealId}`}>
           <Box
             component={"img"}
-            alt={item.image}
-            src={item.image}
+            alt={item.mealId}
+            src={item.meal.image}
             marginBottom={"30px"}
             height={{ xs: "250px", sm: "190px" }}
             width={"100%"}
@@ -66,7 +63,7 @@ const CartCard: React.FC<CartCardProp> = ({
                 minHeight: "52px",
               }}
             >
-              {item.name}
+              {item.meal.title}
             </Typography>
             <Typography
               fontFamily={"Poppins"}
@@ -79,7 +76,7 @@ const CartCard: React.FC<CartCardProp> = ({
                 whiteSpace: "nowrap",
               }}
             >
-              ₹{item.price}
+              ₹{item.meal.price}
             </Typography>
           </Stack>
           <Typography
@@ -93,11 +90,11 @@ const CartCard: React.FC<CartCardProp> = ({
               display: "-webkit-box",
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
-              WebkitLineClamp: 2,
+              WebkitLineClamp: 1,
               textOverflow: "ellipsis",
             }}
           >
-            {item.description}
+            {item.meal.shortDescription}
           </Typography>
 
           {/* Quantity Controls */}
@@ -110,7 +107,8 @@ const CartCard: React.FC<CartCardProp> = ({
             }}
           >
             <Button
-              onClick={() => onDecrement(item.id)}
+              onClick={() => decrementItem(item.mealId)}
+              // disabled={isDecrementing}
               variant="outlined"
               sx={{
                 backgroundColor: "#F3F3F3",
@@ -134,10 +132,16 @@ const CartCard: React.FC<CartCardProp> = ({
                 color: "#000000",
               }}
             >
-              {item.quantity}
+              {(item &&
+                cart &&
+                cart.find(
+                  (cartItem: CartItem) => cartItem.mealId === item.mealId
+                )?.quantity) ||
+                0}
             </Button>
             <Button
-              onClick={() => onIncrement(item.id)}
+              onClick={() => incrementItem(item.mealId)}
+              // disabled={isIncrementing}
               variant="outlined"
               sx={{
                 backgroundColor: "#FFA500",
@@ -175,7 +179,7 @@ const CartCard: React.FC<CartCardProp> = ({
               letterSpacing={"0%"}
               color={"#FFA500"}
             >
-              ₹{item.price * item.quantity}
+              ₹{item.meal.price * item.quantity}
             </Typography>
           </Stack>
           <Divider variant="middle" />
@@ -198,7 +202,7 @@ const CartCard: React.FC<CartCardProp> = ({
               letterSpacing={"0%"}
               color={"#FFA500"}
             >
-              ₹{item.price * item.quantity}
+              ₹{item.meal.price * item.quantity}
             </Typography>
           </Stack>
         </Stack>

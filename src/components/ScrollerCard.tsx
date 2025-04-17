@@ -1,67 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { ShoppingBag } from "@mui/icons-material";
 import { Box, Typography, Stack } from "@mui/material";
-import { showErrorToast, showSuccessToast } from "./ToastContainer";
 import { Link } from "react-router-dom";
-import { MealItem } from "../types/type";
-
-import {
-  addToCartBackend,
-  isItemInCartBackend,
-  removeFromCartBackend,
-} from "../util/util";
+import useCart from "../hooks/useCartMeal";
+import { CartItem, MealItem } from "../types/type";
 
 interface ScrollerCardProp {
   Card: MealItem;
-  isAuthenticated: boolean;
 }
 
-const ScrollerCard: React.FC<ScrollerCardProp> = ({
-  Card,
-  isAuthenticated,
-}) => {
-  const [inCart, setInCart] = useState<boolean>(false);
+const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
+  const [isInCart, setIsInCart] = useState<boolean>(false);
+  const { cart, isLoadingCart, errorCart, addToCart, removeFromCart } =
+    useCart();
 
+  // Effect to update color based on cart changes
   useEffect(() => {
-    if (isAuthenticated) {
-      isItemInCart(Card.mealId);
+    if (cart && cart.length > 0) {
+      const itemInCart = cart.some(
+        (cartItem: CartItem) => cartItem.mealId === Card.mealId
+      );
+      setIsInCart(itemInCart);
     }
-  }, [isAuthenticated, Card.mealId]);
+  }, [cart, Card.mealId]);
 
-  const isItemInCart = async (mealId: string) => {
-    if (!isAuthenticated) {
-      // console.warn("User is not authenticated. Skipping cart check.");
-      setInCart(false);
-      return;
-    }
-
-    try {
-      const result = await isItemInCartBackend(mealId);
-      setInCart(result);
-    } catch (error) {
-      console.error("Error checking if item is in cart:", error);
-      setInCart(false);
-    }
-  };
   const handleBagClick = async () => {
-    if (!isAuthenticated) {
-      showErrorToast("Access denied. Please log in.");
-      return;
-    }
-
-    try {
-      if (inCart) {
-        const result = await removeFromCartBackend(Card.mealId);
-        setInCart(false);
-        showSuccessToast(result.message);
-      } else {
-        const result = await addToCartBackend(Card.mealId);
-        setInCart(true);
-        showSuccessToast(result.message);
-      }
-    } catch (error) {
-      console.error("Error adding/removing item from cart:", error);
-      showErrorToast("An error occurred. Please try again.");
+    if (isInCart) {
+      removeFromCart(Card.mealId);
+    } else {
+      addToCart(Card.mealId);
     }
   };
 
@@ -240,12 +207,12 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({
             zIndex={3}
             sx={{
               cursor: "pointer",
-              backgroundColor: inCart ? "#F6B716" : "#fff",
-              color: inCart ? "#fff" : "#000000",
+              backgroundColor: isInCart ? "#F6B716" : "#fff",
+              color: isInCart ? "#fff" : "#000000",
               transition: "all 0.3s ease",
               "&:hover": {
-                backgroundColor: inCart ? "#ff8c00" : "#F6B716",
-                color: inCart ? "#fff" : "#000000",
+                backgroundColor: isInCart ? "#ff8c00" : "#F6B716",
+                color: isInCart ? "#fff" : "#000000",
 
                 transform: "scale(1.1)",
                 "& .MuiSvgIcon-root": {

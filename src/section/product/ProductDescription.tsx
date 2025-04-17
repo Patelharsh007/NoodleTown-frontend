@@ -9,147 +9,31 @@ import {
 import React, { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { MealItem } from "../../types/type";
-import {
-  addToCartBackend,
-  decrementCartMealBackend,
-  getItemQuantitty,
-  incrementCartMealBackend,
-  isItemInCartBackend,
-} from "../../util/util";
-import {
-  showErrorToast,
-  showInfoToast,
-  showSuccessToast,
-} from "../../components/ToastContainer";
+import useCart from "../../hooks/useCartMeal";
+import { CartItem, MealItem } from "../../types/type";
 
 interface ProductDescriptionProps {
   meal: MealItem;
 }
 
 const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [inCart, setInCart] = useState<boolean>(false);
-  let [quantity, setQuantity] = useState<number>(0);
+  const [isInCart, setIsInCart] = useState<boolean>(false);
+  const { cart, isLoadingCart, addToCart, incrementItem, decrementItem } =
+    useCart();
 
   useEffect(() => {
-    const verifyUser = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:8080/api/user/verifyUser",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          }
-        );
+    console.log("use effect called");
 
-        const result = await response.json();
-
-        if (result.status === "success") {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error("Error verifying user:", error);
-        setIsAuthenticated(false);
-      }
-    };
-
-    verifyUser();
-  }, []);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      isItemInCart(meal.mealId);
+    if (cart && cart.length > 0) {
+      const itemInCart = cart.some(
+        (cartItem: CartItem) => cartItem.mealId === meal.mealId
+      );
+      console.log("item in cart", itemInCart);
+      setIsInCart(itemInCart);
+    } else {
+      setIsInCart(false);
     }
-  }, [isAuthenticated, meal, inCart, quantity]);
-
-  const isItemInCart = async (mealId: string) => {
-    if (!isAuthenticated) {
-      setInCart(false);
-      return;
-    }
-
-    try {
-      const result = await isItemInCartBackend(mealId);
-      getMealQuantity(mealId);
-      setInCart(result);
-    } catch (error) {
-      // console.error("Error checking if item is in cart:", error);
-      setInCart(false);
-    }
-  };
-
-  const onAddToCart = async (mealId: string) => {
-    if (!isAuthenticated) {
-      showErrorToast("Access denied. Please log in.");
-      return;
-    }
-    try {
-      const result = await addToCartBackend(mealId);
-      getMealQuantity(mealId);
-      setInCart(true);
-      showSuccessToast(result.message);
-    } catch (error) {
-      // console.error("Error adding/removing item from cart:", error);
-      showErrorToast("An error occurred. Please try again.");
-    }
-  };
-  const onIncrement1 = async (mealId: string) => {
-    if (!isAuthenticated) {
-      showErrorToast("Access denied. Please log in.");
-      return;
-    }
-    try {
-      const result = await incrementCartMealBackend(mealId);
-      getMealQuantity(mealId);
-      setInCart(true);
-      showInfoToast(result.message);
-    } catch (error) {
-      if (error instanceof Error) {
-        showErrorToast(error.message || "An error occurred. Please try again.");
-      } else {
-        showErrorToast("An error occurred. Please try again.");
-      }
-    }
-  };
-  const onDecrement1 = async (mealId: string) => {
-    if (!isAuthenticated) {
-      showErrorToast("Access denied. Please log in.");
-      return;
-    }
-    try {
-      if (quantity === 1) {
-        const result = await decrementCartMealBackend(mealId);
-        showErrorToast("Item removed from cart");
-        setInCart(false);
-        return;
-      }
-      const result = await decrementCartMealBackend(mealId);
-      getMealQuantity(mealId);
-      setInCart(true);
-      showInfoToast(result.message);
-    } catch (error) {
-      if (error instanceof Error) {
-        showErrorToast("Item removed from cart.");
-      } else {
-        showErrorToast("An error occurred. Please try again.");
-      }
-    }
-  };
-
-  const getMealQuantity = async (mealId: string) => {
-    try {
-      const result = await getItemQuantitty(mealId);
-      setQuantity(result);
-    } catch (error) {
-      setQuantity(0);
-    }
-  };
+  }, [cart, meal]);
 
   return (
     <Grid2 size={{ sm: 12, md: 7 }}>
@@ -224,9 +108,28 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
               {meal.category}
             </Typography>
 
-            {!inCart ? (
+            {isLoadingCart ? (
               <Button
-                onClick={() => onAddToCart(meal.mealId)}
+                // onClick={() => onAddToCart(meal.mealId)}
+                disabled={isLoadingCart}
+                sx={{
+                  padding: "12px 24px",
+                  borderRadius: "8px",
+                  width: { xs: "100%", sm: "auto" },
+                  backgroundColor: "#FFA500",
+                  color: "#fff",
+                  "&:hover": {
+                    backgroundColor: "#FFC300",
+                  },
+                }}
+              >
+                <Typography fontFamily="Poppins" fontWeight={500}>
+                  Add to Cart
+                </Typography>
+              </Button>
+            ) : !isInCart ? (
+              <Button
+                onClick={() => addToCart(meal.mealId)}
                 sx={{
                   padding: "12px 24px",
                   borderRadius: "8px",
@@ -254,7 +157,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
                 }}
               >
                 <Button
-                  onClick={() => onDecrement1(meal.mealId)}
+                  onClick={() => decrementItem(meal.mealId)}
                   sx={{
                     flex: 1,
                     backgroundColor: "#999999",
@@ -282,12 +185,20 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
                   disableRipple
                 >
                   <Typography fontFamily="Poppins" fontSize="18px">
-                    {/* {onGetItemQuantity(meal.mealId)} */ quantity}
+                    {cart &&
+                    cart.length > 0 &&
+                    cart.find(
+                      (cartItem: CartItem) => cartItem.mealId === meal.mealId
+                    )
+                      ? cart.find(
+                          (cartItem: CartItem) =>
+                            cartItem.mealId === meal.mealId
+                        )?.quantity || 0
+                      : 0}
                   </Typography>
                 </Button>
                 <Button
-                  // onClick={() => onIncrement(meal.mealId)}
-                  onClick={() => onIncrement1(meal.mealId)}
+                  onClick={() => incrementItem(meal.mealId)}
                   sx={{
                     flex: 1,
                     backgroundColor: "#FFA500",

@@ -1,8 +1,10 @@
 import axios from "axios";
 import { showErrorToast } from "../components/ToastContainer";
+import { AddressItem } from "../types/type";
+import { UUID } from "crypto";
 const BASE_URL = "http://localhost:8080/api";
 
-//-------------------------Menu Page----------------------------
+//-----------+------------Menu Page----------------------------
 
 //get Top Brands ---- Menu/tobrand
 export const fetchTopBrands = async () => {
@@ -185,33 +187,45 @@ export const fetchSearchMeals = async (city: string, value: string) => {
 };
 
 //-------------------------Cart Mangement----------------------------
-export const isItemInCartBackend = async (mealId: string) => {
+export const getUserCart = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/cart/cartMeal/${mealId}`, {
-      withCredentials: true, // Include cookies for authentication
+    const response = await axios.get(`${BASE_URL}/cart/allCartData`, {
+      withCredentials: true,
     });
-    return response.data.isInCart;
+    if (response.data && response.data.cartItem) {
+      return response.data.cartItem;
+    } else {
+      return [];
+    }
   } catch (error) {
-    throw new Error("An error occurred while fetching data");
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to check if item is in the cart."
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while checking item in cart."
+      );
+    }
   }
 };
 
-export const getItemQuantitty = async (mealId: string) => {
+export const getCartItemByMealId = async (mealId: string) => {
   try {
     const response = await axios.get(`${BASE_URL}/cart/cartMeal/${mealId}`, {
-      withCredentials: true, // Include cookies for authentication
+      withCredentials: true,
     });
-    if (response.data.status === "success") {
-      if (response.data.isInCart === true) {
-        return response.data.cartItem.quantity;
-      } else {
-        throw new Error(response.data.message);
-      }
-    } else {
-      throw new Error(response.data.message || "Failed to fetch data.");
-    }
+    return response.data;
   } catch (error) {
-    throw new Error("An error occurred while fetching data");
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to check if item is in the cart."
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while checking item in cart."
+      );
+    }
   }
 };
 
@@ -219,7 +233,7 @@ export const addToCartBackend = async (mealId: string) => {
   try {
     const response = await axios.post(
       `${BASE_URL}/cart/addToCart/${mealId}`,
-      {}, //empty -- body for post rquest
+      {}, // Empty body for POST request
       {
         withCredentials: true,
       }
@@ -228,12 +242,24 @@ export const addToCartBackend = async (mealId: string) => {
       return response.data;
     } else {
       showErrorToast(response.data.message);
-      throw new Error(response.data.message || "Failed to fetch data.");
+      throw new Error(
+        response.data.message || "Failed to add item to the cart."
+      );
     }
   } catch (error) {
-    throw new Error("An error occurred while fetching data");
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message ||
+          "An error occurred while adding to the cart."
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while adding item to the cart."
+      );
+    }
   }
 };
+
 export const removeFromCartBackend = async (mealId: string) => {
   try {
     const response = await axios.delete(
@@ -248,14 +274,24 @@ export const removeFromCartBackend = async (mealId: string) => {
       return response.data;
     }
   } catch (error) {
-    throw new Error("An error occurred while fetching data");
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message ||
+          "An error occurred while removing from the cart."
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while removing item from the cart."
+      );
+    }
   }
 };
+
 export const incrementCartMealBackend = async (mealId: string) => {
   try {
-    const response = await axios.put(
+    const response = await axios.patch(
       `${BASE_URL}/cart/increment/${mealId}`,
-      {}, //empty body for put request
+      {}, // No body data is needed
       {
         withCredentials: true,
       }
@@ -269,18 +305,21 @@ export const incrementCartMealBackend = async (mealId: string) => {
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(
         error.response.data.message ||
-          "An error occurred while processing the request."
+          "An error occurred while processing the increment request."
       );
     } else {
-      throw new Error("An unexpected error occurred.");
+      throw new Error(
+        "An unexpected error occurred while incrementing item quantity."
+      );
     }
   }
 };
+
 export const decrementCartMealBackend = async (mealId: string) => {
   try {
-    const response = await axios.put(
+    const response = await axios.patch(
       `${BASE_URL}/cart/decrement/${mealId}`,
-      {}, //empty body for put request
+      {}, // No body data is needed
       {
         withCredentials: true,
       }
@@ -294,10 +333,278 @@ export const decrementCartMealBackend = async (mealId: string) => {
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(
         error.response.data.message ||
-          "An error occurred while processing the request."
+          "An error occurred while processing the decrement request."
       );
     } else {
-      throw new Error("An unexpected error occurred.");
+      throw new Error(
+        "An unexpected error occurred while decrementing item quantity."
+      );
+    }
+  }
+};
+export const emptyCartBackend = async () => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/cart/clearCart`, {
+      withCredentials: true,
+    });
+    if (response.data.status === "success") {
+      return response.data;
+    } else {
+      return response.data;
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message ||
+          "An error occurred while processing the decrement request."
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while decrementing item quantity."
+      );
+    }
+  }
+};
+
+//-------------------------User Profile----------------------------
+export const getUserAddresses = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/user/addresses`, {
+      withCredentials: true,
+    });
+    if (response.data && response.data.addresses) {
+      return response.data.addresses;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to get addresses");
+    } else {
+      throw new Error(
+        "An unexpected error occurred while checking user's addresses."
+      );
+    }
+  }
+};
+
+//-------------------------User Address Management----------------------------
+export const addAddress = async (address: Omit<AddressItem, "id">) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/user/addAddress`,
+      { address },
+      { withCredentials: true }
+    );
+
+    if (response.data.status === "success") {
+      return response.data.address;
+    } else if (response.data.status === "info") {
+      throw new Error(response.data.message);
+    } else {
+      throw new Error(response.data.message || "Failed to add address");
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to add address");
+    } else {
+      throw new Error("An unexpected error occurred while adding the address.");
+    }
+  }
+};
+
+export const updateAddress = async (
+  addressId: string,
+  updatedFields: Partial<AddressItem>
+) => {
+  try {
+    const response = await axios.patch(
+      `${BASE_URL}/user/updateAddress/${addressId}`,
+      updatedFields,
+      { withCredentials: true }
+    );
+
+    if (response.data.status === "success") {
+      return response.data.updatedAddress;
+    } else if (response.data.status === "error") {
+      throw new Error(response.data.message);
+    } else {
+      throw new Error("Failed to update address");
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to update address"
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while updating the address"
+      );
+    }
+  }
+};
+
+export const deleteAddress = async (addressId: string) => {
+  try {
+    const response = await axios.delete(
+      `${BASE_URL}/user/deleteAddress/${addressId}`,
+      { withCredentials: true }
+    );
+
+    if (response.data.status === "success") {
+      return response.data;
+    } else if (response.data.status === "error") {
+      throw new Error(response.data.message);
+    } else {
+      throw new Error("Failed to delete address");
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to delete address"
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while deleting the address"
+      );
+    }
+  }
+};
+
+export const updatePassword = async (data: {
+  currentPassword: string;
+  newPassword: string;
+  confirmNew: string;
+}) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/user/updatePassword`, data, {
+      withCredentials: true,
+    });
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to update password"
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while updating user's password."
+      );
+    }
+  }
+};
+
+export const logout = async (): Promise<void> => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/auth/logout`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error("Logout failed");
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to logout");
+    } else {
+      throw new Error("An unexpected error occurred while logging out user");
+    }
+  }
+};
+
+//-------------------------User Profile Image Update----------------------------
+export const updateProfileImage = async (file: File) => {
+  try {
+    const formData = new FormData();
+    formData.append("profileImage", file);
+
+    const response = await axios.post(
+      `${BASE_URL}/user/changeProfileImage`,
+      formData,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (response.data.status === "success") {
+      return response.data;
+    } else {
+      throw new Error(
+        response.data.message || "Failed to update profile image"
+      );
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to update profile picture"
+      );
+    } else {
+      throw new Error(
+        "An unexpected error occurred while updating user's profile picture."
+      );
+    }
+  }
+};
+
+//-------------------------Checkout Page----------------------------
+
+export const createPayment = async (discount: number, addressId: string) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/order/createOrder`,
+      { discount: discount, addressId: addressId },
+      { withCredentials: true }
+    );
+
+    if (response.data.status === "success") {
+      return response.data;
+    } else {
+      throw new Error(response.data.message || "Failed to create payment");
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to create payment"
+      );
+    } else {
+      console.log(error);
+      throw new Error("An unexpected error occurred while creating payment");
+    }
+  }
+};
+
+//-------------------------Order Management----------------------------
+export const getOrders = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/order/getOrders`, {
+      withCredentials: true,
+    });
+
+    if (response.data.status === "success") {
+      return response.data.orders;
+    } else {
+      throw new Error(
+        response.data.message || "Failed to fetched orders detail"
+      );
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(
+        error.response.data.message || "Failed to fetched orders detail"
+      );
+    } else {
+      console.log(error);
+      throw new Error(
+        "An unexpected error occurred while fetching orders data"
+      );
     }
   }
 };

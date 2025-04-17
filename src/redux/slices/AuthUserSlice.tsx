@@ -15,6 +15,7 @@ const loadAuthUserFromLocalStorage = (): AuthUserItem => {
       id: 0,
       userName: "",
       email: "",
+      profileImage: "",
       isAuthenticated: false,
     };
   }
@@ -34,12 +35,14 @@ const authUserSlice = createSlice({
         id: number;
         email: string;
         userName: string;
+        profileImage: string;
       }>
     ) => {
       state.authUser = {
         id: action.payload.id,
         userName: action.payload.userName,
         email: action.payload.email,
+        profileImage: action.payload.profileImage,
         isAuthenticated: true,
       };
 
@@ -50,6 +53,7 @@ const authUserSlice = createSlice({
         id: 0,
         userName: "",
         email: "",
+        profileImage: "",
         isAuthenticated: false,
       };
 

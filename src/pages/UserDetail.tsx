@@ -1,12 +1,12 @@
 import React from "react";
-import User from "../section/user/User";
+import UserProfile from "../section/user/Profile";
 import Navbar from "../components/Navbar";
 
 const UserDetail = () => {
   return (
     <>
       <Navbar linkColor="#000000" />
-      <User />
+      <UserProfile />
     </>
   );
 };

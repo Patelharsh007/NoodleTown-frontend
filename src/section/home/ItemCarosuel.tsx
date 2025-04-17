@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Container, Skeleton, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import ScrollerCard from "../../components/ScrollerCard";
 import { assets } from "../../assets/assets";
-
 import { fetchCarosuelCategories, fetchCarosuelItems } from "../../util/util";
 import { useQuery } from "@tanstack/react-query";
 import CarosuelCategoriesSkeleton from "../../skeleton/CarosuelCategoriesSkeleton";
@@ -11,39 +10,6 @@ import { MealItem } from "../../types/type";
 
 const ItemCarosuel: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
-  useEffect(() => {
-    const verifyUser = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:8080/api/user/verifyUser",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          }
-        );
-
-        const result = await response.json();
-
-        if (result.status === "success") {
-          // console.log("User verified:", result.user);
-          setIsAuthenticated(true);
-        } else {
-          console.warn("User is not authenticated.");
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error("Error verifying user:", error);
-        setIsAuthenticated(false);
-      }
-    };
-
-    verifyUser();
-  }, []);
 
   const {
     data: categories,
@@ -226,7 +192,7 @@ const ItemCarosuel: React.FC = () => {
                     },
                   }}
                 >
-                  <ScrollerCard Card={item} isAuthenticated={isAuthenticated} />
+                  <ScrollerCard Card={item} />
                 </Box>
               ))}
             </>

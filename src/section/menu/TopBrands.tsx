@@ -16,7 +16,11 @@ const TopBrands = () => {
     data: restaurants,
     isLoading,
     error,
-  } = useQuery({ queryKey: ["topBrands"], queryFn: fetchTopBrands });
+  } = useQuery({
+    queryKey: ["topBrands"],
+    queryFn: fetchTopBrands,
+    staleTime: 5 * 60 * 1000, // 5min
+  });
 
   return (
     <>

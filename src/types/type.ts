@@ -1,67 +1,84 @@
-//Order-Item used in OrderSlice and OrderSummary
 export interface OrderItem {
-  id: string;
-  user_email: string | null;
-  Date: Date | string;
-  address: string;
-  items: {
-    itemName: string;
-    quantity: number;
-    price: number;
-    itemTotal: number;
-  }[];
+  // itemId: number;
+  id: string | number;
+  itemName: string;
+  image: string;
+  quantity: number;
+  price: number;
+  itemTotal: number;
+}
+
+export interface Order {
+  id: number;
+  userId: number | string;
+  orderedAt: Date | string;
+  address: AddressItem;
+  items: OrderItem[];
   subTotal: number;
   discount: number;
   total: number;
-  status: string;
+  status: OrderStatus;
+  delivery: number;
+  stripePaymentId: string;
+  paymentStatus: PaymentStatus;
 }
 
-//Adress used in AddressForm and addressSlice
+export type OrderStatus =
+  | "completed"
+  | "pending"
+  | "cancelled"
+  | "processing"
+  | "shipped";
+
+export type PaymentStatus = "completed" | "pending" | "failed";
+
 export interface AddressItem {
+  // id: number;
   id: string;
+  recipientName: string;
   street: string;
   city: string;
   state: string;
   pincode: string;
+  country?: string;
 }
 
 export interface NewAddress {
+  id: string;
+  recipientName: string;
   street: string;
   city: string;
   state: string;
   pincode: string;
+  country?: string;
 }
 
 //CartItem for CartSlice
 export interface CartItem {
-  id: string;
-  itemId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  restaurantId: string;
-  category: string;
-  description?: string;
-}
-
-//AuthItem for AuthSlice
-export interface AuthItem {
-  isAuthenticated: boolean;
+  id: number;
+  mealId: string;
   email: string;
-  fullName?: string;
-  password: string;
+  quantity: number;
+  meal: MealItem;
 }
 
 //AuthItem for AuthUserSlice
 export interface AuthUserItem {
   isAuthenticated: boolean;
-  id: number | null;
-  email: string | null;
-  userName: string | null;
+  id: number | string;
+  email: string;
+  userName: string;
+  profileImage: string;
 }
 
-//mealItemType used in mealitem data and
+export interface User {
+  id: number;
+  email: string;
+  userName: string;
+  profileImage: string | null;
+  createdAt?: Date;
+}
+
 export interface MealItem {
   id: number;
   mealId: string;
@@ -76,7 +93,6 @@ export interface MealItem {
   restaurant?: RestaurantItem;
 }
 
-//restuarantType used in restaurant data
 export interface RestaurantItem {
   id: number;
   restaurantId: string;

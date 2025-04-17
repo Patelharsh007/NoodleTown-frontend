@@ -16,6 +16,7 @@ import {
   Stack,
   Divider,
   Skeleton,
+  CircularProgress,
 } from "@mui/material";
 import useCart from "../../hooks/useCartMeal";
 import { useSelector } from "react-redux";
@@ -37,6 +38,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
 
   const stripePromise = loadStripe(
     "pk_test_51RCJqwDfRsZ5MFTOWEumZBCfll3VQvDmpMmD2oSXKIge7louCqiymjHYh1Zgdy5SuR9X0m7CTfN6z7Zd54QhmL5y00sZy30aD8"
@@ -72,6 +74,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const handleCheckout = async () => {
     if (!cart || !authUser || !selectedAddressId) return;
 
+    setIsPaying(true);
     try {
       const paymentData = await createPayment(discount, selectedAddressId);
       console.log("Payment created successfully", paymentData);
@@ -95,6 +98,8 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       showSuccessToast("Payment created successfully!");
     } catch (error: any) {
       showErrorToast(error.message || "Failed to create payment");
+    } finally {
+      setIsPaying(false);
     }
   };
 
@@ -289,6 +294,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             cursor: "not-allowed",
           },
         }}
+        startIcon={
+          isPaying ? (
+            <CircularProgress size={20} sx={{ color: "white" }} />
+          ) : null
+        }
       >
         {!isAddressSelected
           ? "Select an address to continue"

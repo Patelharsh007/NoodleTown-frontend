@@ -26,13 +26,15 @@ import { getOrders } from "../../util/util";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import { formatDate } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 const OrderHistory: React.FC = () => {
   const authUser = useSelector((state: RootState) => state.authUser.authUser);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const navigate = useNavigate();
 
   const {
-    data: orders,
+    data: orders = [],
     isLoading,
     error,
   } = useQuery({
@@ -84,23 +86,6 @@ const OrderHistory: React.FC = () => {
     );
   }
 
-  // Error state
-  if (error) {
-    return (
-      <Alert severity="error" variant="outlined" sx={{ borderRadius: 1 }}>
-        <Box display="flex" alignItems="center">
-          <Typography variant="body1" fontWeight={500}>
-            Failed to fetch your orders
-          </Typography>
-        </Box>
-        <Typography variant="body2" sx={{ mt: 1 }}>
-          An error occurred while retrieving your orders. Please try again
-          later.
-        </Typography>
-      </Alert>
-    );
-  }
-
   // Empty state
   if (!orders || orders.length === 0) {
     return (
@@ -128,6 +113,9 @@ const OrderHistory: React.FC = () => {
         </Typography>
         <Button
           variant="contained"
+          onClick={() => {
+            navigate("/menu");
+          }}
           sx={{
             mt: 3,
             bgcolor: "warning.main",

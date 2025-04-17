@@ -35,11 +35,9 @@ const useCart = () => {
   const clearCart = useMutation({
     mutationFn: emptyCartBackend,
     onSuccess: (clearCart) => {
-      showSuccessToast(clearCart.message);
-      queryClient.setQueryData(["cartItems", authUser.id], {
-        cartItem: [],
-      });
       queryClient.invalidateQueries({ queryKey: ["cartItems", authUser.id] });
+      showSuccessToast(clearCart.message);
+      queryClient.setQueryData(["cartItems", authUser.id], []);
     },
     onError: (error) => {
       showErrorToast(
@@ -107,10 +105,9 @@ const useCart = () => {
         cart?.find((cart: CartItem) => cart.mealId === mealId)?.quantity === 1
       ) {
         if (cart?.length === 1) {
-          queryClient.setQueryData(["cartItems", authUser.id], {
-            cartItem: [],
-          });
+          queryClient.setQueryData(["cartItems", authUser.id], []);
         }
+
         showSuccessToast("Item removed from cart");
       } else {
         showInfoToast(decrementData.message);

@@ -59,8 +59,17 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({ open, onClose }) => {
         return;
       }
       await addAddressMutation.mutateAsync(newAddress);
+      setNewAddress({
+        recipientName: "",
+        street: "",
+        city: "",
+        state: "",
+        pincode: "",
+        country: "",
+      });
     } catch (error) {
       showErrorToast("Failed to save address");
+    } finally {
     }
   };
 

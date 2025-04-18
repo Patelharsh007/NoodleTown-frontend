@@ -116,7 +116,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
                 backgroundColor: bgcolor1,
                 color: color1,
                 fontWeight: 500,
-                "& .MuiChip-icon": { color: color },
+                "& .MuiChip-icon": { color: color1 },
               }}
             />
           </Box>

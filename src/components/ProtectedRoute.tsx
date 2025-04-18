@@ -17,7 +17,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   const verifyToken = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/user/verifyUser",
+        `${process.env.REACT_APP_BACKENDURL}/user/verifyUser`,
         {
           method: "GET",
           headers: {

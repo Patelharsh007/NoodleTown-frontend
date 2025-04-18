@@ -48,11 +48,14 @@ export const Register: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/register", {
-        method: "POST",
-        body: form, // Send the FormData object directly
-        // Do NOT set the Content-Type header here.
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKENDURL}/auth/register`,
+        {
+          method: "POST",
+          body: form, // Send the FormData object directly
+          // Do NOT set the Content-Type header here.
+        }
+      );
 
       const result = await response.json();
 

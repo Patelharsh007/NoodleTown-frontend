@@ -1,6 +1,6 @@
 import React from "react";
 import { OrderItem } from "../../types/type";
-import { Box, Typography, Paper, Divider } from "@mui/material";
+import { Box, Typography, Paper } from "@mui/material";
 
 interface OrderItemsListProps {
   items: OrderItem[];

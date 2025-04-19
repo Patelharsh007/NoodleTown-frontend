@@ -1,27 +1,17 @@
 import React, { useState } from "react";
 import AddressSection from "./AddressSection";
 import OrderSummary from "./OrderSummary";
-import { AddressItem, Order } from "../../types/type";
-import { Box, Grid2, Typography, Button } from "@mui/material";
-import {
-  showSuccessToast,
-  showErrorToast,
-  showInfoToast,
-} from "../../components/ToastContainer";
-import useCart from "../../hooks/useCartMeal";
+import { Box, Grid2, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import { useQuery } from "@tanstack/react-query";
 import { getUserAddresses } from "../../util/util";
-import { useNavigate } from "react-router-dom";
 
 const CheckOut = () => {
-  const navigate = useNavigate();
   const authUser = useSelector((state: RootState) => state.authUser.authUser);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
     null
   );
-  const [orderData, setOrderData] = useState<Order | null>(null);
 
   const {
     data: addresses,

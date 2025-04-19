@@ -1,8 +1,6 @@
 import React from "react";
 import { Order } from "../../types/type";
-
 import { Box, Typography, Chip, Divider, Paper } from "@mui/material";
-
 import {
   Check,
   AccessTime,

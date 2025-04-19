@@ -1,7 +1,6 @@
 import axios from "axios";
 import { showErrorToast } from "../components/ToastContainer";
 import { AddressItem } from "../types/type";
-import { UUID } from "crypto";
 const BASE_URL = process.env.REACT_APP_BACKENDURL;
 
 //-----------+------------Menu Page----------------------------

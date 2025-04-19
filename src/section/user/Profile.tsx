@@ -11,9 +11,8 @@ import {
 import { updateProfileImage } from "../../util/util";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/slices/AuthUserSlice";
-import useCart from "../../hooks/useCartMeal";
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const UserProfile: React.FC = () => {
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);

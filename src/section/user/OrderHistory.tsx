@@ -12,15 +12,8 @@ import {
   DialogContent,
   Chip,
   CircularProgress,
-  Alert,
 } from "@mui/material";
-import {
-  RemoveRedEye as Eye,
-  AccessTime as Clock,
-  Cancel as X,
-  RotateRight as Loader,
-  Inventory as Package,
-} from "@mui/icons-material";
+import { RemoveRedEye as Eye, Inventory as Package } from "@mui/icons-material";
 import OrderDetail from "./OrderDetail";
 import { getOrders } from "../../util/util";
 import { useSelector } from "react-redux";
@@ -33,11 +26,7 @@ const OrderHistory: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const navigate = useNavigate();
 
-  const {
-    data: orders = [],
-    isLoading,
-    error,
-  } = useQuery({
+  const { data: orders = [], isLoading } = useQuery({
     queryKey: ["orders", authUser.email],
     queryFn: getOrders,
     staleTime: 5 * 60 * 1000,

@@ -18,7 +18,7 @@ const SuccessfulPayment: React.FC = () => {
 
       try {
         const res = await axios.get(
-          `http://localhost:8080/api/order/verifyPayment?session_id=${sessionId}`,
+          `${process.env.REACT_APP_BACKENDURL}/order/verifyPayment?session_id=${sessionId}`,
           { withCredentials: true }
         );
         showSuccessToast("🎉 Payment successful!");

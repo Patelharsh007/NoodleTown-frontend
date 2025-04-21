@@ -42,7 +42,6 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
       const itemInCart = cart.some(
         (cartItem: CartItem) => cartItem.mealId === meal.mealId
       );
-      console.log("item in cart", itemInCart);
       setIsInCart(itemInCart);
     } else {
       setIsInCart(false);

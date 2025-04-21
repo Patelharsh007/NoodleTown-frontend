@@ -41,9 +41,9 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
         // console.log("protected user", user);
         // showSuccessToast("User Authenticated");
       } else {
-        // showErrorToast("Access Denied. Please Log-In");
+        showErrorToast("Access Denied. Please Log-In");
         dispatch(clearUser());
-        navigate("/auth/login"); // Redirect to login page
+        navigate("/auth/login");
       }
     } catch (error) {
       console.error("Error verifying token:", error);

@@ -73,6 +73,8 @@ const UpdateAddressModal: React.FC<UpdateAddressModalProps> = ({
     },
     onError: (error: Error) => {
       showErrorToast(error.message);
+
+      onClose();
     },
   });
 
@@ -105,10 +107,6 @@ const UpdateAddressModal: React.FC<UpdateAddressModalProps> = ({
           <Box display="flex" justifyContent="center" my={4}>
             <CircularProgress sx={{ color: "#FFA500" }} />
           </Box>
-        ) : updateAddressMutation.isError ? (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {updateAddressMutation.error.message}
-          </Alert>
         ) : (
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12}>

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useRef } from "react";
+import debounce from "lodash.debounce";
 import {
   Grid2,
   Stack,
@@ -21,6 +22,18 @@ interface CartCardProp {
 const CartCard: React.FC<CartCardProp> = ({ item }) => {
   const { cart, incrementItem, decrementItem, isIncrementing, isDecrementing } =
     useCart();
+
+  // Debounce the mutation call
+  const debouncedIncrement = useRef(
+    debounce((mealId: string) => {
+      incrementItem(mealId);
+    }, 500)
+  ).current;
+  const debouncedDecrement = useRef(
+    debounce((mealId: string) => {
+      decrementItem(mealId);
+    }, 500)
+  ).current;
 
   return (
     <Grid2 key={item.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
@@ -107,7 +120,7 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
             }}
           >
             <Button
-              onClick={() => decrementItem(item.mealId)}
+              onClick={() => debouncedDecrement(item.mealId)}
               // disabled={isDecrementing}
               variant="outlined"
               sx={{
@@ -140,7 +153,7 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
                 0}
             </Button>
             <Button
-              onClick={() => incrementItem(item.mealId)}
+              onClick={() => debouncedIncrement(item.mealId)}
               // disabled={isIncrementing}
               variant="outlined"
               sx={{

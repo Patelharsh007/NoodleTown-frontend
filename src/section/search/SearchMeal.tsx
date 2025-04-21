@@ -8,13 +8,14 @@ import {
   Skeleton,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { fetchSearchMeals } from "../../util/util";
 import { CartItem, MealItem } from "../../types/type";
 import useCart from "../../hooks/useCartMeal";
+import debounce from "lodash.debounce";
 
 const SearchMeal: React.FC<{ city: string; value: string }> = ({
   city,
@@ -48,18 +49,20 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
     addToCart(meal.mealId);
   };
 
-  const handleIncrementMeal = (mealId: string) => incrementItem(mealId);
-  const handleDecrementMeal = (mealId: string) => decrementItem(mealId);
+  // Debounce the mutation call
+  const debouncedIncrement = useRef(
+    debounce((mealId: string) => {
+      incrementItem(mealId);
+    }, 500)
+  ).current;
+  const debouncedDecrement = useRef(
+    debounce((mealId: string) => {
+      decrementItem(mealId);
+    }, 500)
+  ).current;
 
-  if (error) {
-    return (
-      <Box sx={{ marginTop: "40px" }}>
-        <Typography variant="body1" color="textSecondary">
-          An error occurred while fetching the meals.
-        </Typography>
-      </Box>
-    );
-  }
+  const handleIncrementMeal = (mealId: string) => debouncedIncrement(mealId);
+  const handleDecrementMeal = (mealId: string) => debouncedDecrement(mealId);
 
   return (
     <Box marginTop={"50px"}>

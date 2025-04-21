@@ -9,23 +9,11 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import useCart from "../hooks/useCartMeal";
-import { CartItem } from "../types/type";
-
-interface MealItem {
-  id: number;
-  mealId: string;
-  restaurantId: string;
-  category: string;
-  image: string;
-  title: string;
-  shortDescription: string;
-  fullDescription: string[];
-  price: number;
-  isPopular: boolean;
-}
+import { CartItem, MealItem } from "../types/type";
+import debounce from "lodash.debounce";
 
 interface RestaurantOrderMenuItemsProps {
   meal: MealItem;
@@ -44,6 +32,18 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
     incrementItem,
     decrementItem,
   } = useCart();
+
+  // Debounce the mutation call
+  const debouncedIncrement = useRef(
+    debounce((mealId: string) => {
+      incrementItem(mealId);
+    }, 500)
+  ).current;
+  const debouncedDecrement = useRef(
+    debounce((mealId: string) => {
+      decrementItem(mealId);
+    }, 500)
+  ).current;
 
   useEffect(() => {
     if (cart && cart.length > 0) {
@@ -165,7 +165,7 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
                   }}
                 >
                   <Button
-                    onClick={() => decrementItem(meal.mealId)}
+                    onClick={() => debouncedDecrement(meal.mealId)}
                     sx={{
                       flex: 1,
                       backgroundColor: "#999999",
@@ -214,7 +214,7 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
                     </Typography>
                   </Button>
                   <Button
-                    onClick={() => incrementItem(meal.mealId)}
+                    onClick={() => debouncedIncrement(meal.mealId)}
                     sx={{
                       flex: 1,
                       backgroundColor: "#FFA500",

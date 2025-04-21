@@ -174,7 +174,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 },
               }}
             >
-              {isUpdatingImage ? "Updating..." : "Update Profile"}
+              {isUpdatingImage ? "Updating..." : "Update Profile Picture"}
               <input
                 type="file"
                 accept="image/*"

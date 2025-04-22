@@ -20,7 +20,6 @@ const useCart = () => {
   const authUser = useSelector((state: RootState) => state.authUser.authUser);
   const queryClient = useQueryClient();
 
-  // Fetch the user's cart data
   const {
     data: cart,
     isLoading: isLoadingCart,
@@ -31,7 +30,6 @@ const useCart = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Mutation for clearing the cart
   const clearCart = useMutation({
     mutationFn: emptyCartBackend,
     onSuccess: (clearCart) => {
@@ -48,7 +46,6 @@ const useCart = () => {
     },
   });
 
-  // Mutation for adding an item to the cart
   const addToCartMutation = useMutation({
     mutationFn: (mealId: string) => addToCartBackend(mealId),
     onSuccess: (addData) => {
@@ -64,7 +61,6 @@ const useCart = () => {
     },
   });
 
-  // Mutation for removing an item from the cart
   const removeFromCartMutation = useMutation({
     mutationFn: (mealId: string) => removeFromCartBackend(mealId),
     onSuccess: (removeData) => {
@@ -80,7 +76,6 @@ const useCart = () => {
     },
   });
 
-  // Mutation for incrementing the quantity of an item
   const incrementItemMutation = useMutation({
     mutationFn: (mealId: string) => incrementCartMealBackend(mealId),
     onSuccess: (incrementData) => {
@@ -96,7 +91,6 @@ const useCart = () => {
     },
   });
 
-  // Mutation for decrementing the quantity of an item
   const decrementItemMutation = useMutation({
     mutationFn: (mealId: string) => decrementCartMealBackend(mealId),
     onSuccess: (decrementData, mealId) => {
@@ -107,7 +101,6 @@ const useCart = () => {
         if (cart?.length === 1) {
           queryClient.setQueryData(["cartItems", authUser.id], []);
         }
-
         showSuccessToast("Item removed from cart");
       } else {
         showInfoToast(decrementData.message);

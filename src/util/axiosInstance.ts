@@ -19,7 +19,9 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     const message =
-      error.response?.data?.message || "An unexpected server error occurred";
+      error.response?.data?.message ||
+      error ||
+      "An unexpected server error occurred";
     // showErrorToast(message);
     return Promise.reject(new Error(message));
   }

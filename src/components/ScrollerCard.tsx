@@ -14,7 +14,6 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
   const { cart, isLoadingCart, errorCart, addToCart, removeFromCart } =
     useCart();
 
-  // Effect to update color based on cart changes
   useEffect(() => {
     if (cart && cart.length > 0) {
       const itemInCart = cart.some(

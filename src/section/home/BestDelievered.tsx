@@ -17,7 +17,6 @@ const BestDelievered: React.FC = () => {
     staleTime: 5 * 60 * 1000, // 5min
   });
 
-  // If there is an error (network error or server error)
   if (error) {
     return (
       <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }}></Container>
@@ -106,23 +105,3 @@ const BestDelievered: React.FC = () => {
 };
 
 export default BestDelievered;
-
-// type dummy_best_delieverd_data = {
-//   imageurl: string;
-//   title: string;
-// }[];
-
-// const DUMMY_BEST_DELIEVERED_DATA: dummy_best_delieverd_data = [
-//   {
-//     imageurl: "/images/Best_Delievered/img1.jpeg",
-//     title: "Chicken Noodles",
-//   },
-//   {
-//     imageurl: "/images/Best_Delievered/img2.jpeg",
-//     title: "French Fries",
-//   },
-//   {
-//     imageurl: "/images/Best_Delievered/img3.jpeg",
-//     title: "Avacado Mint Noodles",
-//   },
-// ];

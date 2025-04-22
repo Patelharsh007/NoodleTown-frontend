@@ -37,12 +37,12 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
   const debouncedIncrement = useRef(
     debounce((mealId: string) => {
       incrementItem(mealId);
-    }, 300)
+    }, 250)
   ).current;
   const debouncedDecrement = useRef(
     debounce((mealId: string) => {
       decrementItem(mealId);
-    }, 300)
+    }, 250)
   ).current;
 
   useEffect(() => {

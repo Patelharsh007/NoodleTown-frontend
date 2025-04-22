@@ -1,30 +1,5 @@
-import axios from "axios";
-import { showErrorToast } from "../components/ToastContainer";
 import { AddressItem } from "../types/type";
-const BASE_URL = process.env.REACT_APP_BACKENDURL;
-
-//---------------------------Axios Instance----------------------------------
-const axiosInstance = axios.create({
-  baseURL: BASE_URL,
-  withCredentials: true,
-});
-
-axiosInstance.interceptors.response.use(
-  (response) => {
-    if (response.data?.status === "error") {
-      const message = response.data.message || "Something went wrong";
-      // showErrorToast(message);
-      return Promise.reject(new Error(message));
-    }
-    return response;
-  },
-  (error) => {
-    const message =
-      error.response?.data?.message || "An unexpected server error occurred";
-    // showErrorToast(message);
-    return Promise.reject(new Error(message));
-  }
-);
+import { axiosInstance } from "./axiosInstance";
 
 //-----------+------------Menu Page----------------------------
 
@@ -133,7 +108,7 @@ export const addToCartBackend = async (mealId: string) => {
 };
 
 export const removeFromCartBackend = async (mealId: string) => {
-  const response = await axios.delete(`/cart/removeFromCart/${mealId}`);
+  const response = await axiosInstance.delete(`/cart/removeFromCart/${mealId}`);
   return response.data;
 };
 
@@ -167,7 +142,7 @@ export const getUserAddresses = async () => {
 };
 
 export const addAddress = async (address: Omit<AddressItem, "id">) => {
-  const response = await axiosInstance.post(`${BASE_URL}/user/addAddress`, {
+  const response = await axiosInstance.post(`/user/addAddress`, {
     address,
   });
   return response.data.address;
@@ -200,8 +175,17 @@ export const updatePassword = async (data: {
   return response.data;
 };
 
-export const logout = async (): Promise<void> => {
-  const response = await axiosInstance.post(`${BASE_URL}/auth/logout`, {});
+export const logout = async () => {
+  const response = await axiosInstance.post(`/auth/logout`, {});
+};
+export const login = async (email: string, password: string): Promise<void> => {
+  const loginInfo = {
+    email: email,
+    password: password,
+  };
+
+  const response = await axiosInstance.post(`/auth/login`, loginInfo);
+  return response.data;
 };
 
 //-------------------------User Profile Image Update----------------------------
@@ -229,13 +213,11 @@ export const createPayment = async (discount: number, addressId: string) => {
     discount: discount,
     addressId: addressId,
   });
-
   return response.data;
 };
 
 //-------------------------Order Management----------------------------
 export const getOrders = async () => {
   const response = await axiosInstance.get(`/order/getOrders`);
-
   return response.data.orders;
 };

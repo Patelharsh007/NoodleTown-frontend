@@ -33,7 +33,7 @@ const ItemCarosuel: React.FC = () => {
   } = useQuery({
     queryKey: ["CarosuelItems", selectedCategory],
     queryFn: () => fetchCarosuelItems(selectedCategory),
-    enabled: !isLoadingCategories && !error,
+    enabled: !isLoadingCategories && !error && !!selectedCategory,
   });
 
   return (

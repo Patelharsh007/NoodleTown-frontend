@@ -64,8 +64,8 @@ const useCart = () => {
   const removeFromCartMutation = useMutation({
     mutationFn: (mealId: string) => removeFromCartBackend(mealId),
     onSuccess: (removeData) => {
-      showSuccessToast(removeData.message);
       queryClient.invalidateQueries({ queryKey: ["cartItems", authUser.id] });
+      showSuccessToast(removeData.message);
     },
     onError: (error) => {
       showErrorToast(
@@ -79,8 +79,8 @@ const useCart = () => {
   const incrementItemMutation = useMutation({
     mutationFn: (mealId: string) => incrementCartMealBackend(mealId),
     onSuccess: (incrementData) => {
-      showInfoToast(incrementData.message);
       queryClient.invalidateQueries({ queryKey: ["cartItems", authUser.id] });
+      showInfoToast(incrementData.message);
     },
     onError: (error) => {
       showErrorToast(

@@ -9,7 +9,6 @@ interface restaurantProps {
 }
 
 const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
-  //query to get restaurant data by id
   const {
     data: restaurant,
     isLoading,
@@ -40,7 +39,6 @@ const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
           gridTemplateColumns={{ xs: "1fr", sm: "1.1fr 0.9fr" }}
           gap={"10px"}
         >
-          {/* Check for posterImages existence */}
           {restaurant?.posterImages?.[0] && (
             <Box
               component={"img"}

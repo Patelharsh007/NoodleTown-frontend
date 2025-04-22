@@ -49,7 +49,7 @@ const DiningOut: React.FC = () => {
           overscrollBehaviorX: "contain",
           scrollbarColor: "#f8f8f8 transparent",
           "&::-webkit-scrollbar-button": {
-            display: "none", // Remove the arrows completely
+            display: "none",
           },
         }}
       >

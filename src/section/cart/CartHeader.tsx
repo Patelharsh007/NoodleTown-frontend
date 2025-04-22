@@ -1,9 +1,9 @@
 import React from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart"; // For checkout icon
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import useCart from "../../hooks/useCartMeal";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const CartHeader: React.FC = () => {
   const { emptyCart, cart, isLoadingCart } = useCart();
@@ -65,7 +65,7 @@ const CartHeader: React.FC = () => {
           {cart && cart.length > 0 && (
             <Button
               startIcon={<ShoppingCartIcon />}
-              onClick={handleCheckout} // Trigger checkout navigation
+              onClick={handleCheckout}
               sx={{
                 color: "#fff",
                 backgroundColor: "#FFA500",

@@ -141,8 +141,6 @@ const ItemCarosuel: React.FC = () => {
             top: 0,
             height: "100%",
             width: "100px",
-            // background:
-            //   "linear-gradient(to left, rgba(255,255,255,1), rgba(255,255,255,0))",
             pointerEvents: "none",
             display: { xs: "none", md: "block" },
             zIndex: 1,

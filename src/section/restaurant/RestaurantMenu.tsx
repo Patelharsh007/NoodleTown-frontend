@@ -9,7 +9,6 @@ interface restaurantProps {
 }
 
 const RestaurantMenu: React.FC<restaurantProps> = ({ id }) => {
-  //query to get restaurant data by id
   const {
     data: restaurant,
     isLoading,
@@ -47,7 +46,6 @@ const RestaurantMenu: React.FC<restaurantProps> = ({ id }) => {
           padding={{ xs: "10px", sm: "0" }}
         >
           {isLoading ? (
-            // Show skeleton while loading
             <RestaurantMenuSkeleton />
           ) : (
             restaurant?.menuImages.map((image: string, id: number) => (

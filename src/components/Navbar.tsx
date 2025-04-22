@@ -76,20 +76,17 @@ const Navbar: React.FC<NavbarProps> = ({ linkColor }) => {
                   textDecoration: "none",
                   color: linkColor,
                   padding: "0 20px",
-                  // paddingX:"20px"
                 }}
               >
                 <FaceIcon />
               </Link>
 
-              {/* <Stack > */}
               <Link
                 to="/cart"
                 style={{
                   textDecoration: "none",
                   color: linkColor,
                   padding: "0 15px",
-                  // paddingX:"20px",
                 }}
               >
                 <Badge
@@ -105,7 +102,6 @@ const Navbar: React.FC<NavbarProps> = ({ linkColor }) => {
                 </Badge>
               </Link>
             </Stack>
-            {/* </Stack> */}
           </Stack>
         </Stack>
       </Box>

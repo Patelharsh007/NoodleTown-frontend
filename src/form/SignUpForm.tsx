@@ -74,9 +74,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
 
   return (
     <Stack spacing={3}>
-      {/* Profile Image  */}
       <Box
-        // sx={{ position: "relative" }}
         margin={"auto"}
         display={"flex"}
         justifyContent={"center"}

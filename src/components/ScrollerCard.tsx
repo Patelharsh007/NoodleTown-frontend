@@ -100,7 +100,6 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
             />
           </Link>
 
-          {/* <Box height={"150px"} margin={"25px 20px"}> */}
           <Stack marginTop={"20px"} spacing={"10px"}>
             <Typography
               fontFamily={"Inter"}
@@ -115,7 +114,6 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
                 display: "-webkit-box",
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: "vertical",
-                // minHeight: { xs: "48px", sm: "56px", md: "60px" },
                 maxWidth: "100%",
               }}
             >
@@ -134,7 +132,6 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
                 display: "-webkit-box",
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: "vertical",
-                // minHeight: { xs: "48px", sm: "56px", md: "60px" },
                 maxWidth: "100%",
               }}
             >
@@ -175,7 +172,6 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
               ₹ {Card.price}
             </Typography>
           </Stack>
-          {/* </Box> */}
 
           <Box
             id={"triangle"}

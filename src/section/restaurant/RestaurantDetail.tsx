@@ -1,4 +1,3 @@
-// RestaurantDetail.tsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -20,7 +19,6 @@ interface restaurantProps {
 const RestaurantDetail: React.FC<restaurantProps> = ({ id }) => {
   const navigate = useNavigate();
 
-  // Query to get restaurant data by id
   const {
     data: restaurant,
     isLoading,
@@ -39,19 +37,15 @@ const RestaurantDetail: React.FC<restaurantProps> = ({ id }) => {
       const mapUrl = `https://www.google.com/maps/search/?q=${encodeURIComponent(
         restaurant.title
       )}}`;
-
-      // Open the map in a new tab
       window.open(mapUrl, "_blank");
     } else {
       console.error("Restaurant is null");
     }
   };
   const handleShare = () => {
-    // Open the map in a new tab
     window.open("https://www.instagram.com", "_blank");
   };
 
-  // If there is an error (network error or server error)
   if (error) {
     return (
       <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }}>
@@ -65,13 +59,11 @@ const RestaurantDetail: React.FC<restaurantProps> = ({ id }) => {
 
   return (
     <>
-      {/* Restaurant Info */}
       <Container maxWidth="md" sx={{ marginTop: { xs: "40px" } }}>
         {isLoading ? (
           <RestaurantDetailSkeleton />
         ) : (
           <Grid2 container spacing={"20px"}>
-            {/* Restaurant logo */}
             <Grid2
               size={{ xs: 12, sm: 3 }}
               display={"flex"}
@@ -87,7 +79,6 @@ const RestaurantDetail: React.FC<restaurantProps> = ({ id }) => {
               />
             </Grid2>
 
-            {/* Restaurant info content */}
             <Grid2 size={{ xs: 12, sm: 9 }} width={"100%"}>
               <Stack
                 width={"87%"}
@@ -162,7 +153,6 @@ const RestaurantDetail: React.FC<restaurantProps> = ({ id }) => {
                   )}
                 </Typography>
 
-                {/* Buttons */}
                 <Stack
                   direction={{ xs: "column", sm: "row" }}
                   gap={{ xs: 2, sm: 3 }}

@@ -49,7 +49,6 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
     addToCart(meal.mealId);
   };
 
-  // Debounce the mutation call
   const debouncedIncrement = useRef(
     debounce((mealId: string) => {
       incrementItem(mealId);

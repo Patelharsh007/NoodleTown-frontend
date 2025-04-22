@@ -27,10 +27,8 @@ const HeroSection: React.FC = () => {
     setSearchValue(event.target.value);
   };
 
-  // Function to handle the Enter key press
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && searchValue.trim()) {
-      // Navigate to the URL based on the search value
       navigate(`/search/${selectedCity}/${searchValue}`);
     }
   };
@@ -150,14 +148,12 @@ const HeroSection: React.FC = () => {
                       {
                         border: 0,
                       },
-                    //For to see dropdown list when click in side of select
                     "& .MuiSelect-select": {
                       padding: { xs: "7px", sm: "auto" },
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
                     },
-                    // Center the icon
                     "& .MuiSelect-icon": {
                       position: "absolute",
                       right: { xs: "15%", sm: "0" },

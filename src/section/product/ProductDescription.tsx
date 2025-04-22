@@ -22,7 +22,6 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
   const { cart, isLoadingCart, addToCart, incrementItem, decrementItem } =
     useCart();
 
-  // Debounce the mutation call
   const debouncedIncrement = useRef(
     debounce((mealId: string) => {
       incrementItem(mealId);
@@ -36,8 +35,6 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
   ).current;
 
   useEffect(() => {
-    // console.log("use effect called");
-
     if (cart && cart.length > 0) {
       const itemInCart = cart.some(
         (cartItem: CartItem) => cartItem.mealId === meal.mealId
@@ -60,7 +57,6 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
             backgroundColor: "#fff",
           }}
         >
-          {/* Title and Price */}
           <Stack>
             <Typography
               fontFamily="Poppins"
@@ -69,7 +65,6 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
               color="#000"
               sx={{ lineHeight: 1.2 }}
             >
-              {/* {meal.restaurantName} */}
               {meal.restaurant?.title}
             </Typography>
           </Stack>
@@ -100,7 +95,6 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
             </Typography>
           </Stack>
 
-          {/* Category and Cart Actions */}
           <Stack
             direction={{ xs: "column", sm: "row" }}
             alignItems={{ xs: "flex-start", sm: "center" }}
@@ -226,7 +220,6 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
             )}
           </Stack>
 
-          {/* Description Section */}
           <Box sx={{ mt: { xs: 2, md: 4 } }}>
             <Typography
               fontFamily="Poppins"

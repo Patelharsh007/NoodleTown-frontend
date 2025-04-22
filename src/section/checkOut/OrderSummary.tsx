@@ -93,7 +93,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         showErrorToast("Payment failed: " + error.message);
       }
 
-      // Redirect user to payment page or success page
       navigate("/payment-success");
       showSuccessToast("Payment created successfully!");
     } catch (error) {

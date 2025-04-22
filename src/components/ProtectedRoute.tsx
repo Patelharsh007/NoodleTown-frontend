@@ -44,7 +44,6 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  // Only render children if the user is authenticated
   return <>{children}</>;
 };
 

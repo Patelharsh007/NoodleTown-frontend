@@ -1,7 +1,7 @@
 import { toast, ToastOptions, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-let activeToasts: (string | number)[] = []; // Keep track of active toast IDs
+let activeToasts: (string | number)[] = [];
 const MAX_TOASTS = 3;
 
 const toastConfig: ToastOptions = {
@@ -31,20 +31,17 @@ export const showInfoToast = (message: string) => {
 };
 
 const showToast = (message: string, type: "success" | "error" | "info") => {
-  // Remove the oldest toast if the max count is reached
   if (activeToasts.length >= MAX_TOASTS) {
-    const oldestToast = activeToasts.shift(); // Remove the oldest toast ID from the list
+    const oldestToast = activeToasts.shift();
     if (oldestToast) {
-      toast.dismiss(oldestToast); // Dismiss the oldest toast
+      toast.dismiss(oldestToast);
     }
   }
 
-  // Show the new toast
   const toastId = toast[type](message, toastConfig);
-  activeToasts.push(toastId); // Store the new toast ID
+  activeToasts.push(toastId);
 };
 
-// Include the ToastContainer in your component render to display the toasts
 export const ToastContainerWrapper = () => {
   return <ToastContainer />;
 };

@@ -87,7 +87,6 @@ const AddressSection: React.FC<AddressSectionProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate pincode
     if (!PINCODE_REGEX.test(newAddress.pincode)) {
       showErrorToast("Pincode must be a number between 5-8 digits");
       return;

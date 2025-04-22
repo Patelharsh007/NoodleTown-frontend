@@ -20,7 +20,6 @@ const RestaurantMenuCategories: React.FC<RestaurantMenuCategoriesProps> = ({
     <Grid2
       size={{ xs: 12, sm: 3 }}
       position={"relative"}
-      // for line beside the side menu categories
       sx={{
         "&::after": {
           display: { xs: "none", sm: "block" },

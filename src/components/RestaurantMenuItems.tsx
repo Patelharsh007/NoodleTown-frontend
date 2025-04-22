@@ -33,7 +33,6 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
     decrementItem,
   } = useCart();
 
-  // Debounce the mutation call
   const debouncedIncrement = useRef(
     debounce((mealId: string) => {
       incrementItem(mealId);

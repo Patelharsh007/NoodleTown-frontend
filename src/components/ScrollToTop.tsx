@@ -6,7 +6,7 @@ const ScrollToTop = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location]); // Trigger the effect whenever the location changes (i.e., when the route changes)
+  }, [location]);
 
   return null;
 };

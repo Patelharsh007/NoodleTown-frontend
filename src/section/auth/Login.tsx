@@ -60,7 +60,7 @@ export const Login: React.FC = () => {
       }
     } catch (error) {
       console.log("Error during fetch:", error);
-      showErrorToast("An unexpected error occurred. Please try again later.");
+      // showErrorToast("An unexpected error occurred. Please try again later.");
     } finally {
       setLoading(false);
     }

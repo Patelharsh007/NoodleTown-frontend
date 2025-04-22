@@ -27,12 +27,12 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
   const debouncedIncrement = useRef(
     debounce((mealId: string) => {
       incrementItem(mealId);
-    }, 500)
+    }, 300)
   ).current;
   const debouncedDecrement = useRef(
     debounce((mealId: string) => {
       decrementItem(mealId);
-    }, 500)
+    }, 300)
   ).current;
 
   return (

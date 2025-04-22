@@ -46,15 +46,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     if (userData?.email) {
       return userData.email.substring(0, 2).toUpperCase();
     }
-    return "U"; // Default initial if both are undefined
+    return "U";
   };
 
   const handleLogout = async () => {
     try {
       await logout();
-      // Clear cart query data
       queryClient.removeQueries({ queryKey: ["cartItems", userData.id] });
-      // Clear user data from Redux
       dispatch(clearUser());
       showSuccessToast("You have been logged out successfully");
       navigate("/");
@@ -82,7 +80,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           gap: 3,
         }}
       >
-        {/* Avatar */}
         <Box sx={{ position: "relative" }}>
           <Avatar
             src={userData.profileImage || undefined}
@@ -138,7 +135,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           )}
         </Box>
 
-        {/* User info and buttons */}
         <Box>
           <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
             {userData.userName || "Hello there!"}

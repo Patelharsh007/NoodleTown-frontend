@@ -57,7 +57,6 @@ const OrderHistory: React.FC = () => {
     }
   };
 
-  // Loading state
   if (isLoading) {
     return (
       <Box
@@ -75,7 +74,6 @@ const OrderHistory: React.FC = () => {
     );
   }
 
-  // Empty state
   if (!orders || orders.length === 0) {
     return (
       <Box
@@ -117,7 +115,6 @@ const OrderHistory: React.FC = () => {
     );
   }
 
-  // Success state with orders
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -301,7 +298,7 @@ const OrderHistory: React.FC = () => {
         PaperProps={{
           sx: {
             borderRadius: 2,
-            maxHeight: "90vh", // Ensures the dialog doesn't go off screen
+            maxHeight: "90vh",
           },
         }}
       >

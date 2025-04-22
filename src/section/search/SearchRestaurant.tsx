@@ -29,7 +29,7 @@ const SearchRestaurant: React.FC<SearchRestaurantProp> = ({ city, value }) => {
       </Typography>
 
       {isLoading ? (
-        // Skeleton loader when data is loading
+        // Skeleton
         <Grid2 container spacing={3} marginTop={"20px"}>
           {[...Array(3)].map((_, index) => (
             <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={index}>
@@ -80,8 +80,7 @@ const SearchRestaurant: React.FC<SearchRestaurantProp> = ({ city, value }) => {
             </Grid2>
           ))}
         </Grid2>
-      ) : // Display restaurants once data is fetched
-      restaurants && restaurants.length > 0 ? (
+      ) : restaurants && restaurants.length > 0 ? (
         <Grid2 container spacing={3} marginTop={"20px"}>
           {restaurants.map((restaurant: RestaurantItem) => (
             <Grid2

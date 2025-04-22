@@ -123,7 +123,6 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
 
             {isLoadingCart ? (
               <Button
-                // onClick={() => onAddToCart(meal.mealId)}
                 disabled={isLoadingCart}
                 sx={{
                   padding: "12px 24px",

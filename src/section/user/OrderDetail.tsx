@@ -135,12 +135,12 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
               Shipping Address
             </Typography>
             <Box sx={{ mt: 1.5, color: "text.secondary" }}>
-              <Typography variant="body2">{order.address.street}</Typography>
               <Typography variant="body2">
                 {order.address.recipientName}
-                {""}
-                {order.address.city}, {order.address.state}{" "}
-                {order.address.pincode}
+              </Typography>
+              <Typography variant="body2">
+                {order.address.street}, {order.address.city},{" "}
+                {order.address.state}, {order.address.pincode}
               </Typography>
               <Typography variant="body2">{order.address.country}</Typography>
             </Box>

@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { clearUser, setUser } from "../redux/slices/AuthUserSlice";
 import { showErrorToast } from "./ToastContainer";
 import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../util/axiosInstance";
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -16,18 +17,10 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
 
   const verifyToken = async () => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKENDURL}/user/verifyUser`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
-
-      const result = await response.json();
+      const response = await axiosInstance.get(`/user/verifyUser`, {
+        withCredentials: true,
+      });
+      const result = await response.data;
       if (result.status === "success") {
         const { user, profileImage } = result;
         dispatch(
@@ -38,16 +31,14 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
             profileImage: profileImage,
           })
         );
-        // console.log("protected user", user);
-        // showSuccessToast("User Authenticated");
       } else {
-        showErrorToast("Access Denied. Please Log-In");
+        showErrorToast("Login required.");
         dispatch(clearUser());
         navigate("/auth/login");
       }
     } catch (error) {
-      console.error("Error verifying token:", error);
-      showErrorToast("Failed to verify token...");
+      // console.error("Error verifying token:", error);
+      showErrorToast("Login required (Token expired)");
       dispatch(clearUser());
       navigate("/auth/login");
     }

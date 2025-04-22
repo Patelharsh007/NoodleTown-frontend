@@ -48,10 +48,8 @@ export const Login: React.FC = () => {
         dispatch(setUser({ id, userName, email, profileImage }));
         navigate("/user");
       } else if (result.status === "error") {
-        // Handle validation errors
         if (result.errors && result.errors.length > 0) {
           result.errors.forEach((error: { field: string; message: string }) => {
-            // Display error messages for each field
             showErrorToast(`${error.message}`);
           });
         } else {

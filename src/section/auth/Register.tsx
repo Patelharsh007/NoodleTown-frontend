@@ -41,7 +41,7 @@ export const Register: React.FC = () => {
     form.append("userName", fullName);
     form.append("email", email);
     form.append("password", password);
-    form.append("profileImage", profileImage); // Append the File object
+    form.append("profileImage", profileImage);
 
     console.log("form", form);
 
@@ -52,8 +52,7 @@ export const Register: React.FC = () => {
         `${process.env.REACT_APP_BACKENDURL}/auth/register`,
         {
           method: "POST",
-          body: form, // Send the FormData object directly
-          // Do NOT set the Content-Type header here.
+          body: form,
         }
       );
 

@@ -101,7 +101,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </Avatar>
           {isUpdatingImage && (
             <CircularProgress
-              size={96}
+              size={100}
               sx={{
                 color: "#FFA500",
                 position: "absolute",
@@ -110,6 +110,31 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 zIndex: 1,
               }}
             />
+          )}
+          {!isUpdatingImage && (
+            <Button
+              component="label"
+              sx={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                minWidth: 0,
+                padding: 0.5,
+                backgroundColor: "#FFF4E0",
+                borderRadius: "50%",
+                "&:hover": {
+                  backgroundColor: "#FFE4B5",
+                },
+              }}
+            >
+              <Camera size={16} color="#FFA500" />
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+            </Button>
           )}
         </Box>
 
@@ -146,42 +171,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               startIcon={<ShoppingCart size={16} />}
             >
               My Cart
-            </Button>
-
-            <Button
-              component="label"
-              variant="outlined"
-              startIcon={
-                isUpdatingImage ? (
-                  <CircularProgress size={16} />
-                ) : (
-                  <Camera size={16} />
-                )
-              }
-              disabled={isUpdatingImage}
-              sx={{
-                gap: 1,
-                color: "#FFA500",
-                backgroundColor: "#FFF4E0",
-                borderColor: "#FFA500",
-                "&:hover": {
-                  backgroundColor: "#FFE4B5",
-                },
-                "&.Mui-disabled": {
-                  color: "#999",
-                  backgroundColor: "#f5f5f5",
-                  borderColor: "#ddd",
-                },
-              }}
-            >
-              {isUpdatingImage ? "Updating..." : "Update Profile Picture"}
-              <input
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={handleFileChange}
-                disabled={isUpdatingImage}
-              />
             </Button>
 
             <Button

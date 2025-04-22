@@ -61,7 +61,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
       profileImage: file,
     }));
 
-    // Set preview for the selected image
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => setPreview(reader.result as string);
@@ -75,7 +74,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
 
   return (
     <Stack spacing={3}>
-      {/* Profile Image Upload */}
+      {/* Profile Image  */}
       <Box
         // sx={{ position: "relative" }}
         margin={"auto"}
@@ -84,7 +83,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
         alignItems={"center"}
       >
         <Avatar
-          src={preview || "/default-avatar.png"} // Default image if no preview
+          src={preview || "/default-avatar.png"}
           sx={{
             width: 100,
             height: 100,

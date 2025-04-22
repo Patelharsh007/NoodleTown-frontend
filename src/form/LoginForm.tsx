@@ -11,7 +11,7 @@ import { Email, Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 
 interface LoginFormProps {
   onSubmit: (email: string, password: string) => void;
-  loading: boolean; // Prop for loading state
+  loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 

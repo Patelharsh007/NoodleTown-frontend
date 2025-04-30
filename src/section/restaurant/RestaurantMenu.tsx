@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Box, Container, Grid2, Typography } from "@mui/material";
 import { fetchRestaurantDetailById } from "../../util/util";
 import RestaurantMenuSkeleton from "../../skeleton/RestaurantMenuSkeleton";
+import { RestaurantItem } from "../../types/type";
 
 interface restaurantProps {
   id: string;
@@ -49,8 +50,7 @@ const RestaurantMenu: React.FC<restaurantProps> = ({ id }) => {
             <RestaurantMenuSkeleton />
           ) : (
             restaurant &&
-            restaurant.length > 0 &&
-            restaurant?.menuImages.map((image: string, id: number) => (
+            restaurant?.menu_images.map((image: string, id: number) => (
               <Grid2
                 size={{ xs: 12, sm: 6, md: 4 }}
                 marginTop={"30px"}

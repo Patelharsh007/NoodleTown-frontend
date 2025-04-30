@@ -10,7 +10,7 @@ interface restaurantProps {
 
 const RestaurantMenu: React.FC<restaurantProps> = ({ id }) => {
   const {
-    data: restaurant,
+    data: restaurant = [],
     isLoading,
     error,
   } = useQuery({
@@ -48,6 +48,8 @@ const RestaurantMenu: React.FC<restaurantProps> = ({ id }) => {
           {isLoading ? (
             <RestaurantMenuSkeleton />
           ) : (
+            restaurant &&
+            restaurant.length > 0 &&
             restaurant?.menuImages.map((image: string, id: number) => (
               <Grid2
                 size={{ xs: 12, sm: 6, md: 4 }}

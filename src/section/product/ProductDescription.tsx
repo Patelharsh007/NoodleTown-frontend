@@ -37,7 +37,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
   useEffect(() => {
     if (cart && cart.length > 0) {
       const itemInCart = cart.some(
-        (cartItem: CartItem) => cartItem.mealId === meal.mealId
+        (cartItem: CartItem) => cartItem.meal?.id === meal.id
       );
       setIsInCart(itemInCart);
     } else {
@@ -135,7 +135,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
               </Button>
             ) : !isInCart ? (
               <Button
-                onClick={() => addToCart(meal.mealId)}
+                onClick={() => addToCart(meal.id)}
                 sx={{
                   padding: "12px 24px",
                   borderRadius: "8px",
@@ -163,7 +163,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
                 }}
               >
                 <Button
-                  onClick={() => debouncedDecrement(meal.mealId)}
+                  onClick={() => debouncedDecrement(meal.id)}
                   sx={{
                     flex: 1,
                     backgroundColor: "#999999",
@@ -194,17 +194,16 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
                     {cart &&
                     cart.length > 0 &&
                     cart.find(
-                      (cartItem: CartItem) => cartItem.mealId === meal.mealId
+                      (cartItem: CartItem) => cartItem.meal?.id === meal.id
                     )
                       ? cart.find(
-                          (cartItem: CartItem) =>
-                            cartItem.mealId === meal.mealId
+                          (cartItem: CartItem) => cartItem.meal?.id === meal.id
                         )?.quantity || 0
                       : 0}
                   </Typography>
                 </Button>
                 <Button
-                  onClick={() => debouncedIncrement(meal.mealId)}
+                  onClick={() => debouncedIncrement(meal.id)}
                   sx={{
                     flex: 1,
                     backgroundColor: "#FFA500",
@@ -228,7 +227,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
               fontWeight={500}
               sx={{ mb: 2 }}
             >
-              {meal.shortDescription}
+              {meal.short_description}
             </Typography>
 
             <Typography
@@ -242,7 +241,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ meal }) => {
                 borderRadius: "12px",
               }}
             >
-              {meal.fullDescription}
+              {meal.full_description}
             </Typography>
           </Box>
         </Stack>

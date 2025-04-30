@@ -40,13 +40,13 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
   });
 
   const isItemInCart = (mealId: string) =>
-    cart.length > 0 && cart?.some((item: CartItem) => item.mealId === mealId);
+    cart.length > 0 && cart?.some((item: CartItem) => item.meal?.id === mealId);
   const getItemQuantity = (mealId: string) =>
-    cart?.find((item: CartItem) => item.mealId === mealId)?.quantity || 0;
+    cart?.find((item: CartItem) => item.meal?.id === mealId)?.quantity || 0;
 
   const handleAddToCart = (meal: MealItem) => {
-    if (!meal || isItemInCart(meal.mealId)) return;
-    addToCart(meal.mealId);
+    if (!meal || isItemInCart(meal.id)) return;
+    addToCart(meal.id);
   };
 
   const debouncedIncrement = useRef(
@@ -99,7 +99,7 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
           {meals.map((meal: MealItem) => (
             <Grid2
               size={{ xs: 12, sm: 6, md: 4 }}
-              key={meal.mealId}
+              key={meal.id}
               paddingY={"10px"}
               bgcolor={"#f3f3f3"}
               borderRadius={"17px"}
@@ -108,7 +108,7 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
             >
               <Stack width={"100%"} paddingY={"10px"}>
                 <Link
-                  to={`/product/${meal.mealId}`}
+                  to={`/product/${meal.id}`}
                   style={{ textDecoration: "none" }}
                 >
                   <Box
@@ -156,7 +156,7 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
                     }}
                     color="#848484"
                   >
-                    {meal.shortDescription}
+                    {meal.short_description}
                   </Typography>
                   <Typography
                     fontFamily="Poppins"
@@ -171,7 +171,7 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
                     ₹{meal.price}
                   </Typography>
 
-                  {isItemInCart(meal.mealId) ? (
+                  {isItemInCart(meal.id) ? (
                     <ButtonGroup
                       disableElevation
                       sx={{
@@ -183,7 +183,7 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
                       }}
                     >
                       <Button
-                        onClick={() => handleDecrementMeal(meal.mealId)}
+                        onClick={() => handleDecrementMeal(meal.id)}
                         sx={{
                           flex: 1,
                           backgroundColor: "#999999",
@@ -215,11 +215,11 @@ const SearchMeal: React.FC<{ city: string; value: string }> = ({
                           fontWeight={400}
                           fontSize={16}
                         >
-                          {getItemQuantity(meal.mealId)}
+                          {getItemQuantity(meal.id)}
                         </Typography>
                       </Button>
                       <Button
-                        onClick={() => handleIncrementMeal(meal.mealId)}
+                        onClick={() => handleIncrementMeal(meal.id)}
                         sx={{
                           flex: 1,
                           backgroundColor: "#FFA500",

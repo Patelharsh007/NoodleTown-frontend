@@ -17,17 +17,17 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
   useEffect(() => {
     if (cart && cart.length > 0) {
       const itemInCart = cart.some(
-        (cartItem: CartItem) => cartItem.mealId === Card.mealId
+        (cartItem: CartItem) => cartItem.meal?.id === Card.id
       );
       setIsInCart(itemInCart);
     }
-  }, [cart, Card.mealId]);
+  }, [cart, Card.id]);
 
   const handleBagClick = async () => {
     if (isInCart) {
-      removeFromCart(Card.mealId);
+      removeFromCart(Card.id);
     } else {
-      addToCart(Card.mealId);
+      addToCart(Card.id);
     }
   };
 
@@ -60,7 +60,7 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
             height={"31px"}
             borderRadius={"3px"}
             sx={{
-              ...(Card.isPopular && {
+              ...(Card.is_popular && {
                 boxShadow: "0px 4px 8px 0px #191F2C40",
                 backgroundColor: "#191F2C",
               }),
@@ -76,13 +76,10 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
               textAlign={"center"}
               padding={"7px 0"}
             >
-              {Card.isPopular ? <>Popular</> : <></>}
+              {Card.is_popular ? <>Popular</> : <></>}
             </Typography>
           </Box>
-          <Link
-            to={`/product/${Card.mealId}`}
-            style={{ textDecoration: "none" }}
-          >
+          <Link to={`/product/${Card.id}`} style={{ textDecoration: "none" }}>
             <Box
               component={"img"}
               src={Card.image}
@@ -156,7 +153,7 @@ const ScrollerCard: React.FC<ScrollerCardProp> = ({ Card }) => {
                 textOverflow: "ellipsis",
               }}
             >
-              {Card.shortDescription}
+              {Card.short_description}
             </Typography>
 
             <Typography

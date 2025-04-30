@@ -96,7 +96,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
     setIsPaying(true);
     try {
-      const paymentData = await createPayment(discount, selectedAddressId);
+      const paymentData = await createPayment(couponCode, selectedAddressId);
       console.log("Payment created successfully", paymentData);
 
       const stripe = await stripePromise;

@@ -177,7 +177,7 @@ const AddressManager: React.FC = () => {
                 <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                   <MapPin size={20} style={{ marginRight: 8 }} />
                   <Typography variant="subtitle1" fontWeight={500}>
-                    {address.recipientName}
+                    {address.name}
                   </Typography>
                 </Box>
                 <Typography variant="body2" color="text.secondary" mb={1}>

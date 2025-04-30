@@ -34,7 +34,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
 }) => {
   const [isAddingAddress, setIsAddingAddress] = useState(false);
   const [newAddress, setNewAddress] = useState<Omit<AddressItem, "id">>({
-    recipientName: "",
+    name: "",
     street: "",
     city: "",
     state: "",
@@ -63,7 +63,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
       });
       showSuccessToast("Address added successfully");
       setNewAddress({
-        recipientName: "",
+        name: "",
         street: "",
         city: "",
         state: "",
@@ -140,7 +140,7 @@ const AddressSection: React.FC<AddressSectionProps> = ({
             <TextField
               label="Recipient Name"
               name="recipientName"
-              value={newAddress.recipientName}
+              value={newAddress.name}
               onChange={handleInputChange}
               variant="outlined"
               fullWidth

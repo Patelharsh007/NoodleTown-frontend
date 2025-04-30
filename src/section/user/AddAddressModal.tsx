@@ -30,7 +30,7 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({ open, onClose }) => {
   const queryClient = useQueryClient();
 
   const [newAddress, setNewAddress] = useState<Omit<AddressItem, "id">>({
-    recipientName: "",
+    name: "",
     street: "",
     city: "",
     state: "",
@@ -60,7 +60,7 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({ open, onClose }) => {
       }
       await addAddressMutation.mutateAsync(newAddress);
       setNewAddress({
-        recipientName: "",
+        name: "",
         street: "",
         city: "",
         state: "",
@@ -82,11 +82,11 @@ const AddAddressModal: React.FC<AddAddressModalProps> = ({ open, onClose }) => {
             <TextField
               fullWidth
               label="Recipient Name"
-              value={newAddress.recipientName}
+              value={newAddress.name}
               onChange={(e) =>
                 setNewAddress({
                   ...newAddress,
-                  recipientName: e.target.value,
+                  name: e.target.value,
                 })
               }
               sx={{

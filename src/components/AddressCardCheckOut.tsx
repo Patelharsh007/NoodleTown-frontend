@@ -58,7 +58,7 @@ const AddressCardCheckOut: React.FC<AddressCardProps> = ({
 
         <Box>
           <Typography variant="subtitle1" fontWeight="bold" mb={0.5}>
-            {address.recipientName}
+            {address.name}
           </Typography>
           <Stack spacing={0.5}>
             <Typography variant="body2">{address.street}</Typography>

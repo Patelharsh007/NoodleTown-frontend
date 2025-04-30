@@ -88,7 +88,7 @@ const BestDelievered: React.FC = () => {
                   return (
                     <BestDelieveredBox
                       box={{
-                        id: item.mealId,
+                        id: item.id,
                         imageurl: item.image,
                         title: item.title,
                       }}

@@ -3,6 +3,7 @@ import { Box, Container } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { fetchRestaurantDetailById } from "../../util/util";
 import RestaurantBannerSkeleton from "../../skeleton/RestaurantBannerSkeleton";
+import { RestaurantItem } from "../../types/type";
 
 interface restaurantProps {
   id: string;
@@ -13,7 +14,7 @@ const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
     data: restaurant,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<RestaurantItem>({
     queryKey: ["restaurantDetails", id],
     queryFn: () => fetchRestaurantDetailById(id),
     staleTime: 10 * 60 * 1000, // 5min
@@ -39,10 +40,10 @@ const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
           gridTemplateColumns={{ xs: "1fr", sm: "1.1fr 0.9fr" }}
           gap={"10px"}
         >
-          {restaurant?.posterImages?.[0] && (
+          {restaurant && restaurant?.poster_images?.[0] && (
             <Box
               component={"img"}
-              src={restaurant?.posterImages[0]}
+              src={restaurant?.poster_images[0]}
               alt="Restaurant meals"
               width={"100%"}
               height={{ xs: "200px", sm: "500px", lg: "600px" }}
@@ -54,10 +55,10 @@ const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
               }}
             />
           )}
-          {restaurant?.posterImages?.[1] && (
+          {restaurant?.poster_images?.[1] && (
             <Box
               component={"img"}
-              src={restaurant?.posterImages[1]}
+              src={restaurant?.poster_images[1]}
               alt="Restaurant meals"
               width={"100%"}
               height={{ xs: "200px", sm: "245px", lg: "295px" }}
@@ -69,10 +70,10 @@ const RestaurantBanner: React.FC<restaurantProps> = ({ id }) => {
               }}
             />
           )}
-          {restaurant?.posterImages?.[2] && (
+          {restaurant?.poster_images?.[2] && (
             <Box
               component={"img"}
-              src={restaurant?.posterImages[2]}
+              src={restaurant?.poster_images[2]}
               alt="Restaurant meals"
               width={"100%"}
               height={{ xs: "200px", sm: "245px", lg: "295px" }}

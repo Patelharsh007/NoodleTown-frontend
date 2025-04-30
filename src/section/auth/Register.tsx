@@ -59,8 +59,14 @@ export const Register: React.FC = () => {
       if (result.status === "success") {
         showInfoToast(result.message);
         navigate("/auth/login");
-      } else {
-        showErrorToast(result.message || "Registration failed.");
+      } else if (result.status === "error") {
+        if (result.errors && result.errors.length > 0) {
+          result.errors.forEach((error: { field: string; message: string }) => {
+            showErrorToast(`${error.message}`);
+          });
+        } else {
+          showErrorToast(result.message || "Registration failed.");
+        }
       }
     } catch (error) {
       showErrorToast("An unexpected error occurred. Please try again later.");

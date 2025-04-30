@@ -4,12 +4,13 @@ import { Link } from "react-router-dom";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import TopBrandUI from "../../components/TopBrandUI";
 import { fetchTopBrands } from "../../util/util";
+import { RestaurantItem } from "../../types/type";
 
-interface Restaurant {
-  restaurantId: string;
-  title: string;
-  logo: string;
-}
+// interface Restaurant {
+//   restaurant_id: string;
+//   title: string;
+//   logo: string;
+// }
 
 const TopBrands = () => {
   const {
@@ -104,16 +105,17 @@ const TopBrands = () => {
             {/* Rendering all brands */}
 
             {restaurants && restaurants.length > 0 ? (
-              restaurants.map((restaurant: Restaurant) => (
+              restaurants.map((restaurant: RestaurantItem) => (
                 <Link
-                  to={`/restaurant/${restaurant.restaurantId}`}
-                  key={restaurant.restaurantId}
+                  to={`/restaurant/${restaurant.id}`}
+                  key={restaurant.id}
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
                   <TopBrandUI
+                    key={restaurant.id}
                     restaurant={{
                       title: restaurant.title,
-                      id: restaurant.restaurantId,
+                      id: restaurant.id,
                       logo: restaurant.logo,
                     }}
                   />

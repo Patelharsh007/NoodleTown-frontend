@@ -17,7 +17,7 @@ const SearchRestaurant: React.FC<SearchRestaurantProp> = ({ city, value }) => {
     data: restaurants,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<RestaurantItem[]>({
     queryKey: ["SerachRestaurant", city, value],
     queryFn: () => fetchSearchRestaurants(city, value),
   });
@@ -83,10 +83,7 @@ const SearchRestaurant: React.FC<SearchRestaurantProp> = ({ city, value }) => {
       ) : restaurants && restaurants.length > 0 ? (
         <Grid2 container spacing={3} marginTop={"20px"}>
           {restaurants.map((restaurant: RestaurantItem) => (
-            <Grid2
-              size={{ xs: 12, sm: 6, md: 4 }}
-              key={restaurant.restaurantId}
-            >
+            <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={restaurant.id}>
               <Box
                 display={"flex"}
                 flexDirection={"column"}
@@ -99,7 +96,7 @@ const SearchRestaurant: React.FC<SearchRestaurantProp> = ({ city, value }) => {
                 <Box
                   component={"img"}
                   onClick={() => {
-                    navigate(`/restaurant/${restaurant.restaurantId}`);
+                    navigate(`/restaurant/${restaurant.id}`);
                   }}
                   src={`${restaurant.logo}`}
                   alt={`${restaurant.title}`}

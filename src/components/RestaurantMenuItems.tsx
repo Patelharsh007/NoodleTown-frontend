@@ -47,16 +47,16 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
   useEffect(() => {
     if (cart && cart.length > 0) {
       const itemInCart = cart.some(
-        (cartItem: CartItem) => cartItem.mealId === meal.mealId
+        (cartItem: CartItem) => cartItem.meal?.id === meal.id
       );
       setIsInCart(itemInCart);
     }
-  }, [cart, meal.mealId]);
+  }, [cart, meal.id]);
 
   return (
-    <React.Fragment key={meal.mealId}>
+    <React.Fragment key={meal.id}>
       <Grid2 size={{ xs: 12, sm: 6 }} paddingY={"20px"}>
-        <Link to={`/product/${meal.mealId}`} style={{ textDecoration: "none" }}>
+        <Link to={`/product/${meal.id}`} style={{ textDecoration: "none" }}>
           <Box
             component={"img"}
             src={meal.image}
@@ -103,7 +103,7 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
             }}
             color="#848484"
           >
-            {meal.shortDescription}
+            {meal.short_description}
           </Typography>
           <Typography
             fontFamily="Poppins"
@@ -164,7 +164,7 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
                   }}
                 >
                   <Button
-                    onClick={() => debouncedDecrement(meal.mealId)}
+                    onClick={() => debouncedDecrement(meal.id)}
                     sx={{
                       flex: 1,
                       backgroundColor: "#999999",
@@ -204,8 +204,7 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
                         <CircularProgress />
                       ) : cart.length > 0 && isInCart ? (
                         cart.find(
-                          (cartItem: CartItem) =>
-                            cartItem.mealId === meal.mealId
+                          (cartItem: CartItem) => cartItem.meal?.id === meal.id
                         )?.quantity || 0
                       ) : (
                         0
@@ -213,7 +212,7 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
                     </Typography>
                   </Button>
                   <Button
-                    onClick={() => debouncedIncrement(meal.mealId)}
+                    onClick={() => debouncedIncrement(meal.id)}
                     sx={{
                       flex: 1,
                       backgroundColor: "#FFA500",
@@ -229,7 +228,7 @@ const RestaurantMenuItems: React.FC<RestaurantOrderMenuItemsProps> = ({
               ) : (
                 <>
                   <Button
-                    onClick={() => addToCart(meal.mealId)}
+                    onClick={() => addToCart(meal.id)}
                     sx={{
                       height: "37px",
                       width: "175px",

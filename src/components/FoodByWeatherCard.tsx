@@ -10,7 +10,7 @@ interface foodByWeatherCardProp {
 const FoodByWeatherCard: React.FC<foodByWeatherCardProp> = ({ Card }) => {
   return (
     <Grid2 size={{ xs: 6, sm: 4 }}>
-      <Link to={`/product/${Card.mealId}`}>
+      <Link to={`/product/${Card.id}`}>
         <Box
           component={"img"}
           src={Card.image}
@@ -43,7 +43,7 @@ const FoodByWeatherCard: React.FC<foodByWeatherCardProp> = ({ Card }) => {
           letterSpacing={"0%"}
           color={"#999999"}
         >
-          {Card.shortDescription}
+          {Card.short_description}
         </Typography>
       </Stack>
     </Grid2>

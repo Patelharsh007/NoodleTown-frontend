@@ -37,15 +37,6 @@ export enum PaymentStatus {
   FAILED = "failed",
 }
 
-// export type OrderStatus =
-//   | "completed"
-//   | "pending"
-//   | "cancelled"
-//   | "processing"
-//   | "shipped";
-
-// export type PaymentStatus = "completed" | "pending" | "failed";
-
 export interface AddressItem {
   // id: number;
   id: string;
@@ -114,7 +105,9 @@ export interface RestaurantItem {
   avg_cost_per_person: number;
   address: string;
   is_open: boolean;
-  timing: string;
+  // timing: string;
+  open_time: string;
+  close_time: string;
   menu_images: string[];
   is_featured: boolean;
   rating: number;

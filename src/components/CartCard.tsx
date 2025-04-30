@@ -42,11 +42,11 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
         borderRadius={"17px"}
         sx={{ backgroundColor: "#F9F9F9" }}
       >
-        <Link to={`/product/${item.mealId}`}>
+        <Link to={`/product/${item.meal?.id}`}>
           <Box
             component={"img"}
-            alt={item.mealId}
-            src={item.meal.image}
+            alt={item.meal?.id}
+            src={item.meal?.image}
             marginBottom={"30px"}
             height={{ xs: "250px", sm: "190px" }}
             width={"100%"}
@@ -76,7 +76,7 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
                 minHeight: "52px",
               }}
             >
-              {item.meal.title}
+              {item.meal?.title}
             </Typography>
             <Typography
               fontFamily={"Poppins"}
@@ -89,7 +89,7 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
                 whiteSpace: "nowrap",
               }}
             >
-              ₹{item.meal.price}
+              ₹{item.meal?.price}
             </Typography>
           </Stack>
           <Typography
@@ -107,7 +107,7 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
               textOverflow: "ellipsis",
             }}
           >
-            {item.meal.shortDescription}
+            {item.meal?.short_description}
           </Typography>
 
           {/* Quantity Controls */}
@@ -120,7 +120,7 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
             }}
           >
             <Button
-              onClick={() => debouncedDecrement(item.mealId)}
+              onClick={() => debouncedDecrement(item.meal?.id!)}
               // disabled={isDecrementing}
               variant="outlined"
               sx={{
@@ -148,12 +148,12 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
               {(item &&
                 cart &&
                 cart.find(
-                  (cartItem: CartItem) => cartItem.mealId === item.mealId
+                  (cartItem: CartItem) => cartItem.meal?.id === item.meal?.id
                 )?.quantity) ||
                 0}
             </Button>
             <Button
-              onClick={() => debouncedIncrement(item.mealId)}
+              onClick={() => debouncedIncrement(item.meal?.id!)}
               // disabled={isIncrementing}
               variant="outlined"
               sx={{
@@ -192,7 +192,7 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
               letterSpacing={"0%"}
               color={"#FFA500"}
             >
-              ₹{item.meal.price * item.quantity}
+              ₹{item.meal?.price! * item.quantity}
             </Typography>
           </Stack>
           <Divider variant="middle" />
@@ -215,7 +215,7 @@ const CartCard: React.FC<CartCardProp> = ({ item }) => {
               letterSpacing={"0%"}
               color={"#FFA500"}
             >
-              ₹{item.meal.price * item.quantity}
+              ₹{item.meal?.price! * item.quantity}
             </Typography>
           </Stack>
         </Stack>

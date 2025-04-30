@@ -23,14 +23,28 @@ export interface Order {
   payment_status: PaymentStatus;
 }
 
-export type OrderStatus =
-  | "completed"
-  | "pending"
-  | "cancelled"
-  | "processing"
-  | "shipped";
+export enum OrderStatus {
+  PENDING = "pending",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
+  PROCESSING = "processing",
+  SHIPPED = "shipped",
+}
 
-export type PaymentStatus = "completed" | "pending" | "failed";
+export enum PaymentStatus {
+  PENDING = "pending",
+  COMPLETED = "completed",
+  FAILED = "failed",
+}
+
+// export type OrderStatus =
+//   | "completed"
+//   | "pending"
+//   | "cancelled"
+//   | "processing"
+//   | "shipped";
+
+// export type PaymentStatus = "completed" | "pending" | "failed";
 
 export interface AddressItem {
   // id: number;

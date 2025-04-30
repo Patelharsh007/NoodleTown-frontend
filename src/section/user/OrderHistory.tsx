@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Order } from "../../types/type";
+import { Order, OrderStatus } from "../../types/type";
 import { useQuery } from "@tanstack/react-query";
 import {
   Box,
@@ -40,17 +40,17 @@ const OrderHistory: React.FC = () => {
     setSelectedOrder(null);
   };
 
-  const getStatusColor = (status: string = "") => {
-    switch (status.toLowerCase()) {
-      case "completed":
+  const getStatusColor = (status: OrderStatus) => {
+    switch (status) {
+      case OrderStatus.COMPLETED:
         return { bgcolor: "#E8F5E9", color: "#2E7D32" };
-      case "pending":
+      case OrderStatus.PENDING:
         return { bgcolor: "#FFF3E0", color: "#E65100" };
-      case "cancelled":
+      case OrderStatus.CANCELLED:
         return { bgcolor: "#FFEBEE", color: "#C62828" };
-      case "processing":
+      case OrderStatus.PROCESSING:
         return { bgcolor: "#E3F2FD", color: "#1565C0" };
-      case "shipped":
+      case OrderStatus.SHIPPED:
         return { bgcolor: "#F3E5F5", color: "#6A1B9A" };
       default:
         return { bgcolor: "#F5F5F5", color: "#616161" };

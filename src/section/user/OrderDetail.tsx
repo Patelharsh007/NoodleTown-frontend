@@ -1,5 +1,5 @@
 import React from "react";
-import { Order } from "../../types/type";
+import { Order, OrderStatus } from "../../types/type";
 import { Box, Typography, Chip, Divider, Paper } from "@mui/material";
 import {
   Check,
@@ -17,34 +17,51 @@ interface OrderDetailProps {
 }
 
 const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: OrderStatus) => {
     switch (status) {
-      case "completed":
+      case OrderStatus.COMPLETED:
         return <Check fontSize="small" />;
-      case "pending":
+      case OrderStatus.PENDING:
         return <AccessTime fontSize="small" />;
-      case "cancelled":
+      case OrderStatus.CANCELLED:
         return <Close fontSize="small" />;
-      case "processing":
+      case OrderStatus.PROCESSING:
         return <RotateRight fontSize="small" />;
-      case "shipped":
+      case OrderStatus.SHIPPED:
         return <LocalShipping fontSize="small" />;
       default:
         return <Help fontSize="small" />;
     }
   };
 
-  const getOrderStatusColor = (status: string = "") => {
-    switch (status.toLowerCase()) {
-      case "completed":
+  // const getOrderStatusColor = (status: string = "") => {
+  //   switch (status.toLowerCase()) {
+  //     case "completed":
+  //       return { bgcolor: "#E8F5E9", color: "#2E7D32" };
+  //     case "pending":
+  //       return { bgcolor: "#FFF3E0", color: "#E65100" };
+  //     case "cancelled":
+  //       return { bgcolor: "#FFEBEE", color: "#C62828" };
+  //     case "processing":
+  //       return { bgcolor: "#E3F2FD", color: "#1565C0" };
+  //     case "shipped":
+  //       return { bgcolor: "#F3E5F5", color: "#6A1B9A" };
+  //     default:
+  //       return { bgcolor: "#F5F5F5", color: "#616161" };
+  //   }
+  // };
+
+  const getOrderStatusColor = (status: OrderStatus) => {
+    switch (status) {
+      case OrderStatus.COMPLETED:
         return { bgcolor: "#E8F5E9", color: "#2E7D32" };
-      case "pending":
+      case OrderStatus.PENDING:
         return { bgcolor: "#FFF3E0", color: "#E65100" };
-      case "cancelled":
+      case OrderStatus.CANCELLED:
         return { bgcolor: "#FFEBEE", color: "#C62828" };
-      case "processing":
+      case OrderStatus.PROCESSING:
         return { bgcolor: "#E3F2FD", color: "#1565C0" };
-      case "shipped":
+      case OrderStatus.SHIPPED:
         return { bgcolor: "#F3E5F5", color: "#6A1B9A" };
       default:
         return { bgcolor: "#F5F5F5", color: "#616161" };

@@ -34,6 +34,7 @@ const RestaurantOrderOnline: React.FC<restaurantProps> = ({ id }) => {
   } = useQuery({
     queryKey: ["filterMenu", id, selectedCategory],
     queryFn: () => fetchMenu(id, selectedCategory),
+    staleTime: 10 * 60 * 1000,
   });
 
   const handleCategoryClick = (category: string) => {

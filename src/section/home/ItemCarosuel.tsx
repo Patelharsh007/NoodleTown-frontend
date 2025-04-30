@@ -18,6 +18,7 @@ const ItemCarosuel: React.FC = () => {
   } = useQuery({
     queryKey: ["CarosuelCategories"],
     queryFn: fetchCarosuelCategories,
+    staleTime: 10 * 60 * 1000,
   });
 
   useEffect(() => {
@@ -34,6 +35,7 @@ const ItemCarosuel: React.FC = () => {
     queryKey: ["CarosuelItems", selectedCategory],
     queryFn: () => fetchCarosuelItems(selectedCategory),
     enabled: !isLoadingCategories && !error && !!selectedCategory,
+    staleTime: 10 * 60 * 1000,
   });
 
   return (

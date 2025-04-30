@@ -208,9 +208,9 @@ export const updateProfileImage = async (file: File) => {
 
 //-------------------------Checkout Page----------------------------
 
-export const createPayment = async (discount: number, addressId: string) => {
+export const createPayment = async (coupon_code: string, addressId: string) => {
   const response = await axiosInstance.post(`/order/createOrder`, {
-    discount: discount,
+    coupon_code: coupon_code,
     addressId: addressId,
   });
   return response.data;

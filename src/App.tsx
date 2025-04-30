@@ -52,8 +52,23 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path={ROUTES.PAYMENT_SUCCESS} element={<SuccessfulPayment />} />
-        <Route path={ROUTES.PAYMENT_FAILED} element={<FailedPayment />} />
+        <Route
+          path={ROUTES.PAYMENT_FAILED}
+          element={
+            <ProtectedRoute>
+              <FailedPayment />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.PAYMENT_SUCCESS}
+          element={
+            <ProtectedRoute>
+              <SuccessfulPayment />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
       </Routes>
       <ToastContainer />

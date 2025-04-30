@@ -21,7 +21,7 @@ const SuccessfulPayment: React.FC = () => {
           `${process.env.REACT_APP_BACKENDURL}/order/verifyPayment?session_id=${sessionId}`,
           { withCredentials: true }
         );
-        showSuccessToast("🎉 Payment successful!");
+        showSuccessToast("Payment successful!");
         console.log("Verified Order:", res.data);
       } catch (error) {
         console.error("Payment verification failed:", error);

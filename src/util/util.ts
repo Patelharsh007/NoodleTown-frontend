@@ -221,3 +221,10 @@ export const getOrders = async () => {
   const response = await axiosInstance.get(`/order/getOrders`);
   return response.data.orders;
 };
+
+export const getCoupon = async (coupon_code: string) => {
+  const response = await axiosInstance.post(`/order/getCoupons`, {
+    coupon_code,
+  });
+  return response.data.coupon;
+};

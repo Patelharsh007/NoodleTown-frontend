@@ -21,7 +21,7 @@ import {
 import useCart from "../../hooks/useCartMeal";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
-import { createPayment } from "../../util/util";
+import { createPayment, getCoupon } from "../../util/util";
 import { useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 
@@ -56,19 +56,39 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const deliveryCharges = 40;
   const total = subtotal - discount + deliveryCharges;
 
-  const handleApplyCoupon = () => {
-    if (
-      couponCode.toLowerCase() === "first50" ||
-      couponCode.toUpperCase() === "FIRST50"
-    ) {
-      setDiscount(50);
-      setCouponApplied(true);
-      showSuccessToast("Coupon applied: ₹50 off");
-    } else if (couponCode) {
-      showErrorToast("Invalid coupon code");
-      setDiscount(0);
-      setCouponApplied(false);
+  const handleApplyCoupon = async () => {
+    try {
+      const coupon = await getCoupon(couponCode.toUpperCase());
+
+      if (coupon) {
+        if (coupon.amount > subtotal) {
+          showErrorToast("Order more to use this coupon.");
+          setDiscount(0);
+          setCouponApplied(false);
+          return;
+        }
+        setDiscount(coupon.amount);
+        setCouponCode(coupon.coupon_code);
+        setCouponApplied(true);
+        showSuccessToast(`Coupon applied: ₹${coupon.amount} off`);
+      } else {
+        showErrorToast("Invalid coupon code");
+        setDiscount(0);
+        setCouponApplied(false);
+      }
+    } catch (error) {
+      showErrorToast(
+        error instanceof Error
+          ? error.message
+          : "An error occurred while applying the coupon."
+      );
     }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCouponCode("");
+    setDiscount(0);
+    setCouponApplied(false);
   };
 
   const handleCheckout = async () => {
@@ -185,9 +205,15 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       </Box>
 
       <Box>
-        <Typography variant="body1" fontWeight={500} sx={{ mb: 1 }}>
+        <Typography
+          variant="body1"
+          fontWeight={500}
+          padding={"7px"}
+          sx={{ mb: 1 }}
+        >
           Have a coupon?
         </Typography>
+
         <Stack direction="row" spacing={2}>
           <TextField
             value={couponCode}
@@ -215,7 +241,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             }}
           >
             {couponApplied ? (
-              <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", padding: "2px" }}
+              >
                 <Check style={{ fontSize: 16, marginRight: 1 }} />
                 Applied
               </Box>
@@ -225,9 +253,34 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           </Button>
         </Stack>
         {couponApplied && (
-          <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
-            Coupon FIRST50 applied: ₹50 off
-          </Typography>
+          <Stack
+            direction="row"
+            spacing={2}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            marginTop={"7px"}
+          >
+            <Typography variant="body2" color="success.main" sx={{ mt: 1 }}>
+              Coupon {couponCode} applied: ₹{discount} off
+            </Typography>
+            <Button
+              size="small"
+              variant="contained"
+              disabled={!couponApplied}
+              sx={{
+                padding: "7px",
+                width: "100px",
+                bgcolor: "#EF5350",
+                color: "#FFFFFF",
+                "&:hover": {
+                  bgcolor: "#D32F2F",
+                },
+              }}
+              onClick={handleRemoveCoupon}
+            >
+              Remove
+            </Button>
+          </Stack>
         )}
       </Box>
 

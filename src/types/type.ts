@@ -1,26 +1,26 @@
 export interface OrderItem {
   // itemId: number;
   id: string | number;
-  itemName: string;
+  item_name: string;
   image: string;
   quantity: number;
   price: number;
-  itemTotal: number;
+  item_total: number;
 }
 
 export interface Order {
   id: number;
   userId: number | string;
-  orderedAt: Date | string;
+  ordered_at: Date | string;
   address: AddressItem;
   items: OrderItem[];
-  subTotal: number;
+  sub_total: number;
   discount: number;
   total: number;
   status: OrderStatus;
   delivery: number;
-  stripePaymentId: string;
-  paymentStatus: PaymentStatus;
+  stripe_payment_id: string;
+  payment_status: PaymentStatus;
 }
 
 export type OrderStatus =
@@ -35,7 +35,7 @@ export type PaymentStatus = "completed" | "pending" | "failed";
 export interface AddressItem {
   // id: number;
   id: string;
-  recipientName: string;
+  name: string;
   street: string;
   city: string;
   state: string;
@@ -56,10 +56,10 @@ export interface NewAddress {
 //CartItem for CartSlice
 export interface CartItem {
   id: number;
-  mealId: string;
+  // mealId: string;
   email: string;
   quantity: number;
-  meal: MealItem;
+  meal?: MealItem;
 }
 
 //AuthItem for AuthUserSlice
@@ -80,32 +80,29 @@ export interface User {
 }
 
 export interface MealItem {
-  id: number;
-  mealId: string;
-  restaurantId: string;
+  id: string;
   category: string;
   image: string;
   title: string;
-  shortDescription: string;
-  fullDescription: string[];
+  short_description: string;
+  full_description: string[];
   price: number;
-  isPopular: boolean;
+  is_popular: boolean;
   restaurant?: RestaurantItem;
 }
 
 export interface RestaurantItem {
-  id: number;
-  restaurantId: string;
+  id: string;
   title: string;
   logo: string;
-  posterImages: string[];
+  poster_images: string[];
   cuisines: string[];
-  avgCostPerPerson: number;
+  avg_cost_per_person: number;
   address: string;
-  isOpen: boolean;
+  is_open: boolean;
   timing: string;
-  menuImages: string[];
-  isFeatured: boolean;
+  menu_images: string[];
+  is_featured: boolean;
   rating: number;
   meals?: MealItem[];
 }

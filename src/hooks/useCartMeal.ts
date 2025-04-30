@@ -96,7 +96,7 @@ const useCart = () => {
     onSuccess: (decrementData, mealId) => {
       if (
         decrementData &&
-        cart?.find((cart: CartItem) => cart.mealId === mealId)?.quantity === 1
+        cart?.find((cart: CartItem) => cart.meal?.id === mealId)?.quantity === 1
       ) {
         if (cart?.length === 1) {
           queryClient.setQueryData(["cartItems", authUser.id], []);

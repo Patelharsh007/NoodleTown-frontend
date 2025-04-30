@@ -39,7 +39,7 @@ const UpdateAddressModal: React.FC<UpdateAddressModalProps> = ({
 
   const [updatedAddress, setUpdatedAddress] = useState<Omit<AddressItem, "id">>(
     {
-      recipientName: "",
+      name: "",
       street: "",
       city: "",
       state: "",
@@ -51,7 +51,7 @@ const UpdateAddressModal: React.FC<UpdateAddressModalProps> = ({
   useEffect(() => {
     if (address) {
       setUpdatedAddress({
-        recipientName: address.recipientName || "",
+        name: address.name || "",
         street: address.street,
         city: address.city,
         state: address.state,
@@ -113,11 +113,11 @@ const UpdateAddressModal: React.FC<UpdateAddressModalProps> = ({
               <TextField
                 fullWidth
                 label="Recipient Name"
-                value={updatedAddress.recipientName}
+                value={updatedAddress.name}
                 onChange={(e) =>
                   setUpdatedAddress({
                     ...updatedAddress,
-                    recipientName: e.target.value,
+                    name: e.target.value,
                   })
                 }
                 sx={{

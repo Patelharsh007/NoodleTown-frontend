@@ -32,7 +32,7 @@ const OrderItemsList: React.FC<OrderItemsListProps> = ({ items }) => {
             >
               <img
                 src={item.image}
-                alt={item.itemName}
+                alt={item.item_name}
                 style={{ height: "100%", width: "100%", objectFit: "cover" }}
                 onError={(e) => {
                   e.currentTarget.src =
@@ -42,7 +42,7 @@ const OrderItemsList: React.FC<OrderItemsListProps> = ({ items }) => {
             </Box>
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="body1" fontWeight={500}>
-                {item.itemName}
+                {item.item_name}
               </Typography>
               <Typography
                 variant="body2"
@@ -54,7 +54,7 @@ const OrderItemsList: React.FC<OrderItemsListProps> = ({ items }) => {
             </Box>
             <Box sx={{ textAlign: "right" }}>
               <Typography variant="body1" fontWeight={500}>
-                ₹{item.itemTotal.toFixed(2)}
+                ₹{item.item_total.toFixed(2)}
               </Typography>
             </Box>
           </Box>
@@ -67,7 +67,7 @@ const OrderItemsList: React.FC<OrderItemsListProps> = ({ items }) => {
             Subtotal
           </Typography>
           <Typography variant="body2">
-            ₹{items.reduce((acc, item) => acc + item.itemTotal, 0).toFixed(2)}
+            ₹{items.reduce((acc, item) => acc + item.item_total, 0).toFixed(2)}
           </Typography>
         </Box>
       </Box>

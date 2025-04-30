@@ -100,7 +100,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
           <Box>
             <Typography variant="h6">Order #{order.id}</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Placed on {formatDate(order.orderedAt, "dd/MM/yyyy")}
+              Placed on {formatDate(order.ordered_at, "dd/MM/yyyy")}
             </Typography>
           </Box>
 
@@ -135,9 +135,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
               Shipping Address
             </Typography>
             <Box sx={{ mt: 1.5, color: "text.secondary" }}>
-              <Typography variant="body2">
-                {order.address.recipientName}
-              </Typography>
+              <Typography variant="body2">{order.address.name}</Typography>
               <Typography variant="body2">
                 {order.address.street}, {order.address.city},{" "}
                 {order.address.state}, {order.address.pincode}
@@ -156,13 +154,13 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
                 <span
                   style={{
                     color:
-                      order.paymentStatus === "completed"
+                      order.payment_status === "completed"
                         ? "#2e7d32"
                         : "#ed6c02",
                   }}
                 >
-                  {order.paymentStatus.charAt(0).toUpperCase() +
-                    order.paymentStatus.slice(1)}
+                  {order.payment_status.charAt(0).toUpperCase() +
+                    order.payment_status.slice(1)}
                 </span>
               </Typography>
               <Typography
@@ -170,7 +168,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
                 sx={{ mt: 0.5, wordBreak: "break-all" }}
               >
                 <span style={{ fontWeight: 500 }}>ID: </span>
-                {order.stripePaymentId}
+                {order.stripe_payment_id}
               </Typography>
             </Box>
           </Box>
@@ -196,7 +194,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order }) => {
                 Subtotal
               </Typography>
               <Typography variant="body2">
-                ₹{order.subTotal.toFixed(2)}
+                ₹{order.sub_total.toFixed(2)}
               </Typography>
             </Box>
             <Divider />

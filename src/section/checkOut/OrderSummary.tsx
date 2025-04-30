@@ -41,7 +41,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const [isPaying, setIsPaying] = useState(false);
 
   const stripePromise = loadStripe(
-    "pk_test_51RCJqwDfRsZ5MFTOWEumZBCfll3VQvDmpMmD2oSXKIge7louCqiymjHYh1Zgdy5SuR9X0m7CTfN6z7Zd54QhmL5y00sZy30aD8"
+    "pk_test_51RCJr7D6zlgEmt95BvNKtdWDlLAoPV0MhIgcnodjWPYQkaYZbNfBKQF4kTiR3ckrlK5iKcyxfptlOth1pE0RU3Dq00Trzxo8jB"
   );
 
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
   const subtotal: number =
     cart?.reduce(
-      (sum: number, item: CartItem) => sum + item.meal.price * item.quantity,
+      (sum: number, item: CartItem) => sum + item.meal?.price! * item.quantity,
       0
     ) || 0;
   const deliveryCharges = 40;

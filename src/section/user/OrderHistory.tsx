@@ -163,7 +163,7 @@ const OrderHistory: React.FC = () => {
                       />
                     </Box>
                     <Typography variant="caption" color="text.secondary">
-                      {formatDate(order.orderedAt, "dd/MM/yyyy")}
+                      {formatDate(order.ordered_at, "dd/MM/yyyy")}
                     </Typography>
                   </Box>
                   <Button
@@ -217,7 +217,7 @@ const OrderHistory: React.FC = () => {
                           whiteSpace: "nowrap",
                         }}
                       >
-                        {order.items.map((item) => item.itemName).join(", ")}
+                        {order.items.map((item) => item.item_name).join(", ")}
                       </Typography>
                     </Box>
 
@@ -248,7 +248,7 @@ const OrderHistory: React.FC = () => {
                       >
                         <img
                           src={item.image}
-                          alt={item.itemName}
+                          alt={item.item_name}
                           style={{
                             width: "100%",
                             height: "100%",

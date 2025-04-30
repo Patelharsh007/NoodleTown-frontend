@@ -28,8 +28,8 @@ const OrderItemCardCheckOut: React.FC<OrderItemCardProps> = ({ item }) => {
           overflow: "hidden",
         }}
         variant="rounded"
-        src={item.meal.image}
-        alt={item.meal.title}
+        src={item.meal?.image}
+        alt={item.meal?.title}
         onError={(e) => {
           (e.target as HTMLImageElement).src =
             "https://via.placeholder.com/64?text=Food";
@@ -40,19 +40,19 @@ const OrderItemCardCheckOut: React.FC<OrderItemCardProps> = ({ item }) => {
         <Grid container justifyContent="space-between" alignItems="center">
           <Grid item>
             <Typography variant="body2" fontWeight="medium" noWrap>
-              {item.meal.title}
+              {item.meal?.title}
             </Typography>
           </Grid>
           <Grid item>
             <Typography variant="body2" fontWeight="semibold">
-              ₹{item.meal.price * item.quantity}
+              ₹{item.meal?.price! * item.quantity}
             </Typography>
           </Grid>
         </Grid>
         <Grid container justifyContent="space-between" sx={{ mt: 1 }}>
           <Grid item>
             <Typography variant="body2" color="textSecondary">
-              ₹{item.meal.price} × {item.quantity}
+              ₹{item.meal?.price} × {item.quantity}
             </Typography>
           </Grid>
           <Grid item>
